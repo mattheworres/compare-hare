@@ -47,4 +47,6 @@ There will be two processes that need to run, and each will have state/utility-s
 
 **utility_price** data gathering - a CRON job will need to run on a weekly basis to gather all pricing data for all distributors listed in the alerts table. For PA-specific jobs, a `SELECT DISTINCT` on the distributor/ratetype key will provide a list of requests to be made on the PUC site, for example. Consider running this job as a one-off (for a single distributor/ratetype) each time a user alert criteria is created (but skip if data already exists in the utility_prices table).
 
+Still not sure how to handle the fact that a single data source will get hammered for 60 unique offer types of data. Rather than shotgunning 60 requests at it (which might look like a DDOS), maybe make a request, then wait 10 seconds? Would like input here.
+
 **email alert generation** - a CRON job will need to run on a less-than-weekly basis to compare all utility_prices that are newer than the last time the user's alert criteria was checked. Maybe run it every other day? Find a way to run this once after a new alert criteria is created, after the pricing data has been obtained.
