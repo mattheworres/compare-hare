@@ -35,7 +35,9 @@ With this in mind, I'd like to keep state and utility-specific logic and integra
 
 **utility_prices** - a place to store the data received back from data sources. One row per "offer id", timestamped.
 
-Because I think the format the data is received depending on the source may be arbitrary, and rather than hold a the app's DB schema to the will of this data source, I'm considering leveraging **MongoDB** to store the data. 
+At first I thought using a document-based DB like **Mongo** would be helpful here, but as I envision 60+ implementations of a utility price scraper interface all slinging their own format of data into the same table I'm terrified.
+
+Instead, I should work to extract a common interface for the information, since they all describe *roughly the same thing*. So in addition to a DB-generated primary key, a string for the unique "offer id" from the store, the energy generator (so "North American Power" is the company name), the type of offer (so fixed, dynamic, flat fee, etc.), the price and the units (that'll get fun I'm sure)
 
 **historical_utility_prices** - every time an insert is performed on *utility_prices*, an additional insert is done on this table. For an MVP I do not plan to do anything with this data, but thought it might be helpful information to track historical information about a given offer. Timestamped inserts.
 
