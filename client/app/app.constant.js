@@ -1,9 +1,13 @@
 (function(angular, undefined) {
-'use strict';
+  angular.module("comparehareApp.constants", [])
 
-angular.module('comparehareApp.constants', [])
-
-.constant('appConfig', {userRoles:['guest','user','admin']})
+.constant("appConfig", {
+	"userRoles": [
+		"guest",
+		"user",
+		"admin"
+	]
+})
 
 ;
 })(angular);

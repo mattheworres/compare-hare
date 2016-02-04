@@ -6,4 +6,6 @@ public
 client/bower_components
 dist
 /server/config/local.env.js
+/config/config.json
 npm-debug.log
+coverage

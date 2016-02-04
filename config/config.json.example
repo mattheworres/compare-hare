@@ -1,0 +1,24 @@
+{
+  "comment": "This is for sequelize_cli to handle migrations",
+  "development": {
+    "username": "root",
+    "password": null,
+    "database": "comparehare_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "comparehare_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "comparehare_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

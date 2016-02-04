@@ -4,12 +4,12 @@
 // ==================================
 module.exports = {
 
-  // Sequelize connecton opions
+  // Sequelize connection opions
   sequelize: {
-    uri: 'sqlite://',
     options: {
+      username: 'root',
+      password: 'passw0rd',
       logging: false,
-      storage: 'dev.sqlite',
       define: {
         timestamps: false
       }
@@ -17,6 +17,6 @@ module.exports = {
   },
 
   // Seed database on startup
-  seedDB: true
+  seedDB: false
 
 };
