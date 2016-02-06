@@ -1,5 +1,7 @@
 # comparehare
 
+For a general idea of the app and its architecture, please read [ARCHITECTURE.md](ARCHITECTURE.md)
+
 This project was generated with the [Angular Full-Stack Generator](https://github.com/DaftMonk/generator-angular-fullstack) version 3.3.0.
 
 ## Getting Started
