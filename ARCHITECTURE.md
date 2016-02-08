@@ -27,19 +27,25 @@ For an "MVP", the first integration will be for Pennsylvania power through the P
 
 With this in mind, I'd like to keep state and utility-specific logic and integrations separated as makes sense. Some states might also make this a lot harder (before investigating the PUC site, I was gearing up to create a web scraper...)
 
+#### Assumptions
+
+- When getting pricing data, the "offer_id" will represent up to date information, and updates within that offer_id will not exist (pricing changes or other major pieces of info that would affect alerts). For this, we will ignore new data from the price scrapes if we already have that offer_id in utility_prices
+
+- Alerts will only send email once - when the alert is created. We cannot wipe utility_prices OR alerts on every price scrape, or we will be constantly emailing alerts.
+
 #### Database tables/objects
 
-**user_alert_criteria** - tied to a user (is private to that user), stores the distributor/ratetype key for that user as well as any other specific criteria that should trigger an alert. Timestamp last time local prices were checked for a given alert.
+**alert_criteria** - tied to a user (is private to that user), stores the distributor/ratetype key for that user as well as any other specific criteria that should trigger an alert. Timestamp last time local prices were checked for a given alert. Keys: distributor_id, user_id
 
-**user_alerts** - Specific offer information that is generated from the alert job described below. Only contains "active" or matching offers. Each time the alert job is run for a user this table should be emptied out. In addition to getting email notifications, the user will have a "dashboard" of current alerts.
+**alerts** - Specific offer information that is generated from the alert job described below. Only contains "active" or matching offers. Each time the alert job is run for a user this table should be emptied out. In addition to getting email notifications, the user will have a "dashboard" of current alerts. Keys: alert_criteria_id (parent), user_id, utility_price_id; Is this really needed? Will a linker table suffice instead?
 
-**utility_prices** - a place to store the data received back from data sources. One row per "offer id", timestamped.
+**utility_prices** - a place to store the data received back from data sources. One row per "offer id", timestamped create only ("update" is meaningless - only inserts and deletes for now). Keys: none (has many-to-many association with distributors through a linker table)
 
-At first I thought using a document-based DB like **Mongo** would be helpful here, but as I envision 60+ implementations of a utility price scraper interface all slinging their own format of data into the same table I'm terrified.
+**historical_utility_prices** - every time an insert is performed on *utility_prices*, an additional insert is done on this table. For an MVP I do not plan to do anything with this data, but thought it might be helpful information to track historical information about a given offer. Timestamped inserts. Keys: none (has many-to-many assoc with distributors thru linker table)
 
-Instead, I should work to extract a common interface for the information, since they all describe *roughly the same thing*. So in addition to a DB-generated primary key, a string for the unique "offer id" from the store, the energy generator (so "North American Power" is the company name), the type of offer (so fixed, dynamic, flat fee, etc.), the price and the units (that'll get fun I'm sure)
+**distributors** - in the PUC data (see [SAMPLE_PA_PUC_DATA.json](SAMPLE_PA_PUC_DATA.json)) this is the distributor through which the user already receives service. New Castle for example uses Penn Power, most Pittsburgh areas use Duquesne Light. Contains info about their distributor, their price-to-compare, and also will contain the unique string that the price scraper will use to gather up to date pricing. Keys: none. Also has a many-to-many assoc with utility_prices AND utility_price_histories
 
-**historical_utility_prices** - every time an insert is performed on *utility_prices*, an additional insert is done on this table. For an MVP I do not plan to do anything with this data, but thought it might be helpful information to track historical information about a given offer. Timestamped inserts.
+**users** - standard login thru OAuth methods provided by Angular Fullstack. Keys: distributor_id (is the "default" distributor, can be updated periodically. When adding alert_criteria this is provided as the default) Is the foreign key in 2 other tables: alert_criteria, alerts.
 
 #### Scheduled Runs/Jobs
 

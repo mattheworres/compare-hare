@@ -17,4 +17,6 @@ var db = {
 db.Thing = db.sequelize.import('../api/thing/thing.model');
 db.User = db.sequelize.import('../api/user/user.model');
 
+// Define relationships below
+
 export default db;

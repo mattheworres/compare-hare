@@ -9,3 +9,4 @@ dist
 /config/config.json
 npm-debug.log
 coverage
+sequelize_cli_config.json
