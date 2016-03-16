@@ -15,6 +15,15 @@ module.exports = {
           allowNull: false
         },
 
+        distributorId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "distributors",
+            key: "id"
+          }
+        },
+
         supplierId: {
           type: Sequelize.STRING,
           allowNull: false
@@ -82,7 +91,8 @@ module.exports = {
 
         createdAt: {
           type: Sequelize.DATE,
-          allowNull: false
+          allowNull: false,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
         }
       },
       {

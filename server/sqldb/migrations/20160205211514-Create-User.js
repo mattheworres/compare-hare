@@ -46,13 +46,18 @@ module.exports = {
         github: Sequelize.TEXT,
         defaultDistributorId: {
           type: Sequelize.INTEGER,
-          allowNull: false,
+          allowNull: true,
           references: {
             model: "distributors",
             key: "id"
           }
         },
-        defaultDistributorRatetype: Sequelize.STRING
+        defaultRatetype: Sequelize.STRING,
+        createdAt: {
+          type: Sequelize.DATE,
+          allowNull: false,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
+        }
       },
       {
         engine: 'InnoDB', // default: 'InnoDB'

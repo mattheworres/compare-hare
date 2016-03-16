@@ -10,6 +10,16 @@ module.exports = {
           autoIncrement: true
         },
 
+        name: {
+          type: Sequelize.STRING,
+          allowNull: false
+        },
+
+        rateType: {
+          type: Sequelize.STRING,
+          allowNull: false
+        },
+
         pricePerUnit: {
           type: Sequelize.DECIMAL(8,4),
           allowNull: false
@@ -63,7 +73,8 @@ module.exports = {
 
         createdAt: {
           type: Sequelize.DATE,
-          allowNull: false
+          allowNull: false,
+          defaultValue: Sequelize.literal("CURRENT_TIMESTAMP")
         }
       },
       {

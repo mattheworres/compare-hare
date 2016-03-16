@@ -9,8 +9,7 @@ var validatePresenceOf = function(value) {
 
 module.exports = function(sequelize, DataTypes) {
   var User = sequelize.define('User', {
-
-    _id: {
+    id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
@@ -41,8 +40,9 @@ module.exports = function(sequelize, DataTypes) {
     facebook: DataTypes.TEXT,
     twitter: DataTypes.TEXT,
     google: DataTypes.TEXT,
-    github: DataTypes.TEXT
-
+    github: DataTypes.TEXT,
+    defaultDistributorId: DataTypes.INTEGER,
+    defaultRateType: DataTypes.STRING
   }, {
 
     /**
