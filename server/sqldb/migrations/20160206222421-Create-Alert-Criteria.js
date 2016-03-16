@@ -10,17 +10,25 @@ module.exports = {
           autoIncrement: true
         },
 
-        user_id: {
+        userId: {
           type: Sequelize.INTEGER,
-          allowNull: false
+          allowNull: false,
+          references: {
+            model: "users",
+            key: "id"
+          }
         },
 
-        distributor_id: {
+        distributorId: {
           type: Sequelize.INTEGER,
-          allowNull: false
+          allowNull: false,
+          references: {
+            model: "distributors",
+            key: "id"
+          }
         },
 
-        distributorKey: {
+        distributorRateType: {
           type: Sequelize.STRING,
           allowNull: false
         },
@@ -84,12 +92,6 @@ module.exports = {
   },
 
   down: function (queryInterface, Sequelize) {
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.dropTable('users');
-    */
+    return queryInterface.dropTable('alertCriteria');
   }
 };

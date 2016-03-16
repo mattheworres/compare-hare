@@ -2,22 +2,34 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    /*
-      Add altering commands here.
-      Return a promise to correctly handle asynchronicity.
+    return queryInterface.createTable('distributorsUtilityPrices',
+      {
+        distributorId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "distributors",
+            key: "id"
+          }
+        },
 
-      Example:
-      return queryInterface.createTable('users', { id: Sequelize.INTEGER });
-    */
+        utilityPriceId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "utilityPrices",
+            key: "id"
+          }
+        }
+      },
+      {
+        engine: 'InnoDB', // default: 'InnoDB'
+        charset: 'latin1' // default: null
+      }
+    );
   },
 
   down: function (queryInterface, Sequelize) {
-    /*
-      Add reverting commands here.
-      Return a promise to correctly handle asynchronicity.
-
-      Example:
-      return queryInterface.dropTable('users');
-    */
+    return queryInterface.dropTable('distributorsUtilityPrices');
   }
 };

@@ -2,12 +2,30 @@
 
 module.exports = {
   up: function (queryInterface, Sequelize) {
-    return queryInterface.createTable('alerts',
+    return queryInterface.createTable('pendingAlertNotifications',
       {
         id: {
           type: Sequelize.INTEGER,
           primaryKey: true,
           autoIncrement: true
+        },
+
+        userId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "users",
+            key: "id"
+          }
+        },
+
+        distributorId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model:"distributors",
+            key: "id"
+          }
         },
 
         alertCriteriaId: {
@@ -19,29 +37,7 @@ module.exports = {
           }
         },
 
-        utilityPriceId: {
-          type: Sequelize.INTEGER,
-          references: {
-            model: "utilityPrices",
-            key: "id"
-          }
-        },
-
-        utlityPriceHistoryId: {
-          type: Sequelize.INTEGER,
-          allowNull: false,
-          references: {
-            model: "utilityPriceHistories",
-            key: "id"
-          }
-        },
-
         createdAt: {
-          type: Sequelize.DATE,
-          allowNull: false
-        },
-
-        lastUpdatedAt: {
           type: Sequelize.DATE,
           allowNull: false
         }
@@ -54,6 +50,6 @@ module.exports = {
   },
 
   down: function (queryInterface, Sequelize) {
-    return queryInterface.dropTable('alerts');
+    return queryInterface.dropTable('pendingAlertNotifications');
   }
 };

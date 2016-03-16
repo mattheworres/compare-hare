@@ -6,32 +6,53 @@ module.exports = {
       {
         id: {
           type: Sequelize.INTEGER,
-          allowNull: false
+          primaryKey: true,
+          autoIncrement: true
         },
 
-        name: Sequelize.STRING,
+        name: {
+          type: Sequelize.STRING,
+          allowNull: false
+        },
 
         email: {
           type: Sequelize.STRING,
           allowNull: false
         },
 
-        role: Sequelize.STRING,
+        role: {
+          type: Sequelize.STRING,
+          allowNull: false
+        },
+
         password: {
           type: Sequelize.STRING,
           allowNull: false
         },
+
+        provider: {
+          type: Sequelize.STRING,
+          allowNull: false
+        },
+
         salt: {
           type: Sequelize.STRING,
           allowNull: false
         },
+
         facebook: Sequelize.TEXT,
         twitter: Sequelize.TEXT,
         google: Sequelize.TEXT,
         github: Sequelize.TEXT,
-
-        default_distributor_id: Sequelize.INTEGER
-        default_distributor_ratetype: Sequelize.STRING
+        defaultDistributorId: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          references: {
+            model: "distributors",
+            key: "id"
+          }
+        },
+        defaultDistributorRatetype: Sequelize.STRING
       },
       {
         engine: 'InnoDB', // default: 'InnoDB'
