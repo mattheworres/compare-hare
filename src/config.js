@@ -1,12 +1,3 @@
-/**
- * React Starter Kit (https://www.reactstarterkit.com/)
- *
- * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE.txt file in the root directory of this source tree.
- */
-
 /* eslint-disable max-len */
 
 if (process.env.BROWSER) {
@@ -33,17 +24,21 @@ module.exports = {
   },
 
   // Database
-  databaseUrl: process.env.DATABASE_URL || 'sqlite:database.sqlite',
+  databaseHost: process.env.DATABASE_HOST || 'localhost',
+  databaseName: process.env.DATABASE_NAME || 'comparehare',
+  databaseUser: process.env.DATABASE_USER || 'root',
+  databasePassword: process.env.DATABASE_PASS || 'passw0rd',
+  databasePort: process.env.DATABASE_PORT || 3307,
 
   // Web analytics
   analytics: {
     // https://analytics.google.com/
-    googleTrackingId: process.env.GOOGLE_TRACKING_ID, // UA-XXXXX-X
+    googleTrackingId: process.env.GOOGLE_TRACKING_ID || 'UA-134340231-1', // This is real -Matt
   },
 
   // Authentication
   auth: {
-    jwt: { secret: process.env.JWT_SECRET || 'React Starter Kit' },
+    jwt: { secret: process.env.JWT_SECRET || 'CompareHare' },
 
     // https://developers.facebook.com/
     facebook: {

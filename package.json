@@ -24,6 +24,7 @@
     "history": "^4.7.2",
     "isomorphic-style-loader": "^4.0.0",
     "jsonwebtoken": "^8.3.0",
+    "mysql2": "^1.6.5",
     "node-fetch": "^2.1.2",
     "normalize.css": "^8.0.0",
     "passport": "^0.4.0",
@@ -36,7 +37,6 @@
     "sequelize": "^4.37.10",
     "serialize-javascript": "^1.5.0",
     "source-map-support": "^0.5.6",
-    "sqlite3": "^4.0.0",
     "universal-router": "^6.0.0",
     "whatwg-fetch": "^2.0.4"
   },
@@ -106,6 +106,7 @@
     "react-error-overlay": "^4.0.0",
     "react-test-renderer": "^16.4.1",
     "rimraf": "^2.6.2",
+    "sequelize-auto-migrations": "^1.0.3",
     "stylelint": "^9.3.0",
     "stylelint-config-standard": "^18.2.0",
     "stylelint-order": "^0.8.1",
