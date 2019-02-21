@@ -8,21 +8,13 @@ const AlertCriteria = Model.define('AlertCriteria', {
     primaryKey: true,
     autoIncrement: true,
   },
-  userId: {
-    type: DataType.INTEGER,
-    allowNull: false,
-  },
   name: DataType.STRING,
-  distributorRateId: {
-    type: DataType.INTEGER,
-    allowNull: false,
-  },
-  distributorState: {
+  utilityState: {
     type: DataType.STRING(2),
     allowNull: false,
   },
-  priceType: {
-    type: DataType.INTEGER,
+  utilityType: {
+    type: DataType.STRING(255),
     allowNull: false,
   },
   minimumPrice: DataType.DECIMAL,
@@ -51,7 +43,11 @@ const AlertCriteria = Model.define('AlertCriteria', {
     type: DataType.BOOLEAN,
     allowNull: false,
   },
-  comments: DataType.STRING,
+  comments: DataType.STRING(255),
+  stateUtilityIndexHash: {
+    type: DataType.STRING(40),
+    allowNull: true,
+  },
   createdAt: {
     type: DataType.DATE,
     allowNull: false,

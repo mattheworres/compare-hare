@@ -1,4 +1,5 @@
 /* eslint-disable global-require */
+import loadOffers from '../backend/offerLoaders/paPower';
 
 // The top-level (parent) route
 const routes = {
@@ -9,6 +10,14 @@ const routes = {
     {
       path: '',
       load: () => import(/* webpackChunkName: 'home' */ './home'),
+    },
+    {
+      path: '/api/scrape',
+      // eslint-disable-next-line prettier/prettier
+      action: () => {
+        const offers = loadOffers({ loaderDataIdentifier: '16101' });
+        return `We gots ${offers ? offers.length : 'bahhumbug'} offers, fool!`;
+      },
     },
     {
       path: '/contact',
@@ -47,7 +56,7 @@ const routes = {
     const route = await next();
 
     // Provide default values for title, description etc.
-    route.title = `${route.title || 'Untitled Page'} - www.reactstarterkit.com`;
+    route.title = `${route.title || 'Untitled Page'} - www.comparehare.com`;
     route.description = route.description || '';
 
     return route;

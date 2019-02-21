@@ -9,16 +9,20 @@ const PendingAlertNotification = Model.define('PendingAlertNotification', {
     autoIncrement: true,
   },
   userId: {
-    type: DataType.INTEGER,
+    type: DataType.UUID,
     allowNull: false,
+    references: {
+      model: 'User',
+      key: 'id',
+    },
   },
-  distributorRateId: {
+  alertId: {
     type: DataType.INTEGER,
     allowNull: false,
-  },
-  alertCriteriaId: {
-    type: DataType.INTEGER,
-    allowNull: false,
+    references: {
+      model: 'Alert',
+      key: 'id',
+    },
   },
   createdAt: {
     type: DataType.DATE,

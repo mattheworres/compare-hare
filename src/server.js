@@ -205,7 +205,9 @@ app.use((err, req, res, next) => {
 //
 // Launch the server
 // -----------------------------------------------------------------------------
-const promise = models.sync().catch(err => console.error(err.stack));
+const promise = models
+  .sync({ alter: true, force: false })
+  .catch(err => console.error(err.stack));
 if (!module.hot) {
   promise.then(() => {
     app.listen(config.port, () => {

@@ -6,9 +6,9 @@ import UserProfile from './UserProfile';
 
 import Alert from './Alert';
 import AlertCriteria from './AlertCriteria';
-import DistributorRate from './DistributorRate';
-import DistributorRateUpdate from './DistributorRateUpdate';
+import AlertUtilityPriceHistory from './AlertUtilityPriceHistory';
 import PendingAlertNotification from './PendingAlertNotification';
+import StateUtilityIndex from './StateUtilityIndex';
 import UtilityPrice from './UtilityPrice';
 import UtilityPriceHistory from './UtilityPriceHistory';
 
@@ -36,45 +36,37 @@ User.hasOne(UserProfile, {
 User.hasMany(AlertCriteria, {
   foreignKey: 'userId',
   as: 'alertCriteria',
-  onUpdate: 'cascade',
-  onDelete: 'cascade',
 });
 
-User.hasMany(Alert, {
+AlertCriteria.belongsTo(User, {
   foreignKey: 'userId',
-  as: 'alerts',
-  onUdpate: 'cascade',
-  onDelete: 'cascade',
 });
 
-User.hasMany(PendingAlertNotification, {
-  foreignKey: 'userId',
-  as: 'pendingAlertNotifications',
-  onUpdate: 'cascade',
-  onDelete: 'cascade',
+StateUtilityIndex.hasMany(AlertCriteria, {
+  foreignKey: 'stateUtilityIndexId',
 });
 
-UtilityPrice.hasOne(UtilityPriceHistory, {
-  onUpdate: 'cascade',
-  onDelete: 'set null',
+AlertCriteria.belongsTo(StateUtilityIndex, {
+  foreignKey: 'stateUtilityIndexId',
 });
 
-Alert.belongsTo(UtilityPriceHistory, {
-  foreignKey: 'utilityPriceHistoryId',
-  onDelete: 'set null',
+Alert.belongsToMany(UtilityPriceHistory, {
+  through: {
+    model: 'AlertUtilityPriceHistory',
+    unique: false,
+  },
+  as: 'utilityPriceHistories',
+  foreignKey: 'alertId',
 });
 
-AlertCriteria.hasOne(DistributorRate, {
-  foreignKey: 'distributorRateId',
-  onUpdate: 'cascade',
-  onDelete: 'cascade',
-});
-
-DistributorRate.hasMany(AlertCriteria, {
-  foreignKey: 'distributorRateId',
-  onUpdate: 'cascade',
-  onDelete: 'cascade',
-});
+// UtilityPriceHistory.belongsToMany(Alert, {
+//   through: {
+//     model: Alert,
+//     unique: false,
+//   },
+//   as: 'alerts',
+//   foreignKey: 'utilityPriceHistoryId',
+// });
 
 function sync(...args) {
   return sequelize.sync(...args);
@@ -88,8 +80,8 @@ export {
   UserProfile,
   Alert,
   AlertCriteria,
-  DistributorRate,
-  DistributorRateUpdate,
+  AlertUtilityPriceHistory,
+  StateUtilityIndex,
   PendingAlertNotification,
   UtilityPrice,
   UtilityPriceHistory,

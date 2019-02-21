@@ -11,25 +11,32 @@ const Alert = Model.define('Alert', {
   alertCriteriaId: {
     type: DataType.INTEGER,
     allowNull: false,
+    references: {
+      model: 'AlertCriteria',
+      key: 'id',
+    },
   },
-  priceOfferId: {
-    type: DataType.STRING,
+  userId: {
+    type: DataType.UUID,
     allowNull: false,
+    references: {
+      model: 'User',
+      key: 'id',
+    },
   },
-  distributorState: {
+  utilityState: {
     type: DataType.STRING(2),
     allowNull: false,
   },
-  utilityPriceHistoryId: {
-    type: DataType.INTEGER,
+  utilityType: {
+    type: DataType.STRING(255),
+    allowNull: false,
+  },
+  alertOfferHash: {
+    type: DataType.STRING(40),
     allowNull: false,
   },
   createdAt: {
-    type: DataType.DATE,
-    allowNull: false,
-    defaultValue: DataType.NOW,
-  },
-  lastUpdatedAt: {
     type: DataType.DATE,
     allowNull: false,
     defaultValue: DataType.NOW,
