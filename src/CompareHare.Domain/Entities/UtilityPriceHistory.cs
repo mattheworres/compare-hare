@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using CompareHare.Domain.Services;
 
@@ -53,6 +54,8 @@ namespace CompareHare.Domain.Entities
 
         [MaxLength(512)]
         public string Comments { get; set; }
+
+        public IEnumerable<AlertUtilityPriceHistory> Alerts { get; set; }
 
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset? ModifiedDate { get; set; }

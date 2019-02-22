@@ -33,6 +33,16 @@ namespace CompareHare.Domain.Entities
             modelBuilder.Entity<AlertUtilityPriceHistory>()
               .HasKey(x => new {x.AlertId, x.UtilityPriceHistoryId});
 
+            modelBuilder.Entity<AlertUtilityPriceHistory>()
+              .HasOne(x => x.Alert)
+              .WithMany(x => x.UtilityPriceHistories)
+              .HasForeignKey(x => x.AlertId);
+
+            modelBuilder.Entity<AlertUtilityPriceHistory>()
+              .HasOne(x => x.UtilityPriceHistory)
+              .WithMany(x => x.Alerts)
+              .HasForeignKey(x => x.UtilityPriceHistoryId);
+
             base.OnModelCreating(modelBuilder);
         }
 

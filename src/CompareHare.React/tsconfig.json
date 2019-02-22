@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "experimentalDecorators": true,
+      "allowJs": true,
+      "noEmit": true,
+    },
+    "exclude": [
+      "**/node_modules/*",
+      "**/.vscode/*",
+      "**/dist/*",
+    ]
+}
