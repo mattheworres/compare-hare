@@ -53,6 +53,18 @@ namespace CompareHare.Api.Extensions
                 userManager.AddToRoleAsync(user, "Admin").Wait();
                 userManager.AddToRoleAsync(user, "User").Wait();
             }
+
+            var stateUtilityIndices = JsonConvert.DeserializeObject<List<StateUtilityIndex>>(File.ReadAllText(path: $"Seeds{Path.DirectorySeparatorChar}state_utility_indices.json"));
+
+            foreach(var index in stateUtilityIndices) {
+              if (dbContext.StateUtilityIndices.Any(x => x.LoaderDataIdentifier == index.LoaderDataIdentifier
+                && x.UtilityState == index.UtilityState
+                && x.UtilityType == index.UtilityType)) continue;
+
+              dbContext.StateUtilityIndices.Add(index);
+
+              dbContext.SaveChanges();
+            }
         }
     }
 }

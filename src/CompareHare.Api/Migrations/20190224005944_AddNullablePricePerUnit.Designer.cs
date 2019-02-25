@@ -3,14 +3,16 @@ using System;
 using CompareHare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CompareHare.Api.Migrations
 {
     [DbContext(typeof(CompareHareDbContext))]
-    partial class CompareHareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190224005944_AddNullablePricePerUnit")]
+    partial class AddNullablePricePerUnit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -327,7 +329,7 @@ namespace CompareHare.Api.Migrations
                     b.Property<string>("PriceUnit")
                         .HasMaxLength(50);
 
-                    b.Property<float?>("RenewablePercentage");
+                    b.Property<float>("RenewablePercentage");
 
                     b.Property<bool>("RequiresDeposit");
 
@@ -396,7 +398,7 @@ namespace CompareHare.Api.Migrations
                     b.Property<string>("PriceUnit")
                         .HasMaxLength(50);
 
-                    b.Property<float?>("RenewablePercentage");
+                    b.Property<float>("RenewablePercentage");
 
                     b.Property<bool>("RequiresDeposit");
 

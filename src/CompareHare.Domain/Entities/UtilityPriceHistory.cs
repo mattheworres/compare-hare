@@ -18,7 +18,7 @@ namespace CompareHare.Domain.Entities
         [MaxLength(50)]
         public string PriceUnit { get; set; }
 
-        public float PricePerUnit { get; set; }
+        public float? PricePerUnit { get; set; }
 
         [MaxLength(120)]
         public string FlatRate { get; set; }
@@ -43,7 +43,7 @@ namespace CompareHare.Domain.Entities
         public bool IsIntroductoryPrice { get; set; }
 
         public bool HasRenewable { get; set; }
-        public float RenewablePercentage { get; set; }
+        public float? RenewablePercentage { get; set; }
 
         public int TermMonthLength { get; set; }
 

@@ -10,7 +10,7 @@ namespace CompareHare.Domain.Entities
         public int Id { get; set; }
 
         [MaxLength(256)]
-        public string LoaderDataIdentifier { get; set; }
+        public virtual string LoaderDataIdentifier { get; set; }
 
         [Required]
         public UtilityStates UtilityState { get; set; }
