@@ -11,7 +11,8 @@ namespace CompareHare.Domain.Services
     {
         private const string SPACE = " ";
         private const string CLASS = "class";
-        private const string NUMBER_PATTERN = @"^\d+";
+        private const string NUMBER_PATTERN = @"([0-9])+";
+        private const string FLOAT_PATTERN = @"[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)";
 
         public bool ElementHasClass(IElement element, string className, bool caseSensitive = true)
         {
@@ -19,7 +20,7 @@ namespace CompareHare.Domain.Services
 
             if (caseSensitive) return listOfClasses.Any(x => x == className);
 
-            return listOfClasses.Any(x => x.ToLowerInvariant() == className);
+            return listOfClasses.Any(x => x.ToLowerInvariant() == className.ToLowerInvariant());
         }
 
         public IEnumerable<string> GetClasses(IElement element)
@@ -36,7 +37,7 @@ namespace CompareHare.Domain.Services
 
         public float ParseFirstFloatFromString(string text)
         {
-            var matches = Regex.Matches(text, NUMBER_PATTERN);
+            var matches = Regex.Matches(text, FLOAT_PATTERN);
 
             return float.Parse(matches[0].Value);
         }
@@ -45,14 +46,7 @@ namespace CompareHare.Domain.Services
         {
             var matches = Regex.Matches(text, NUMBER_PATTERN);
 
-            //TODO: Error here while running tests
-            //return int.Parse(matches[0].Value);
-            int numba;
-            if (matches == null || !int.TryParse(matches[0].Value, out numba)) {
-                throw new Exception($"Gah! Couldn't parse an int from \"{text}\"!");
-            }
-
-            return numba;
+            return int.Parse(matches[0].Value);
         }
     }
 }
