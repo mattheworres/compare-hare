@@ -34,36 +34,53 @@ With this in mind, I'd like to keep state and utility-specific logic and integra
 
 #### Assumptions
 
-- When getting pricing data, the "offer_id" will represent up to date information, and updates within that offer_id will not exist (pricing changes or other major pieces of info that would affect alerts). For this, we will ignore new data from the price scrapes if we already have that offer_id in utility_prices
+- When getting pricing data, after scraping/cleaning data into our format, we need to have a way to hash the entire data set and compare it against the last time we scraped data in order to determine if anything has changed. If the hash is the same, we stop right here and do not wipe/insert rows into the UtilityPrice table for this particular StateUtilityIndex.
 
-- Alerts will only send email once - when the alert is created. We cannot wipe utility_prices OR alerts on every price scrape, or we will be constantly emailing alerts.
+- Use [object-hash](https://github.com/puleos/object-hash) for SHA1 hashing
+
+- Alerts will only send notifications when the hash of the matching offers has changed.
+
+Given example: PA Power sends the same 5 offers for 3 months. Two of the offers match the very first time, a notification is sent. Every subsequent scrape stops with the OfferLoader because the offer hash never changes there.
+
+Then, they add 1 new offer. The OfferLoader offer hash will have changed, but when the AlertAssessor views the hash of all matching offers (still 2 offers), it is determined that no change has occurred, therefore no new notification is sent.
 
 - Existence of a row in utilityPrices means that price is "current". No rows found matching a specific state, energy type and rate type means that any alerts with those three are no longer valid (and must be removed). utilityPriceHistories remain so that even though utilityPrices is constantly emptied and refilled with the "latest" data, alerts can maintain strong referential integrity to the information for display purposes.
 
 #### Database tables/objects
 
-**alertCriteria** - tied to a user (is private to that user), stores the distributor/ratetype key for that user as well as any other specific criteria that should trigger an alert. Timestamp last time utility_prices were checked for a given alert. Keys: distributor_id, user_id
+**AlertCriteria** - tied to a user (is private to that user), stores the distributor/ratetype key for that user as well as any other specific criteria that should trigger an alert. Includes the StateUtilityIndex hash from the last time the alert criteria was checked. Keys: distributor_id, user_id
 
-**alerts** - Specific offer information that is generated from the alert job described below. Only contains "active" or matching offers. In addition to getting email notifications, the user will have a "dashboard" of current alerts. Keys: alert_criteria_id (parent), user_id, utility_price_id, utility_price_history_id (utility prices are wiped often, so the history entry should be used for all displays)
+**Alerts** - Specific offer information that is generated from the alert job described below. Only contains "active" or matching offers. In addition to getting email notifications, the user will have a "dashboard" of current alerts. Keys: alert_criteria_id (parent), user_id, utility_price_history_id (utility prices are wiped often, so the history entry should be used for all displays). Also contains the AlertOffer hash from the matching offer data.
 
-**pendingAlertNotifications** - a message table where each row denotes a notification that needs sent to a specific user. Only generated when a "new" alert is found (part 2 of the alert comp service below). Will also queue one or more "new" price hits into a single notification. Will contain some sort of information pertaining to new prices found - either just a "We found 3 new prices that match your alert "Bob's Alert", click here for info" or a "We found 3 new offers from these companies: [company list] click here for more info" message in the email. Once email has been sent, the row is deleted.
+**PendingAlertNotifications** - a message table where each row denotes a notification that needs sent to a specific user. Only generated when a "new" alert is found (part 2 of the alert comp service below). Will also queue one or more "new" price hits into a single notification. Will contain some sort of information pertaining to new prices found - either just a "We found 3 new prices that match your alert "Bob's Alert", click here for info" or a "We found 3 new offers from these companies: [company list] click here for more info" message in the email. Once email has been sent, the row is deleted.
 
-**utilityPrices** - a place to store the data received back from data sources. One row per "offer id", timestamped create only ("update" is meaningless - only inserts and deletes for now). Keys: utility_price_history_id (has many-to-many association with distributors through a linker table). May need to find out if database can automatically NULL out the utility_price_id field on alerts when we delete rows from this table
+**UtilityPrices** - a place to store the data received back from data sources. One row per "offer id", timestamped create only ("update" is meaningless - only inserts and deletes for now). Keys: utility_price_history_id (has many-to-many association with distributors through a linker table). May need to find out if database can automatically NULL out the utility_price_id field on alerts when we delete rows from this table
 
-**utilityPriceHistories** - every time an insert is performed on _utility_prices_, an additional insert is done on this table. For an MVP I do not plan to do anything with this data, but thought it might be helpful information to track historical information about a given offer. Timestamped inserts. Keys: none (has many-to-many assoc with distributors thru linker table)
+**UtilityPriceHistories** - every time an insert is performed on _utility_prices_, an additional insert is done on this table. For an MVP I do not plan to do anything with this data, but thought it might be helpful information to track historical information about a given offer. Timestamped inserts. Keys: none (has many-to-many assoc with distributors thru linker table)
 
-**distributorRates** - in the PUC data (see [SAMPLE_PA_PUC_DATA.json](SAMPLE_PA_PUC_DATA.json)) this is the distributor through which the user already receives service. New Castle for example uses Penn Power, most Pittsburgh areas use Duquesne Light. Contains info about their distributor, their price-to-compare, and also will contain the unique string that the price scraper will use to gather up to date pricing. A distributorRate is analogous to the price-to-compare given for a user from their distributor (Penn Power or Duquesne Light) for their selected rate type (so Duquesne Light - Residential). Keys: none. Also has a many-to-many assoc with utility_prices AND utility_price_histories
+**StateUtilityIndices** - LoaderDataIdentifier, State, UtilityType, Active, LastUpdated, LastUpdateHash
+A table of indices unique by State and UtilityType, this table provides logic for both of the backend services that run all Offer Loaders and Alert Assessors. LastUpdateHash = reliable hash of all offer data that allows us to cheaply determine if anything has changed since the last time we got data.
 
-**distributorRateUpdates** - a table to track when a distributor has last been updated to notify upstream processes such as the alert comparison service as to when there's newer data available. Should also contain some sort of hash (of the entire data returned from the PUC API) that allows us to quickly determine if there are any updates to the data, or if its the same with what we got last time - so we're not thrashing more on the utility_prices table than we need to. May not be possible.
+#### State/Utility Specific Logic
 
-**users** - standard login thru OAuth methods provided by Angular Fullstack. Keys: none Is the foreign key in 2 other tables: alert_criteria, alerts.
+This is where the architecture gets interesting. Each state AND utility type will likely have its own flavor on how to do things, so we need to split out all of this logic in a few interesting ways:
+
+**AlertCreators** - responsible for providing the frontend user with specific prompts and data input, these also have backend components that take this data input and create AlertCriteria, and also Inserts/Updates to StateUtilityIndices.
+
+**AlertAssessors** - responsible for periodically checking a user's alert criteria with the up to date offer data. First checks the StateUtilityIndexHash of the AlertCriteria and the StateUtilityIndex. If the same, stop here. Then assesses the alert criteria against the newest offer data, and compares the hash of matching offers to the AlertOffer hash. If the hash differs: If there are no matching offers, remove alert. Otherwise, the alert has changed, so send a notification.
+
+**OfferLoaders** - unique per State and UtilityType, offer loaders are responsible for loading new offer data for a given LoaderDataIdentifier from all matching rows in StateUtilityIndices. Can be run both as a one-off (a new row added to StateUtilityIndices when a new AlertCriteria is also created) and is also run periodically in the offer loader update service below. Leverages hash checks against LastUpdatedHash to short-circuit before spurious delete/inserts is performed on UtilityPrices.
 
 #### Scheduled Runs/Jobs
 
-**utility price update service** - a CRON job will need to run on a weekly basis to gather all pricing data for all distributors listed in the alerts table. For PA-specific jobs, a `SELECT DISTINCT` on the state/ratetype key from alert_criteria will provide a list of ratetypes to check. Each rate type will then be cycled through existing distributorRates - if no distributorRate exists, the PUC has to be hit to get both the distributorRate and all competing prices. If the distributorRate does exist, check the distributorRateUpdates to see if the PUC site needs hit again. If the hash on distributorRateUpdates indicates there's newer data, we update the distributor rate with the most up to date information, empty that distributor/ratetype's utility_prices, and then proceed to insert the new prices into both utilityPrices and utilityPriceHistories and then finally update distributorRateUpdates with both a timestamp and the hash of the price data from the external API.
+**offer loader update service** - a regularly scheduled job to run all offer loaders on all of their matching identifiers from the StateUtilityIndices table. Must use rate limiting with whatever library we go with. Suggestion: [Bull](https://www.npmjs.com/package/bull)
 
-Still not sure how to handle the fact that a single data source will get hammered for 60 unique offer types of data. Rather than shotgunning 60 requests at it (which might look like a DDOS), maybe make a request, then wait 10 seconds? Would like input here.
+**alert assessor service** - Cycle thru all alert_criteria and find criteria that have updated pricing data (comparison of StateUtilityIndexHash on alert_criteria against the value in the matching StateUtilityIndices row). Once a criteria needs updated (the hash is different), load pricing data for that criteria's matching state utility index.
 
-**alert comparison service** - Cycle thru all alert_criteria and find criteria that have updated pricing data (comparison of the timestamp on alertCriteria and distributorRateUpdates). Once a criteria needs updated, load all pricing data for that criteria's distributorRate. Then, it's a two step process: - One, cycle through all existing alerts tied to the criteria. If there are no rows in utilityPrices that match the "priceOfferId" and "distributorState" then this means the alert is no longer valid (the offer it represented is no longer being returned to us by the external API). Remove the alert, ensure there are no outstanding alert_notification links to the same utility_price external identifier. This step will **absolutely** rely on the assumption that there is a utility price-specific ID that is unique to that specific offer, otherwise every time we get new prices we will generate noisy notifications. - Two, cycle thru the rest of the utility prices for the distributor/ratetype (do an exclusion of IDs based on the ones that currently exist). Add new alert objects when a utility_price matches. Create or update an pending_alert_notification row as necessary
+Then, calculate the hash for matching offers from the newest pricing data and compare against the hash in the specific alert.
+_ If there is no alert AND there are > 0 matching offers, create a new alert + notification
+_ If there is an alert but the hash is the same, do nothing.
+_ If there is an alert and the hash differs, send an alert
+_ If there is an alert and there are 0 new matching offers, remove the alert
 
 **notification service** - Cycle through all pending_alert_notifications and send emails as necessary. The pending_alert_notification table contains all necessary info in order to generate said email. Once notification has been sent, the pending_alert_notification row can be deleted.

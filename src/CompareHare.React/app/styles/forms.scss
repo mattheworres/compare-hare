@@ -1,0 +1,160 @@
+div.react-datetime-picker.react-datetime-picker--enabled.input {
+  display: inline-flex;
+
+  div.react-datetime-picker__wrapper {
+    display: flex;
+
+    div.react-datetime-picker__inputGroup {
+      align-items: baseline;
+      box-sizing: border-box;
+      display: flex;
+      flex-grow: 1;
+      font-size: 20px;
+      height: 36px;
+      min-width: calc(4px + (4px * 3) + 0.54em * 8 + 0.217em * 2);
+      padding-bottom: 2px;
+      padding-left: 2px;
+      padding-right: 2px;
+      padding-top: 2px;
+
+      input {
+        background-clip: border-box;
+        background-color: rgba(0, 0, 0, 0);
+        background-image: none;
+        background-origin: padding-box;
+        background-position-x: 0%;
+        background-size: auto;
+        border-bottom-color: rgb(0, 0, 0);
+        border-bottom-style: none;
+        border-bottom-width: 0px;
+        border-image-outset: 0px;
+        border-image-repeat: stretch;
+        border-image-slice: 100%;
+        border-image-source: none;
+        border-image-width: 1;
+        border-left-color: rgb(0, 0, 0);
+        border-left-style: none;
+        border-left-width: 0px;
+        border-right-color: rgb(0, 0, 0);
+        border-right-style: none;
+        border-right-width: 0px;
+        border-top-color: rgb(0, 0, 0);
+        border-top-style: none;
+        border-top-width: 0px;
+        box-sizing: content-box;
+        color: rgb(0, 0, 0);
+        cursor: text;
+        display: flex;
+        font-size: 20px;
+        font-stretch: 100%;
+        font-style: normal;
+        font-variant-caps: normal;
+        font-variant-east-asian: normal;
+        font-variant-ligatures: normal;
+        font-variant-numeric: normal;
+        font-weight: 400;
+        height: 30px;
+        letter-spacing: normal;
+        line-height: normal;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        min-width: 0.54em;
+        padding-bottom: 1px;
+        padding-left: 1px;
+        padding-right: 1px;
+        padding-top: 1px;
+        position: relative;
+        text-align: start;
+        text-indent: 0px;
+        text-rendering: auto;
+        text-shadow: none;
+        text-transform: none;
+        word-spacing: 0px;
+        writing-mode: horizontal-tb;
+      }
+
+      select {
+        align-items: center;
+        background-attachment: scroll;
+        background-clip: border-box;
+        background-color: rgba(0, 0, 0, 0);
+        background-image: none;
+        background-origin: padding-box;
+        background-position-x: 0%;
+        background-size: auto;
+        border-bottom-color: rgb(0, 0, 0);
+        border-bottom-left-radius: 6px;
+        border-bottom-right-radius: 6px;
+        border-bottom-style: none;
+        border-bottom-width: 0px;
+        border-image-outset: 0px;
+        border-image-repeat: stretch;
+        border-image-slice: 100%;
+        border-image-source: none;
+        border-image-width: 1;
+        border-left-color: rgb(0, 0, 0);
+        border-left-style: none;
+        border-left-width: 0px;
+        border-right-color: rgb(0, 0, 0);
+        border-right-style: none;
+        border-right-width: 0px;
+        border-top-color: rgb(0, 0, 0);
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+        border-top-style: none;
+        border-top-width: 0px;
+        box-sizing: content-box;
+        color: rgb(0, 0, 0);
+        cursor: default;
+        display: flex;
+        font-size: 20px;
+        font-stretch: 100%;
+        font-style: normal;
+        font-variant-caps: normal;
+        font-variant-east-asian: normal;
+        font-variant-ligatures: normal;
+        font-variant-numeric: normal;
+        font-weight: 400;
+        height: 30px;
+        letter-spacing: normal;
+        line-height: normal;
+        margin-bottom: 0px;
+        margin-left: 0px;
+        margin-right: 0px;
+        margin-top: 0px;
+        min-width: 0.54em;
+        padding-bottom: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+        padding-top: 0px;
+        position: relative;
+        text-align: start;
+        text-indent: 0px;
+        text-rendering: auto;
+        text-shadow: none;
+        text-transform: none;
+        white-space: pre;
+        width: 80px !important;
+        word-spacing: 0px;
+        writing-mode: horizontal-tb;
+        -webkit-appearance: menulist-button;
+        -webkit-rtl-ordering: logical;
+        -webkit-border-image: none;
+      }
+
+      span.react-datetime-picker__inputGroup_divider {
+        box-sizing: border-box;
+        display: block;
+        font-family: Montserrat, 'Segoe UI', Tahoma, sans-serif;
+        font-size: 20px;
+        height: 31px;
+        padding-bottom: 1px;
+        padding-left: 1px;
+        padding-right: 1px;
+        padding-top: 1px;
+      }
+    }
+  }
+}

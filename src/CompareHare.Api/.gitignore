@@ -1,0 +1,5 @@
+logs/
+wwwroot/
+appsettings.User.json
+obj/
+bin/
