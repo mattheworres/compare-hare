@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Io;
 using CompareHare.Domain.Entities;
+using CompareHare.Domain.Services;
 using CompareHare.Domain.Services.Interfaces;
+using Serilog;
 
 namespace CompareHare.Domain.Features.OfferLoaders
 {
@@ -15,14 +17,15 @@ namespace CompareHare.Domain.Features.OfferLoaders
         private const string URL = "https://phpdraft.com/{0}";
         private const string SPACE = " ";
         private const string NO_ANSWER = "No";
+        private const string NO_TERM_LENGTH = "No term length";
         private const string YES_ANSWER = "Yes";
-        private const string FIXED_PRICE_STRUCTURE = "Fixed";
-        private const string VARIABLE_PRICE_STRUCTURE = "Variable";
-        private const string UNLIMITED_PRICE_STRUCTURE = "Unlimited";
+        private const string FIXED_PRICE_STRUCTURE_CLASS = "Fixed";
+        private const string VARIABLE_PRICE_STRUCTURE_CLASS = "Variable";
+        private const string UNLIMITED_PRICE_STRUCTURE_CLASS = "Unlimited";
         private readonly IParserWrapper _parserWrapper;
-        private readonly IParserHelper _parserHelper;
+        private readonly ParserHelper _parserHelper;
 
-        public PAPowerOfferLoader(IParserWrapper parserWrapper, IParserHelper parserHelper) {
+        public PAPowerOfferLoader(IParserWrapper parserWrapper, ParserHelper parserHelper) {
             _parserWrapper = parserWrapper;
             _parserHelper = parserHelper;
         }
@@ -44,7 +47,7 @@ namespace CompareHare.Domain.Features.OfferLoaders
 
                     offers.Add(utilityPrice);
                 } catch (Exception ex) {
-                    var message = ex.Message;
+                    Log.Logger.Error(ex, "PAPower Parse Error for {0}", utilityIndex.LoaderDataIdentifier);
                 }
             }
 
@@ -56,8 +59,10 @@ namespace CompareHare.Domain.Features.OfferLoaders
             var uniqueIdentifier = _parserHelper.GetElementClassStartingWith(supplierElement, "nid");
 
             return new UtilityPrice {
-                Name = supplierElement.QuerySelector("span.name a").Text(),
-                StateUtilityIndex = utilityIndex
+                Name = supplierElement.QuerySelector("span.name a").Text().Trim(),
+                SupplierPhone = supplierElement.QuerySelector("span.phone").Text().Trim(),
+                StateUtilityIndex = utilityIndex,
+                OfferId = uniqueIdentifier,
             };
         }
 
@@ -71,7 +76,7 @@ namespace CompareHare.Domain.Features.OfferLoaders
                 utilityPrice.PricePerUnit = null;
                 utilityPrice.FlatRate = supplierRateElement.QuerySelector("span.unlimited-rate").Text();
             } else {
-                var word = supplierRateElement.QuerySelector("span.unit span.word");
+                var word = supplierRateElement.QuerySelector("span.unit span.word").Text();
                 var unit = supplierRateElement.QuerySelector("span.unit span#unit").Text();
                 utilityPrice.PriceUnit = $"{word} {unit}";
             }
@@ -92,7 +97,10 @@ namespace CompareHare.Domain.Features.OfferLoaders
         }
 
         private UtilityPrice ParseRightCopy(IElement element, UtilityPrice utilityPrice) {
-            utilityPrice.OfferUrl = element.QuerySelector("span.sign-up a").GetAttribute("href");
+            var signUpElement = element.QuerySelector("span.sign-up a");
+            if (signUpElement != null) {
+                utilityPrice.OfferUrl = signUpElement.GetAttribute("href");
+            }
 
             return utilityPrice;
         }
@@ -104,32 +112,33 @@ namespace CompareHare.Domain.Features.OfferLoaders
 
             var termLengthText = element.QuerySelector("span.term-length strong").Text();
             //if (termLengthText != NO_ANSWER) utilityPrice.TermMonthLength = Convert.ToInt32(termLengthText);
-            if (termLengthText != NO_ANSWER) utilityPrice.TermMonthLength = _parserHelper.ParseFirstIntegerFromString(termLengthText);
+            if (termLengthText != NO_ANSWER && termLengthText != NO_TERM_LENGTH) utilityPrice.TermMonthLength = _parserHelper.ParseFirstIntegerFromString(termLengthText);
 
             var monthlyFeeText = element.QuerySelector("span.monthly-fee strong").Text();
             utilityPrice.HasMonthlyFee = monthlyFeeText != NO_ANSWER;
             if (utilityPrice.HasMonthlyFee) utilityPrice.MonthlyFee = monthlyFeeText;
 
             var termEndDateText = element.QuerySelector("span.term-end-date strong").Text();
-            if (termEndDateText != NO_ANSWER) utilityPrice.TermEndDate = DateTime.Parse(element.QuerySelector("span.term-end-date strong span").Text());
+            utilityPrice.HasTermEndDate = termEndDateText != NO_ANSWER;
+            if (utilityPrice.HasTermEndDate) utilityPrice.TermEndDate = DateTime.Parse(element.QuerySelector("span.term-end-date strong span").Text());
 
             var enrollmentFeeText = element.QuerySelector("span.enrollment-fee strong").Text();
-            utilityPrice.HasEnrollmentFee = enrollmentFeeText != NO_ANSWER;
+            utilityPrice.HasEnrollmentFee = enrollmentFeeText != NO_ANSWER && !string.IsNullOrEmpty(enrollmentFeeText);
             if (utilityPrice.HasEnrollmentFee) utilityPrice.EnrollmentFee = enrollmentFeeText;
 
             return utilityPrice;
         }
 
         private UtilityPrice ParseLeftCopy(IElement element, UtilityPrice utilityPrice) {
-            var priceStructure = FIXED_PRICE_STRUCTURE;
+            var priceStructure = FIXED_PRICE_STRUCTURE_CLASS;
             var priceStructureElement = element.QuerySelector("span.price.price-structure");
-            var includesVariableClass = _parserHelper.ElementHasClass(priceStructureElement, VARIABLE_PRICE_STRUCTURE);
-            var includesUnlimitedClass = _parserHelper.ElementHasClass(priceStructureElement, UNLIMITED_PRICE_STRUCTURE);
+            var includesVariableClass = _parserHelper.ElementHasClass(priceStructureElement, VARIABLE_PRICE_STRUCTURE_CLASS);
+            var includesUnlimitedClass = _parserHelper.ElementHasClass(priceStructureElement, UNLIMITED_PRICE_STRUCTURE_CLASS);
 
             if (includesVariableClass) {
-                priceStructure = VARIABLE_PRICE_STRUCTURE;
-            } else {
-                priceStructure = UNLIMITED_PRICE_STRUCTURE;
+                priceStructure = VARIABLE_PRICE_STRUCTURE_CLASS;
+            } else if (includesUnlimitedClass) {
+                priceStructure = UNLIMITED_PRICE_STRUCTURE_CLASS;
             }
 
             utilityPrice.PriceStructure = priceStructure;

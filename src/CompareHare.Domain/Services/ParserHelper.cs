@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -30,7 +31,7 @@ namespace CompareHare.Domain.Services
         {
             var listOfClasses = element.GetAttribute(CLASS).Split(SPACE);
 
-            return listOfClasses.FirstOrDefault(x => x == startingNeedle);
+            return listOfClasses.FirstOrDefault(x => x.StartsWith(startingNeedle));
         }
 
         public float ParseFirstFloatFromString(string text)
@@ -44,9 +45,14 @@ namespace CompareHare.Domain.Services
         {
             var matches = Regex.Matches(text, NUMBER_PATTERN);
 
-            return int.Parse(matches[0].Value);
+            //TODO: Error here while running tests
+            //return int.Parse(matches[0].Value);
+            int numba;
+            if (matches == null || !int.TryParse(matches[0].Value, out numba)) {
+                throw new Exception($"Gah! Couldn't parse an int from \"{text}\"!");
+            }
+
+            return numba;
         }
-
-
     }
 }

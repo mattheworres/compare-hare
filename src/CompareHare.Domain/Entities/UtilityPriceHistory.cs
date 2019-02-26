@@ -47,7 +47,14 @@ namespace CompareHare.Domain.Entities
 
         public int TermMonthLength { get; set; }
 
-        public DateTime TermEndDate { get; set; }
+        [MaxLength(40)]
+        public string SupplierPhone { get; set; }
+
+        public bool HasTermEndDate { get; set; }
+        public DateTime? TermEndDate { get; set; }
+
+        [MaxLength(64)]
+        public string OfferId { get; set; }
 
         [MaxLength(256)]
         public string OfferUrl { get; set; }

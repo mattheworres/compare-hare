@@ -14,122 +14,117 @@ using System.Threading.Tasks;
 using CompareHare.Domain.Services;
 using System.Collections.Generic;
 using AngleSharp;
+using System.Linq;
+using System;
 
 namespace CompareHare.Tests.Domain.Features.Services
 {
     public class PAPowerOfferLoaderTests
     {
-        [Fact]//TODO: Run in debug and see which of the 19 offers are borking things
-        public async void ItShouldDoSomething() {
+        private const string VARIABLE_PRICE_STRUCTURE = "Variable";
+        private const string FIXED_PRICE_STRUCTURE = "Fixed";
+
+        [Fact]
+        public async void ItShouldParseBooleansCorrectly() {
             using(var autoMock = AutoMock.GetLoose()) {
                 var mockedWrapper = autoMock.Mock<IParserWrapper>();
+                var parserHelper = new ParserHelper();
                 var mockedIndex = autoMock.Mock<StateUtilityIndex>().SetupProperty(x => x.LoaderDataIdentifier, "12345");
                 var fakeDocument = await GetFakeDocument();
-                var blert = fakeDocument.QuerySelector("div").Text();
                 mockedWrapper.Setup(x => x.OpenUrlAsync(It.IsAny<string>(), It.IsAny<IRequester>())).ReturnsAsync(fakeDocument);
                 autoMock.Provide(mockedWrapper);
+                autoMock.Provide(parserHelper);
 
                 var sut = autoMock.Create<PAPowerOfferLoader>();
 
                 var offers = await sut.LoadOffers(mockedIndex.Object);
 
-                offers.Count.ShouldBe(45);
+                var numberOfBulkDiscounts = offers.Count(x => x.HasBulkDiscounts);
+                var numberOfIntroductoryPrices = offers.Count(x => x.IsIntroductoryPrice);
+                var numberOfRenewables = offers.Count(x => x.HasRenewable);
+                var numberOfCancellationFees = offers.Count(x => x.HasCancellationFee);
+                var numberOfEnrollmentFees = offers.Count(x => x.HasEnrollmentFee);
+                var numberOfUniqueIdentifiers = offers.Select(x => x.OfferId).Distinct().Count();
+
+                offers.Count.ShouldBe(95);
+
+                numberOfBulkDiscounts.ShouldBe(10);
+                numberOfIntroductoryPrices.ShouldBe(9);
+                numberOfRenewables.ShouldBe(35);
+                numberOfCancellationFees.ShouldBe(58);
+                numberOfEnrollmentFees.ShouldBe(1);
+                numberOfUniqueIdentifiers.ShouldBe(95);
             }
         }
 
-        // [Fact]
-        // public void ItShouldCreateA40CharacterHash()
-        // {
-        //     var blarp = GenerateABlerp();
+        [Fact]
+        public async void ItShouldParsePricesCorrectly()
+        {
+            using (var autoMock = AutoMock.GetLoose())
+            {
+                var mockedWrapper = autoMock.Mock<IParserWrapper>();
+                var parserHelper = new ParserHelper();
+                var mockedIndex = autoMock.Mock<StateUtilityIndex>().SetupProperty(x => x.LoaderDataIdentifier, "12345");
+                var fakeDocument = await GetFakeDocument();
+                mockedWrapper.Setup(x => x.OpenUrlAsync(It.IsAny<string>(), It.IsAny<IRequester>())).ReturnsAsync(fakeDocument);
+                autoMock.Provide(mockedWrapper);
+                autoMock.Provide(parserHelper);
 
-        //     using (var autoMock = AutoMock.GetLoose())
-        //     {
-        //         var sut = autoMock.Create<ObjectHasher>();
+                var sut = autoMock.Create<PAPowerOfferLoader>();
 
-        //         var result = sut.HashObject(blarp);
+                var offers = await sut.LoadOffers(mockedIndex.Object);
 
-        //         result.Length.ShouldBe(40);
-        //     }
-        // }
+                var variableAmbitDeal = offers.FirstOrDefault(x => x.Name == "Ambit Energy" && x.PriceStructure == VARIABLE_PRICE_STRUCTURE);
 
-        // [Fact]
-        // public void ItShouldGenerateTheSameValueTwice()
-        // {
-        //     var bloop = GenerateABlerp();
+                variableAmbitDeal.ShouldNotBeNull();
+                variableAmbitDeal.PricePerUnit.HasValue.ShouldBeTrue();
+                variableAmbitDeal.PricePerUnit.Value.ShouldBe(0.0960f);
+                variableAmbitDeal.PriceUnit.ShouldBe("per kWh");
+                variableAmbitDeal.HasRenewable.ShouldBeTrue();
+                variableAmbitDeal.RenewablePercentage.HasValue.ShouldBeTrue();
+                variableAmbitDeal.RenewablePercentage.Value.ShouldBe(100f);
+                variableAmbitDeal.HasCancellationFee.ShouldBeFalse();
+                variableAmbitDeal.HasBulkDiscounts.ShouldBeFalse();
 
-        //     using (var autoMock = AutoMock.GetLoose())
-        //     {
-        //         var sut = autoMock.Create<ObjectHasher>();
+                var blueRockDeal = offers.FirstOrDefault(x => x.Name == "BlueRock Energy Inc." && x.PriceStructure == FIXED_PRICE_STRUCTURE);
 
-        //         var result1 = sut.HashObject(bloop);
-        //         var result2 = sut.HashObject(bloop);
-        //         var result3 = sut.HashObject(bloop);
+                blueRockDeal.ShouldNotBeNull();
+                blueRockDeal.PricePerUnit.HasValue.ShouldBeTrue();
+                blueRockDeal.PricePerUnit.Value.ShouldBe(0.1500f);
+                blueRockDeal.PriceUnit.ShouldBe("per kWh");
+                blueRockDeal.HasRenewable.ShouldBeFalse();
+                blueRockDeal.HasCancellationFee.ShouldBeTrue();
+                blueRockDeal.CancellationFee.ShouldBe("100.00");
+                blueRockDeal.TermMonthLength.ShouldBe(12);
 
-        //         result1.ShouldBe(result2);
-        //         result2.ShouldBe(result3);
-        //     }
-        // }
+                var fesDeal = offers.FirstOrDefault(x => x.Name == "FirstEnergy Solutions" && x.HasRenewable);
 
-        // [Fact]
-        // public void ItShouldCreateDifferentHashesForOneChangedTitleCharacter()
-        // {
-        //     var bloop = GenerateABlerp();
-        //     var blerp = GenerateABlerp("mbinTitle");
+                fesDeal.ShouldNotBeNull();
+                fesDeal.HasRenewable.ShouldBeTrue();
+                fesDeal.RenewablePercentage.HasValue.ShouldBeTrue();
+                fesDeal.RenewablePercentage.Value.ShouldBe(100f);
+                fesDeal.HasCancellationFee.ShouldBeTrue();
+                fesDeal.CancellationFee.ShouldBe("50");
+                fesDeal.TermEndDate.HasValue.ShouldBeTrue();
+                var termEndDate = fesDeal.TermEndDate.HasValue ? fesDeal.TermEndDate.Value : new DateTime();
+                termEndDate.Month.ShouldBe(1);
+                termEndDate.Day.ShouldBe(31);
+                termEndDate.Year.ShouldBe(2021);
 
-        //     using (var autoMock = AutoMock.GetLoose())
-        //     {
-        //         var sut = autoMock.Create<ObjectHasher>();
+                var agwayDeal = offers.FirstOrDefault(x => x.Name == "Agway Energy Services LLC" && x.HasRenewable);
 
-        //         var result1 = sut.HashObject(bloop);
-        //         var result2 = sut.HashObject(blerp);
+                agwayDeal.ShouldNotBeNull();
+                agwayDeal.SupplierPhone.ShouldBe("888-982-4929");
+                agwayDeal.PricePerUnit.ShouldBe(0.069f);
+                agwayDeal.IsIntroductoryPrice.ShouldBeTrue();
+                agwayDeal.PriceStructure.ShouldBe(VARIABLE_PRICE_STRUCTURE);
+                agwayDeal.RenewablePercentage.HasValue.ShouldBeTrue();
+                agwayDeal.RenewablePercentage.Value.ShouldBe(100f);
+                agwayDeal.HasTermEndDate.ShouldBeFalse();
+            }
+        }
 
-        //         result1.ShouldNotBe(result2);
-        //     }
-        // }
-
-        // [Fact]
-        // public void ItShouldCreateDifferentHashesForOneChangedChildCharacter()
-        // {
-        //     var bloop = GenerateABlerp("mainTitle");
-        //     var blerp = GenerateABlerp("mainTitle", "s3condaryTitle");
-
-        //     using (var autoMock = AutoMock.GetLoose())
-        //     {
-        //         var sut = autoMock.Create<ObjectHasher>();
-
-        //         var result1 = sut.HashObject(bloop);
-        //         var result2 = sut.HashObject(blerp);
-
-        //         result1.ShouldNotBe(result2);
-        //     }
-        // }
-
-        // [Fact]
-        // public void ItShouldCreateTheSameHash50Times()
-        // {
-        //     var bloop = GenerateABlerp("sameHash!");
-
-        //     using (var autoMock = AutoMock.GetLoose())
-        //     {
-        //         var sut = autoMock.Create<ObjectHasher>();
-        //         var results = new List<string>();
-        //         var mainResult = sut.HashObject(bloop);
-
-        //         //Sanity check, this should never change unless HerpBlerp is updated
-        //         mainResult.ShouldBe("82283592447D30841F97AC385439218F56F1DF4A");
-
-        //         for (var i = 0; i < 50; i++)
-        //         {
-        //             results.Add(sut.HashObject(bloop));
-        //         }
-
-        //         foreach (var result in results)
-        //         {
-        //             result.ShouldBe(mainResult);
-        //         }
-        //     }
-        // }
-
+        //Test Helpers
         private async Task<IDocument> GetFakeDocument() {
             var parserWrapper = new ParserWrapper();
             var requesterMock = GetDefaultRequesterMock();

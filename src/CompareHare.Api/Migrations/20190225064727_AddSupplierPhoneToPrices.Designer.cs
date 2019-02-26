@@ -3,14 +3,16 @@ using System;
 using CompareHare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CompareHare.Api.Migrations
 {
     [DbContext(typeof(CompareHareDbContext))]
-    partial class CompareHareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190225064727_AddSupplierPhoneToPrices")]
+    partial class AddSupplierPhoneToPrices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -318,9 +320,6 @@ namespace CompareHare.Api.Migrations
 
                     b.Property<string>("NetMetering");
 
-                    b.Property<string>("OfferId")
-                        .HasMaxLength(64);
-
                     b.Property<string>("OfferUrl")
                         .HasMaxLength(256);
 
@@ -394,9 +393,6 @@ namespace CompareHare.Api.Migrations
                         .HasMaxLength(256);
 
                     b.Property<string>("NetMetering");
-
-                    b.Property<string>("OfferId")
-                        .HasMaxLength(64);
 
                     b.Property<string>("OfferUrl")
                         .HasMaxLength(256);
