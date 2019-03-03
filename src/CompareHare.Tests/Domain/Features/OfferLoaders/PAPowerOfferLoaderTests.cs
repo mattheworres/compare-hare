@@ -37,7 +37,7 @@ namespace CompareHare.Tests.Domain.Features.Services
 
                 var sut = autoMock.Create<PAPowerOfferLoader>();
 
-                var offers = await sut.LoadOffers(mockedIndex.Object);
+                var offers = await sut.LoadOffers(1, mockedIndex.Object.LoaderDataIdentifier);
 
                 var numberOfBulkDiscounts = offers.Count(x => x.HasBulkDiscounts);
                 var numberOfIntroductoryPrices = offers.Count(x => x.IsIntroductoryPrice);
@@ -72,7 +72,7 @@ namespace CompareHare.Tests.Domain.Features.Services
 
                 var sut = autoMock.Create<PAPowerOfferLoader>();
 
-                var offers = await sut.LoadOffers(mockedIndex.Object);
+                var offers = await sut.LoadOffers(1, mockedIndex.Object.LoaderDataIdentifier);
 
                 var variableAmbitDeal = offers.FirstOrDefault(x => x.Name == "Ambit Energy" && x.PriceStructure == VARIABLE_PRICE_STRUCTURE);
 

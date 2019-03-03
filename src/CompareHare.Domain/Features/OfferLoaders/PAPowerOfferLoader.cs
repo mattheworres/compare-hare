@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AngleSharp.Dom;
 using AngleSharp.Io;
 using CompareHare.Domain.Entities;
+using CompareHare.Domain.Features.OfferLoaders.Interfaces;
 using CompareHare.Domain.Services;
 using CompareHare.Domain.Services.Interfaces;
 using Serilog;
@@ -13,8 +14,9 @@ namespace CompareHare.Domain.Features.OfferLoaders
 {
     public class PAPowerOfferLoader : IOfferLoader
     {
+        //TODO: Remove once live.....
+        private const string URL = "http://localhost:8000/public/PA_Response.html";
         //private const string URL = "https://www.papowerswitch.com/shop-for-electricity/shop-for-your-home?zipcode={0}";
-        private const string URL = "https://phpdraft.com/{0}";
         private const string SPACE = " ";
         private const string NO_ANSWER = "No";
         private const string NO_TERM_LENGTH = "No term length";
@@ -30,8 +32,8 @@ namespace CompareHare.Domain.Features.OfferLoaders
             _parserHelper = parserHelper;
         }
 
-        public async Task<List<UtilityPrice>> LoadOffers(StateUtilityIndex utilityIndex, IRequester requester = null) {
-            var url = string.Format(URL, utilityIndex.LoaderDataIdentifier);
+        public async Task<List<UtilityPrice>> LoadOffers(int utilityIndexId, string loaderIdentifier, IRequester requester = null) {
+            var url = string.Format(URL, loaderIdentifier);
             var document = await _parserWrapper.OpenUrlAsync(url, requester);
 
             var offers = new List<UtilityPrice>();
@@ -41,27 +43,28 @@ namespace CompareHare.Domain.Features.OfferLoaders
 
             foreach(var fieldContent in fieldContents) {
                 try {
-                    var utilityPrice = ParseSupplier(fieldContent, utilityIndex);
+                    var utilityPrice = ParseSupplier(fieldContent, utilityIndexId);
                     utilityPrice = ParseRates(fieldContent, utilityPrice);
                     utilityPrice = ParseCopy(fieldContent, utilityPrice);
 
                     offers.Add(utilityPrice);
                 } catch (Exception ex) {
-                    Log.Logger.Error(ex, "PAPower Parse Error for {0}", utilityIndex.LoaderDataIdentifier);
+                    Log.Logger.Error(ex, "PAPower Parse Error for {0}", loaderIdentifier);
                 }
             }
 
             return offers;
         }
 
-        private UtilityPrice ParseSupplier(IElement element, StateUtilityIndex utilityIndex) {
+        private UtilityPrice ParseSupplier(IElement element, int utilityIndexId) {
             var supplierElement = element.QuerySelector("div.supplier-name");
             var uniqueIdentifier = _parserHelper.GetElementClassStartingWith(supplierElement, "nid");
 
             return new UtilityPrice {
+                Id = 0,
                 Name = supplierElement.QuerySelector("span.name a").Text().Trim(),
                 SupplierPhone = supplierElement.QuerySelector("span.phone").Text().Trim(),
-                StateUtilityIndex = utilityIndex,
+                StateUtilityIndexId = utilityIndexId,
                 OfferId = uniqueIdentifier,
             };
         }

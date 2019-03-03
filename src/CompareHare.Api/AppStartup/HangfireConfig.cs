@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Serilog;
 using MySql.Data.MySqlClient;
 
+
 #endregion
 
 namespace CompareHare.Api.AppStartup
@@ -23,7 +24,8 @@ namespace CompareHare.Api.AppStartup
             globalConfiguration.UseStorage(new MySqlStorage(BuildConnectionString(connectionString)));
             globalConfiguration.UseAutofacActivator(container);
 
-            ScheduleRecurringJobs<IDefaultRecurringJob>("BatchJobs", configuration, container, configuration["Hangfire:JobSchedule"]);
+            //ScheduleRecurringJobs<IDefaultRecurringJob>("BatchJobs", configuration, container, configuration["Hangfire:BatchJobSchedule"]);
+            ScheduleRecurringJobs<IOfferLoaderJob>("OfferLoaderJob", configuration, container, configuration["Hangfire:OfferLoaderRunnerSchedule"]);
         }
 
         private static string BuildConnectionString(string connectionString)

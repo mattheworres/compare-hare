@@ -56,7 +56,7 @@ namespace CompareHare.Domain.Entities
         [MaxLength(64)]
         public string OfferId { get; set; }
 
-        [MaxLength(256)]
+        [MaxLength(512)]
         public string OfferUrl { get; set; }
 
         [MaxLength(512)]

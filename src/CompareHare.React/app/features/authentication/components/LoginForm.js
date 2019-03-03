@@ -1,21 +1,21 @@
 import React from 'react';
 import {Map} from 'immutable';
 import {Button, Form, Segment} from 'semantic-ui-react';
-import {TextInput, PasswordInput} from '../../forms/components';
+//import {TextInput, PasswordInput} from '../../forms/components';
 import PropTypes from 'prop-types';
 import {LoginModel} from '../models';
 
 export default function LoginForm({
-  model,
-  onFieldChange,
+  // model,
+  // onFieldChange,
   onSubmit,
   disabled,
-  validationErrors,
+  // validationErrors,
 }) {
   return (
     <Form size="large" onSubmit={onSubmit} loading={disabled}>
       <Segment stacked>
-        <TextInput
+        {/* <TextInput
           id="email"
           fluid
           icon="user"
@@ -39,7 +39,7 @@ export default function LoginForm({
           formValidationErrors={validationErrors}
           onChange={onFieldChange}
           type="password"
-        />
+        /> */}
         <Button
           fluid
           className="primary"
