@@ -78,6 +78,10 @@ export default {
         ],
       },
       {
+        test: /\.htm?l(\?v=\d+.\d+.\d+)?$/,
+        use: ['file-loader'],
+      },
+      {
         test: /\.eot(\?v=\d+.\d+.\d+)?$/,
         use: ['file-loader'],
       },
