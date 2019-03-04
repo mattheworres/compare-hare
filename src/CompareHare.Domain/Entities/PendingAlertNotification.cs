@@ -10,8 +10,8 @@ namespace CompareHare.Domain.Entities
         public int UserId { get; set; }
         public User User { get; set; }
 
-        public int AlertId { get; set; }
-        public Alert Alert { get; set; }
+        public int AlertMatchId { get; set; }
+        public AlertMatch AlertMatch { get; set; }
 
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset? ModifiedDate { get; set; }

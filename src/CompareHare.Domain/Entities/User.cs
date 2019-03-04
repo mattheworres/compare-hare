@@ -33,7 +33,8 @@ namespace CompareHare.Domain.Entities
         public DateTime? FullAccessGrantedDate { get; set; }
 
         public virtual ISet<Role> Roles { get; set; }
-        public virtual ISet<Alert> Alerts { get; set; }
+        public virtual IEnumerable<Alert> Alerts { get; set; }
+        public virtual IEnumerable<AlertMatch> AlertMatches { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset? ModifiedDate { get; set; }
     }

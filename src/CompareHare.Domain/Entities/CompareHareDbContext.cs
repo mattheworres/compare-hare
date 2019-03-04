@@ -17,8 +17,8 @@ namespace CompareHare.Domain.Entities
         public CompareHareDbContext(
             DbContextOptions<CompareHareDbContext> dbContextOptions) : base(dbContextOptions) {}
 
-        public DbSet<Alert> Alerts { get; set; }
-        public DbSet<AlertCriteria> AlertCriteria { get; set; }
+        public DbSet<AlertMatch> AlertMatches { get; set; }
+        public DbSet<Alert> Alert { get; set; }
         public DbSet<PendingAlertNotification> PendingAlertNotifications { get; set; }
         public DbSet<StateUtilityIndex> StateUtilityIndices { get; set; }
         public DbSet<UtilityPrice> UtilityPrices { get; set; }
@@ -31,12 +31,12 @@ namespace CompareHare.Domain.Entities
             userBuilder.HasIndex(u => u.Email).IsUnique();
 
             modelBuilder.Entity<AlertUtilityPriceHistory>()
-              .HasKey(x => new {x.AlertId, x.UtilityPriceHistoryId});
+              .HasKey(x => new {x.AlertMatchId, x.UtilityPriceHistoryId});
 
             modelBuilder.Entity<AlertUtilityPriceHistory>()
-              .HasOne(x => x.Alert)
+              .HasOne(x => x.AlertMatch)
               .WithMany(x => x.UtilityPriceHistories)
-              .HasForeignKey(x => x.AlertId);
+              .HasForeignKey(x => x.AlertMatchId);
 
             modelBuilder.Entity<AlertUtilityPriceHistory>()
               .HasOne(x => x.UtilityPriceHistory)

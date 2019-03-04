@@ -3,21 +3,23 @@ using System;
 using CompareHare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CompareHare.Api.Migrations
 {
     [DbContext(typeof(CompareHareDbContext))]
-    partial class CompareHareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190304023649_RenameAlertToMatch")]
+    partial class RenameAlertToMatch
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
-            modelBuilder.Entity("CompareHare.Domain.Entities.Alert", b =>
+            modelBuilder.Entity("CompareHare.Domain.Entities.AlertCriteria", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -72,7 +74,7 @@ namespace CompareHare.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Alert");
+                    b.ToTable("AlertCriteria");
                 });
 
             modelBuilder.Entity("CompareHare.Domain.Entities.AlertMatch", b =>
@@ -80,7 +82,7 @@ namespace CompareHare.Api.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<int>("AlertId");
+                    b.Property<int>("AlertCriteriaId");
 
                     b.Property<string>("AlertOfferHash")
                         .IsRequired()
@@ -96,7 +98,7 @@ namespace CompareHare.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlertId");
+                    b.HasIndex("AlertCriteriaId");
 
                     b.HasIndex("StateUtilityIndexId");
 
@@ -510,7 +512,7 @@ namespace CompareHare.Api.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("CompareHare.Domain.Entities.Alert", b =>
+            modelBuilder.Entity("CompareHare.Domain.Entities.AlertCriteria", b =>
                 {
                     b.HasOne("CompareHare.Domain.Entities.StateUtilityIndex", "StateUtilityIndex")
                         .WithMany()
@@ -518,16 +520,16 @@ namespace CompareHare.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CompareHare.Domain.Entities.User", "User")
-                        .WithMany("Alerts")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CompareHare.Domain.Entities.AlertMatch", b =>
                 {
-                    b.HasOne("CompareHare.Domain.Entities.Alert", "Alert")
+                    b.HasOne("CompareHare.Domain.Entities.AlertCriteria", "AlertCriteria")
                         .WithMany()
-                        .HasForeignKey("AlertId")
+                        .HasForeignKey("AlertCriteriaId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("CompareHare.Domain.Entities.StateUtilityIndex", "StateUtilityIndex")
