@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Confirm} from 'semantic-ui-react';
 
 export default class ConfirmModal extends React.Component {
   constructor(props) {
@@ -21,14 +20,7 @@ export default class ConfirmModal extends React.Component {
   render() {
     const {onDestroy, ...modalProps} = this.props; // eslint-disable-line no-unused-vars
 
-    return (
-      <Confirm
-        onClose={this.handleCancel}
-        onCancel={this.handleCancel}
-        onConfirm={this.handleConfirm}
-        {...modalProps}
-      />
-    );
+    return <div>Uh, confirm modal? Maybe this goes away now with MUI</div>;
   }
 }
 

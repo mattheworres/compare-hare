@@ -1,8 +1,13 @@
 import React from 'react';
+import {Page} from '../../layout/components';
 
-class Dashboard extends React.PureComponent {
+class Dashboard extends React.Component {
   render() {
-    return <span>Hello World</span>;
+    return (
+      <Page>
+        <div>Hello CompareHare world!</div>
+      </Page>
+    );
   }
 }
 

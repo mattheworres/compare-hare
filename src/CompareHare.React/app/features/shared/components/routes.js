@@ -5,7 +5,7 @@ import {Dashboard} from '../../dashboard/components';
 import {NotFound, AuthenticatedRoute} from './index';
 import {
   RedirectToDashboard,
-  LoginPage,
+  SigninPage,
   LogoutPage,
   LoadIdentityPage,
 } from '../../authentication/components';
@@ -15,7 +15,7 @@ export default () => (
     <Route exact path="/" component={RedirectToDashboard} />
 
     <Route path="/load-identity" component={LoadIdentityPage} />
-    <Route path="/login" component={LoginPage} />
+    <Route path="/signin" component={SigninPage} />
     <Route path="/logout" component={LogoutPage} />
 
     {/* Authenticated routes start below here */}

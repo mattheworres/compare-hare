@@ -23,7 +23,7 @@
     "jest/globals": true
   },
   "rules": {
-    "react/prop-types": ["error", {"skipUndeclared": true}],
+    "react/prop-types": 0,
     "react/display-name": 0,
     "react/jsx-no-target-blank": 0
   },

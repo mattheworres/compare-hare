@@ -79,7 +79,7 @@ namespace CompareHare.Tests.Domain.Features.Services
                 variableAmbitDeal.ShouldNotBeNull();
                 variableAmbitDeal.PricePerUnit.HasValue.ShouldBeTrue();
                 variableAmbitDeal.PricePerUnit.Value.ShouldBe(0.0960f);
-                variableAmbitDeal.PriceUnit.ShouldBe("per kWh");
+                variableAmbitDeal.PriceUnit.ShouldBe("kWh");
                 variableAmbitDeal.HasRenewable.ShouldBeTrue();
                 variableAmbitDeal.RenewablePercentage.HasValue.ShouldBeTrue();
                 variableAmbitDeal.RenewablePercentage.Value.ShouldBe(100f);
@@ -91,7 +91,7 @@ namespace CompareHare.Tests.Domain.Features.Services
                 blueRockDeal.ShouldNotBeNull();
                 blueRockDeal.PricePerUnit.HasValue.ShouldBeTrue();
                 blueRockDeal.PricePerUnit.Value.ShouldBe(0.1500f);
-                blueRockDeal.PriceUnit.ShouldBe("per kWh");
+                blueRockDeal.PriceUnit.ShouldBe("kWh");
                 blueRockDeal.HasRenewable.ShouldBeFalse();
                 blueRockDeal.HasCancellationFee.ShouldBeTrue();
                 blueRockDeal.CancellationFee.ShouldBe("100.00");

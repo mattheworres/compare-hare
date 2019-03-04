@@ -14,7 +14,7 @@
     "generateReducerIndexFiles": "babel-node tools/generateReducerIndexFiles.js",
     "generateRootReducer": "babel-node tools/generateRootReducer.js",
     "generateFiles": "run-p generateIndexFiles generateRootReducer",
-    "webpack": "webpack-cli --config webpack.config.prod.babel.js --bail",
+    "webpack": "webpack --config webpack.config.prod.babel.js --bail",
     "clean": "rimraf dist && mkdir dist && rimraf ./lib",
     "build": "yarn run generateFiles && yarn run webpack --display=\"verbose\""
   },
@@ -32,9 +32,10 @@
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
     "@hocs/with-lifecycle": "^0.5.0",
+    "@material-ui/core": "^3.9.2",
+    "@material-ui/icons": "^3.0.2",
     "autobind-decorator": "^2.4.0",
     "axios": "^0.18.0",
-    "babel-polyfill": "^6.26.0",
     "class-autobind": "^0.1.4",
     "classnames": "^2.2.6",
     "connected-react-router": "^6.2.2",
@@ -47,7 +48,7 @@
     "react": "^16.8.1",
     "react-datetime-picker": "^2.1.1",
     "react-day-picker": "^7.1.4",
-    "react-dom": "^16.8.1",
+    "react-dom": "^16.8.3",
     "react-redux": "^6.0.0",
     "react-router": "^4.3.1",
     "react-router-dom": "^4.3.1",
@@ -57,7 +58,6 @@
     "redux-promise-middleware": "^6.0.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "semantic-ui-react": "^0.85.0",
     "toastr": "^2.1.4",
     "truefit-react-utils": "^0.0.15",
     "universal-cookie": "^3.0.7"

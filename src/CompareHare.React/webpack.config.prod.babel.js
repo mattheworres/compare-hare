@@ -13,7 +13,7 @@ export default {
     main: ['./app/index.js'],
   },
   output: {
-    path: path.resolve(__dirname, '../CompareHare.Api/wwwroot'),
+    path: path.resolve(__dirname, './lib'),
     publicPath: '/',
     filename: '[name].[chunkhash].js',
     chunkFilename: '[name].[chunkhash].js',
@@ -44,6 +44,17 @@ export default {
         use: {
           loader: 'babel-loader',
           options: {
+            cacheDirectory: true,
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  useBuiltIns: 'entry',
+                  modules: false,
+                },
+              ],
+              '@babel/preset-react',
+            ],
             plugins: [
               [
                 '@babel/plugin-proposal-decorators',
@@ -52,7 +63,7 @@ export default {
               '@babel/plugin-syntax-dynamic-import',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-external-helpers',
-              'transform-react-remove-prop-types',
+              'babel-plugin-transform-react-remove-prop-types',
             ],
           },
         },

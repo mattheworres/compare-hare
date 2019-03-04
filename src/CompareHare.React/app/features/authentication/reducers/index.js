@@ -1,9 +1,9 @@
 /* eslint-disable sort-imports */
 import {combineReducers} from 'redux';
 import currentUser from './currentUser.js';
-import login from './login.js';
+import signin from './signin.js';
 
 export default combineReducers({
   currentUser,
-  login,
+  signin,
 });

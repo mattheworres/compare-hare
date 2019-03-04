@@ -26,8 +26,8 @@ namespace CompareHare.Api.Features.Authentication
             _mediator = mediator;
         }
 
-        [Route("log-in"), HttpPost, AllowAnonymous]
-        public async Task<IActionResult> LogIn([FromBody] LogInModel model)
+        [Route("sign-in"), HttpPost, AllowAnonymous]
+        public async Task<IActionResult> SignIn([FromBody] LogInModel model)
         {
             var ip = this.Request.HttpContext.Connection.RemoteIpAddress;
             return await _mediator.Send(new LogInMessage(model, ip.ToString()));

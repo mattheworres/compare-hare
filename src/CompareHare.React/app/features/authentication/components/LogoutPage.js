@@ -1,29 +1,18 @@
 import {connect} from 'react-redux';
 import {logOut} from '../actions/currentUser';
-import {Segment, Dimmer, Modal} from 'semantic-ui-react';
 import React, {PureComponent} from 'react';
 
-const loginPage = '/login';
+const signinPage = '/signin';
 
 class LogoutPage extends PureComponent {
   componentDidMount() {
     const {logOut, history} = this.props;
 
-    logOut().then(() => history.push(loginPage));
+    logOut().then(() => history.push(signinPage));
   }
 
   render() {
-    return (
-      <Segment>
-        <Dimmer active inverted>
-          <Modal open className="logoutContainer">
-            <Modal.Content>
-              <p className="logoutMessage">You have been logged out.</p>
-            </Modal.Content>
-          </Modal>
-        </Dimmer>
-      </Segment>
-    );
+    return <div>Uh, logout here</div>;
   }
 }
 

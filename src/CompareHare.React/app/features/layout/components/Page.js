@@ -1,9 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {NavBar} from './index';
 
 export default function Page({className, loading, children}) {
   return (
     <div className={`page ${className || ''}`}>
+      <NavBar />
       {loading && (
         <div className="loading-overlay">
           <div className="loading-indicator-container">

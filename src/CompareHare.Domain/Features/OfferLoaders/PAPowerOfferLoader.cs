@@ -79,9 +79,9 @@ namespace CompareHare.Domain.Features.OfferLoaders
                 utilityPrice.PricePerUnit = null;
                 utilityPrice.FlatRate = supplierRateElement.QuerySelector("span.unlimited-rate").Text();
             } else {
-                var word = supplierRateElement.QuerySelector("span.unit span.word").Text();
+                //var word = supplierRateElement.QuerySelector("span.unit span.word").Text();
                 var unit = supplierRateElement.QuerySelector("span.unit span#unit").Text();
-                utilityPrice.PriceUnit = $"{word} {unit}";
+                utilityPrice.PriceUnit = $"{unit}";
             }
 
             return utilityPrice;

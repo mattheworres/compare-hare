@@ -1,10 +1,10 @@
+import React from 'react';
 import autobind from 'class-autobind';
 import {connect} from 'react-redux';
 import {loadIdentity} from '../actions/currentUser';
 import {Page} from '../../layout/components';
-import React, {Component} from 'react';
 
-class LoadIdentityPage extends Component {
+class LoadIdentityPage extends React.Component {
   constructor(props, context) {
     super(props, context);
 
@@ -28,10 +28,10 @@ class LoadIdentityPage extends Component {
         if (location.state) {
           const {from} = location.state;
           if (from && from.pathname) {
-            history.push('/login', {state: {from}});
+            history.push('/signin', {state: {from}});
           }
         } else {
-          history.push('/login');
+          history.push('/signin');
         }
       });
   }

@@ -18,6 +18,11 @@ export default {
     new HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({template: 'app/index.ejs'}),
   ],
+  // resolve: {
+  //   alias: {
+  //     'react-dom': '@hot-loader/react-dom',
+  //   },
+  // },
   module: {
     rules: [
       {
@@ -26,6 +31,17 @@ export default {
         use: {
           loader: 'babel-loader',
           options: {
+            // cacheDirectory: true,
+            // presets: [
+            //   [
+            //     '@babel/preset-env',
+            //     {
+            //       useBuiltIns: 'entry',
+            //       modules: false,
+            //     },
+            //   ],
+            //   '@babel/preset-react',
+            // ],
             plugins: [
               [
                 '@babel/plugin-proposal-decorators',
