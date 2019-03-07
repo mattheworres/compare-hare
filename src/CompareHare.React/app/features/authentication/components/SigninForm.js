@@ -53,6 +53,13 @@ class SigninForm extends React.Component {
     );
   }
 
+  getValidationErrorText(fieldName) {
+    const {validationErrors} = this.props;
+    const hasError = this.hasValidationErrors(fieldName);
+
+    return hasError ? validationErrors[fieldName].join(' ') : '';
+  }
+
   render() {
     const {classes, onSubmit, onFieldChange} = this.props;
 
@@ -62,6 +69,9 @@ class SigninForm extends React.Component {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
+          CompareHare (Alpha)
+        </Typography>
+        <Typography component="h1" variant="h4">
           Sign in
         </Typography>
         <form className={classes.form}>

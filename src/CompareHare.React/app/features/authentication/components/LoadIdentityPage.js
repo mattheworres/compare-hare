@@ -1,16 +1,9 @@
 import React from 'react';
-import autobind from 'class-autobind';
 import {connect} from 'react-redux';
 import {loadIdentity} from '../actions/currentUser';
 import {Page} from '../../layout/components';
 
 class LoadIdentityPage extends React.Component {
-  constructor(props, context) {
-    super(props, context);
-
-    autobind(this);
-  }
-
   componentDidMount() {
     const {loadIdentity, history, location} = this.props;
 

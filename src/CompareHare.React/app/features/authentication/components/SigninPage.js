@@ -11,8 +11,9 @@ import {
 } from '../selectors/signin';
 import {authenticate} from '../actions/currentUser';
 import {signIn} from '../actions/signin';
-import {handleApiError} from '../../shared/services';
+//import {handleApiError} from '../../shared/services';
 import autobind from 'class-autobind';
+import {withSnackbar} from 'material-ui-snackbar-provider';
 
 const defaultPageAfterSignin = '/dashboard';
 
@@ -76,7 +77,7 @@ class SigninPage extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    const {authenticate, history, location, signIn} = this.props;
+    const {authenticate, history, location, signIn, snackbar} = this.props;
     const {email, password} = this.state;
 
     const model = {email, password};
@@ -84,6 +85,8 @@ class SigninPage extends React.Component {
     signIn(model)
       .then(response => {
         authenticate(response.value);
+
+        snackbar.showMessage('Welcome back!');
 
         let redirectTo;
 
@@ -98,14 +101,11 @@ class SigninPage extends React.Component {
           history.push(defaultPageAfterSignin);
         }
       })
-      .catch(error =>
-        handleApiError(
-          error,
-          history,
-          'An error occurred while attempting to sign in.',
-          'Error',
-        ),
-      );
+      .catch(() => {
+        snackbar.showMessage(
+          'Uh oh: An error occurred while attempting to sign in.',
+        );
+      });
   }
 
   render() {
@@ -140,9 +140,11 @@ const mapDispatchToProps = {
   authenticate,
 };
 
-export default withStyles(styles)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(SigninPage),
+export default withSnackbar()(
+  withStyles(styles)(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps,
+    )(SigninPage),
+  ),
 );

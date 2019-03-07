@@ -34,7 +34,7 @@ class AlertsCard extends React.Component {
   }
 }
 
-AlertsCard.PropTypes = {
+AlertsCard.propTypes = {
   classes: PropTypes.object.required,
 };
 
