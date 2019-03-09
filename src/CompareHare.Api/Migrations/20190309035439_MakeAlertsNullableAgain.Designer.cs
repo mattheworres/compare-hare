@@ -3,14 +3,16 @@ using System;
 using CompareHare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CompareHare.Api.Migrations
 {
     [DbContext(typeof(CompareHareDbContext))]
-    partial class CompareHareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190309035439_MakeAlertsNullableAgain")]
+    partial class MakeAlertsNullableAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

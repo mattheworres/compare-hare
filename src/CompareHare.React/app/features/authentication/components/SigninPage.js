@@ -58,6 +58,7 @@ class SigninPage extends React.Component {
       email: '',
       password: '',
       rememberMe: false,
+      submitting: false,
     };
 
     autobind(this);
@@ -82,6 +83,8 @@ class SigninPage extends React.Component {
 
     const model = {email, password};
 
+    this.setState({submitting: true});
+
     signIn(model)
       .then(response => {
         authenticate(response.value);
@@ -105,11 +108,15 @@ class SigninPage extends React.Component {
         snackbar.showMessage(
           'Uh oh: An error occurred while attempting to sign in.',
         );
+      })
+      .finally(() => {
+        this.setState({submitting: false});
       });
   }
 
   render() {
     const {classes, validationErrors} = this.props;
+    const {submitting} = this.state;
 
     return (
       <main className={classes.main}>
@@ -118,6 +125,7 @@ class SigninPage extends React.Component {
           validationErrors={validationErrors}
           onFieldChange={this.handleFieldChange}
           onSubmit={this.handleSubmit}
+          submitting={submitting}
         />
       </main>
     );

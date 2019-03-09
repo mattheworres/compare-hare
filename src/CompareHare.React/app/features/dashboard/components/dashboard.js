@@ -1,8 +1,13 @@
 import React from 'react';
 import {Page} from '../../layout/components';
+import {connect} from 'react-redux';
 import {AlertsCard} from './index';
 import {Grid} from '@material-ui/core';
 import {AddAlertModal} from '../../alerts/components';
+import {
+  AddPaPowerAlert1stModal,
+  AddPaPowerAlert2ndModal,
+} from '../../alerts/components/paPower';
 
 class Dashboard extends React.Component {
   render() {
@@ -16,9 +21,21 @@ class Dashboard extends React.Component {
           <Grid item xs={2} />
         </Grid>
         <AddAlertModal />
+        <AddPaPowerAlert1stModal />
+        <AddPaPowerAlert2ndModal />
       </Page>
     );
   }
 }
 
-export default Dashboard;
+function mapStateToProps() {
+  return {
+
+  };
+}
+
+const mapDispatchToProps = {
+
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

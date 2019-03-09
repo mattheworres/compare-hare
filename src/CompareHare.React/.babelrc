@@ -6,7 +6,10 @@
         "useBuiltIns": "entry",
         "targets": {
           "node": "current"
-        }
+        },
+        // "include": [
+        //   "transform-es2015-classes"
+        // ]
       }
     ],
     "@babel/preset-react"

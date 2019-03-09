@@ -99,7 +99,7 @@ class NavBar extends React.Component {
 }
 
 NavBar.propTypes = {
-  classes: PropTypes.object.required,
+  classes: PropTypes.object,
 };
 
 function mapStateToProps(state) {
@@ -111,9 +111,9 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {};
 
-export default withStyles(styles)(
-  connect(
+export default connect(
     mapStateToProps,
     mapDispatchToProps,
-  )(NavBar),
+  )(
+    withStyles(styles)(NavBar),
 );
