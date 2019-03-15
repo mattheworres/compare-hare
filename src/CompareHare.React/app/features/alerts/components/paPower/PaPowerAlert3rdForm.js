@@ -1,21 +1,17 @@
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Typography,
   Button,
   TextField,
-  FormControlLabel,
   withStyles,
-  Switch,
   Grid,
   Stepper,
   Step,
   StepLabel,
-  Select,
-  MenuItem,
-  InputAdornment,
+  ListItemText,
 } from '@material-ui/core';
-import {NavigateNext} from '@material-ui/icons';
 import autobind from 'class-autobind';
 
 const styles = theme => ({
@@ -27,14 +23,27 @@ const styles = theme => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
     outline: 'none',
+    overflowY: 'scroll'
   },
   stepper: {
     paddingTop: '20px',
     paddingBottom: '10px',
   },
+  mainGridContainer: {
+    marginBottom: '15px',
+  },
+  subText: {
+    marginBottom: '15px',
+  },
+  conditionalWrapper: {
+    padding: '8px',
+  },
+  rightAligned: {
+    textAlign: 'right',
+  },
 })
 
-class PaPowerAlert2ndForm extends React.Component {
+class PaPowerAlert3rdForm extends React.Component {
   constructor(props) {
     super(props);
 
@@ -53,17 +62,13 @@ class PaPowerAlert2ndForm extends React.Component {
     return touched[field] ? errors[field] : null;
   }
 
-  onCheckChange(field, currentValue) {
-    this.props.setFieldValue(field, !currentValue);
-  }
-
   renderButtons() {
-    const {handleSubmit, onClose, errors} = this.props;
+    const {handleSubmit, onClose, errors, classes} = this.props;
     const isValid = Object.keys(errors).filter(key => errors[key] !== undefined).length === 0;
 
     return (
       <Grid container>
-        <Grid item xs={9}>
+        <Grid item xs={7}>
           <Button
             type="button"
             variant="outlined"
@@ -71,227 +76,218 @@ class PaPowerAlert2ndForm extends React.Component {
             Cancel
           </Button>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={5} className={classes.rightAligned}>
           <Button
             type="button"
             variant="contained"
             color="primary"
             onClick={handleSubmit}
             disabled={!isValid}>
-              Next
-              <NavigateNext />
+              Save Alert
           </Button>
         </Grid>
       </Grid>
     );
   }
 
-  renderYesNoOptions() {
-    const yesNoOptions = [
-      {value: true, text: 'Yes'},
-      {value: false, text: 'No'}
-    ];
+  renderTextField(field, label, width) {
+    const {alertModel} = this.props;
+    const value = alertModel[field];
 
-    return yesNoOptions.map((option, index) => <MenuItem key={index} value={option.value}>{option.text}</MenuItem>);
+    return (
+      <Grid item xs={width}>
+        <ListItemText primary={value} secondary={label} />
+      </Grid>
+    );
+  }
+
+  renderPriceFields() {
+    const {
+      hasMinimumPrice,
+      hasMaximumPrice,
+      minimumPrice,
+      maximumPrice,
+    } = this.props.alertModel;
+
+    if (!hasMinimumPrice && !hasMaximumPrice) return null;
+
+    let text = '';
+
+    if (hasMinimumPrice && !hasMaximumPrice) {
+      text = `Prices above $${minimumPrice}/kWh`;
+    } else if (hasMinimumPrice && hasMaximumPrice) {
+      text = `Prices between $${minimumPrice} and $${maximumPrice}/kWh`;
+    } else if (!hasMinimumPrice && hasMaximumPrice) {
+      text = `Prices below $${maximumPrice}/kWh`;
+    }
+
+    return (
+      <Grid item xs={12}>
+        <ListItemText primary={text} secondary='Filter by Price' />
+      </Grid>
+    );
+  }
+
+  renderMonthFields() {
+    const {
+      hasMinimumMonthLength,
+      hasMaximumMonthLength,
+      minimumMonthLength,
+      maximumMonthLength,
+    } = this.props.alertModel;
+
+    if (!hasMinimumMonthLength && !hasMaximumMonthLength) return null;
+
+    let text = '';
+
+    if (hasMinimumMonthLength && !hasMaximumMonthLength) {
+      text = `At least ${minimumMonthLength} month long contracts`;
+    } else if (hasMinimumMonthLength && hasMaximumMonthLength) {
+      text = `Contracts between ${minimumMonthLength} and ${maximumMonthLength} months long`;
+    } else if (!hasMinimumMonthLength && hasMaximumMonthLength) {
+      text = `Contracts no longer than ${maximumMonthLength} months long`;
+    }
+
+    return (
+      <Grid item xs={12}>
+        <ListItemText primary={text} secondary='Filter by Contract Length' />
+      </Grid>
+    );
+  }
+
+  renderRenewableFields() {
+    const {
+      filterRenewable,
+      hasRenewable,
+      minimumRenewablePercent,
+      maximumRenewablePercent,
+    } = this.props.alertModel;
+
+    if (!filterRenewable) return null;
+
+    let text = '';
+
+    if (!hasRenewable) {
+      text = 'No offers with any renewable energy sources';
+    } else if (minimumRenewablePercent != 0 || maximumRenewablePercent != 100) {
+      text = `Only offers with ${minimumRenewablePercent}% - ${maximumRenewablePercent}% of renewable energy sources`;
+    } else {
+      text = `Only offers with any amount of renewable energy sources`;
+    }
+
+    return (
+      <Grid item xs={12}>
+        <ListItemText primary={text} secondary='Filter by Renewable Energy' />
+      </Grid>
+    );
+  }
+
+  renderConditionalFields() {
+    const {
+      filterCancellationFee,
+      hasCancellationFee,
+      filterMonthlyFee,
+      hasMonthlyFee,
+      filterEnrollmentFee,
+      hasEnrollmentFee,
+      filterRequiresDeposit,
+      requiresDeposit,
+      filterBulkDiscounts,
+      hasBulkDiscounts,
+    } = this.props.alertModel;
+
+    if (!filterCancellationFee && !filterMonthlyFee && !filterEnrollmentFee && !filterRequiresDeposit && !filterBulkDiscounts) return null;
+
+    return (
+      <Grid container className={this.props.classes.conditionalWrapper} spacing={16}>
+      {filterCancellationFee && (<Grid item xs={12}>
+        <ListItemText
+            primary={`Only offers with ${hasCancellationFee ? null : 'NO '} cancellation fees`}
+            secondary="Cancellation Fees" />
+      </Grid>)}
+      {filterMonthlyFee && (<Grid item xs={12}>
+        <ListItemText
+          primary={`Only offers with ${hasMonthlyFee ? null : 'NO '} monthly fees`}
+          secondary="Monthly Fees" />
+      </Grid>)}
+      {filterEnrollmentFee && (<Grid item xs={12}>
+        <ListItemText
+          primary={`Only offers with ${hasEnrollmentFee ? null : 'NO '} monthly fees`}
+          secondary="Enrollment Fees" />
+      </Grid>)}
+      {filterRequiresDeposit && (<Grid item xs={12}>
+        <ListItemText
+          primary={`Only offers with ${requiresDeposit ? null : 'NO '} deposits required`}
+          secondary="Required Deposits" />
+      </Grid>)}
+      {filterBulkDiscounts && (<Grid item xs={12}>
+        <ListItemText
+          primary={`Only offers with ${hasBulkDiscounts ? null : 'NO '} bulk discounts`}
+          secondary="Bulk Discounts" />
+      </Grid>)}
+    </Grid>
+    );
   }
 
   render() {
     const {
       classes,
+      isNew,
       handleChange,
       handleBlur,
       values,
-      isNew,
     } = this.props;
 
     return (
       <form className={classes.paper}>
         <Typography variant="h5">
-          {isNew ? 'New ' : null}Alert: PA Power
+          {isNew ? 'New' : 'Edit'} Alert: PA Power
         </Typography>
         <Stepper className={classes.stepper}>
-          <Step>
+          <Step completed>
             <StepLabel>Name &amp; Price</StepLabel>
           </Step>
-          <Step active>
+          <Step completed>
             <StepLabel>Flags</StepLabel>
           </Step>
-          <Step>
+          <Step active>
             <StepLabel>Review</StepLabel>
           </Step>
         </Stepper>
-        <Grid container spacing={16}>
+        <Typography variant="h6" className={classes.subText}>
+          Take a moment and review your alert before saving it:
+        </Typography>
+        <Grid container spacing={16} className={classes.mainGridContainer}>
+          {this.renderTextField('name', 'Alert Name', 6)}
+          {this.renderTextField('zip', 'Service Zip', 6)}
           <Grid item xs={6}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={values.filterRenewable}
-                  onChange={handleChange('filterRenewable')}
-                  value={values.filterRenewable}
-                  color="primary"
-                />
-              }
-              label="Renewable"
-            />
+            <ListItemText primary='Pennsylvania' secondary='State' />
           </Grid>
           <Grid item xs={6}>
-            {values.filterRenewable && <Select
-              value={values.hasRenewable}
-              onChange={() => this.onCheckChange('hasRenewable', values.hasRenewable)}
-              inputProps={{
-                name: 'hasRenewable',
-                id: 'hasRenewable',
-              }}>
-              {this.renderYesNoOptions()}
-            </Select>}
+            <ListItemText primary='Power' secondary='Utility' />
           </Grid>
-          {values.filterRenewable && values.hasRenewable && <Grid item xs={6}>
+          {this.renderPriceFields()}
+          {this.renderMonthFields()}
+          {this.renderRenewableFields()}
+          {this.renderConditionalFields()}
+          <Grid item xs={12}>
+            <Typography variant="h6">
+              Feel free to jot down personal notes here, help future you remember what you were thinking:
+            </Typography>
             <TextField
-              id="minimumRenewablePercent"
-              label="Min Renewable"
-              value={values.minimumRenewablePercent}
-              onChange={handleChange('minimumRenewablePercent')}
-              onBlur={handleBlur('minimumRenewablePercent')}
-              error={this.hasError('minimumRenewablePercent')}
-              helperText={this.getErrorText('minimumRenewablePercent')}
-              InputProps={{
-                endAdornment:<InputAdornment position="end" >%</InputAdornment>,
-              }}
-          margin="normal" />
-          </Grid>}
-          {values.filterRenewable && values.hasRenewable && <Grid item xs={6}>
-            <TextField
-              id="maximumRenewablePercent"
-              label="Max Renewable"
-              value={values.maximumRenewablePercent}
-              onChange={handleChange('maximumRenewablePercent')}
-              onBlur={handleBlur('maximumRenewablePercent')}
-              error={this.hasError('maximumRenewablePercent')}
-              helperText={this.getErrorText('maximumRenewablePercent')}
-              InputProps={{
-                endAdornment: <InputAdornment position="end" >%</InputAdornment>,
-              }}
+              className={classes.dynamicSecondaryElement}
+              id="comments"
+              label="Comments"
+              value={values.comments}
+              placeholder="I want to make sure I dont miss any great promotional rates on renewable energy..."
+              onChange={handleChange('comments')}
+              onBlur={handleBlur('comments')}
+              error={this.hasError('comments')}
+              helperText={this.getErrorText('comments')}
+              multiline
+              fullWidth
+              rows={4}
               margin="normal" />
-          </Grid>}
-          <Grid item xs={6}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={values.filterCancellationFee}
-                  onChange={handleChange('filterCancellationFee')}
-                  value={values.filterCancellationFee}
-                  color="primary"
-                />
-              }
-              label="Cancellation Fees"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            {values.filterCancellationFee && <Select
-              value={values.hasCancellationFee}
-              onChange={() => this.onCheckChange('hasCancellationFee', values.hasCancellationFee)}
-              inputProps={{
-                name: 'hasCancellationFee',
-                id: 'hasCancellationFee',
-              }}>
-              {this.renderYesNoOptions()}
-            </Select>}
-          </Grid>
-          <Grid item xs={6}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={values.filterMonthlyFee}
-                  onChange={handleChange('filterMonthlyFee')}
-                  value={values.filterMonthlyFee}
-                  color="primary"
-                />
-              }
-              label="Monthly Fees"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            {values.filterMonthlyFee && <Select
-              value={values.hasMonthlyFee}
-              onChange={() => this.onCheckChange('hasMonthlyFee', values.hasMonthlyFee)}
-              inputProps={{
-                name: 'hasMonthlyFee',
-                id: 'hasMonthlyFee',
-              }}>
-              {this.renderYesNoOptions()}
-            </Select>}
-          </Grid>
-          <Grid item xs={6}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={values.filterEnrollmentFee}
-                  onChange={handleChange('filterEnrollmentFee')}
-                  value={values.filterEnrollmentFee}
-                  color="primary"
-                />
-              }
-              label="Enrollment Fees"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            {values.filterEnrollmentFee && <Select
-              value={values.hasEnrollmentFee}
-              onChange={() => this.onCheckChange('hasEnrollmentFee', values.hasEnrollmentFee)}
-              inputProps={{
-                name: 'hasEnrollmentFee',
-                id: 'hasEnrollmentFee',
-              }}>
-              {this.renderYesNoOptions()}
-            </Select>}
-          </Grid>
-          <Grid item xs={6}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={values.filterRequiresDeposit}
-                  onChange={handleChange('filterRequiresDeposit')}
-                  value={values.filterRequiresDeposit}
-                  color="primary"
-                />
-              }
-              label="Requires Deposit"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            {values.filterRequiresDeposit && <Select
-              value={values.requiresDeposit}
-              onChange={() => this.onCheckChange('requiresDeposit', values.requiresDeposit)}
-              inputProps={{
-                name: 'requiresDeposit',
-                id: 'requiresDeposit',
-              }}>
-              {this.renderYesNoOptions()}
-            </Select>}
-          </Grid>
-          <Grid item xs={6}>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={values.filterBulkDiscounts}
-                  onChange={handleChange('filterBulkDiscounts')}
-                  value={values.filterBulkDiscounts}
-                  color="primary"
-                />
-              }
-              label="Bulk Discounts"
-            />
-          </Grid>
-          <Grid item xs={6}>
-            {values.filterBulkDiscounts && <Select
-              value={values.hasBulkDiscounts}
-              onChange={() => this.onCheckChange('hasBulkDiscounts', values.hasBulkDiscounts)}
-              inputProps={{
-                name: 'hasBulkDiscounts',
-                id: 'hasBulkDiscounts',
-              }}>
-              {this.renderYesNoOptions()}
-            </Select>}
           </Grid>
         </Grid>
         {this.renderButtons()}
@@ -300,7 +296,7 @@ class PaPowerAlert2ndForm extends React.Component {
   }
 }
 
-PaPowerAlert2ndForm.propTypes = {
+PaPowerAlert3rdForm.propTypes = {
   isNew: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
@@ -313,6 +309,7 @@ PaPowerAlert2ndForm.propTypes = {
   isSubmitting: PropTypes.bool.isRequired,
   isValid: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
+  alertModel: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(PaPowerAlert2ndForm);
+export default withStyles(styles)(PaPowerAlert3rdForm);

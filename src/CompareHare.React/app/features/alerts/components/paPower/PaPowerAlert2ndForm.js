@@ -32,6 +32,12 @@ const styles = theme => ({
     paddingTop: '20px',
     paddingBottom: '10px',
   },
+  dynamicSecondaryCell: {
+    paddingTop: 0,
+  },
+  dynamicSecondaryElement: {
+    marginTop: 0,
+  }
 })
 
 class PaPowerAlert2ndForm extends React.Component {
@@ -73,7 +79,7 @@ class PaPowerAlert2ndForm extends React.Component {
         </Grid>
         <Grid item xs={2}>
           <Button
-            type="button"
+            type="submit"
             variant="contained"
             color="primary"
             onClick={handleSubmit}
@@ -107,10 +113,10 @@ class PaPowerAlert2ndForm extends React.Component {
     return (
       <form className={classes.paper}>
         <Typography variant="h5">
-          {isNew ? 'New ' : null}Alert: PA Power
+          {isNew ? 'New' : 'Edit'} Alert: PA Power
         </Typography>
         <Stepper className={classes.stepper}>
-          <Step>
+          <Step completed>
             <StepLabel>Name &amp; Price</StepLabel>
           </Step>
           <Step active>
@@ -147,6 +153,7 @@ class PaPowerAlert2ndForm extends React.Component {
           </Grid>
           {values.filterRenewable && values.hasRenewable && <Grid item xs={6}>
             <TextField
+              className={classes.dynamicSecondaryElement}
               id="minimumRenewablePercent"
               label="Min Renewable"
               value={values.minimumRenewablePercent}
@@ -161,6 +168,7 @@ class PaPowerAlert2ndForm extends React.Component {
           </Grid>}
           {values.filterRenewable && values.hasRenewable && <Grid item xs={6}>
             <TextField
+              className={classes.dynamicSecondaryElement}
               id="maximumRenewablePercent"
               label="Max Renewable"
               value={values.maximumRenewablePercent}

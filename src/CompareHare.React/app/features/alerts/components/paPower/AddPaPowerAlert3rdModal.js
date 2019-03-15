@@ -1,6 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux';
-import {addOpen2ndSelector} from '../../selectors/paPower';
+import {addOpen3rdSelector, alertModelSelector} from '../../selectors/paPower';
 import {closeAddPaPower, openAddPaPower3} from '../../actions/paPower';
 import {Modal, withStyles} from '@material-ui/core';
 import {withFormik} from 'formik';
@@ -9,13 +9,14 @@ import {
   paPower3rdFormValidationSchema as validationSchema
 } from '../../validations';
 import autobind from 'class-autobind';
-import {PaPowerAlert2ndForm} from './index';
+import {PaPowerAlert3rdForm} from './index';
 
 const styles = () => ({
   modal: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    overflow: 'scroll',
   },
 });
 
@@ -24,6 +25,10 @@ class AddPaPowerAlert3rdModal extends React.Component {
     super(props);
 
     autobind(this);
+  }
+
+  componentDidMount() {
+    this.props.resetForm();
   }
 
   onClose() {
@@ -46,11 +51,12 @@ class AddPaPowerAlert3rdModal extends React.Component {
       touched,
       values,
       classes,
+      alertModel,
     } = this.props;
 
     return (
       <Modal open={open} onClose={this.onClose} className={classes.modal}>
-        <PaPowerAlert2ndForm
+        <PaPowerAlert3rdForm
           isNew
           onClose={this.onClose}
           errors={errors}
@@ -61,7 +67,8 @@ class AddPaPowerAlert3rdModal extends React.Component {
           isValid={isValid}
           setFieldValue={setFieldValue}
           touched={touched}
-          values={values} />
+          values={values}
+          alertModel={alertModel} />
       </Modal>
     );
   }
@@ -71,7 +78,8 @@ const mapPropsToValues = () => paPower3rdFormDefaultValues;
 
 function mapStateToProps(state) {
   return {
-    open: addOpen2ndSelector(state),
+    open: addOpen3rdSelector(state),
+    alertModel: alertModelSelector(state),
   };
 }
 
@@ -82,10 +90,11 @@ const mapDispatchToProps = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(withFormik({
   mapPropsToValues,
-  handleSubmit: (values, {props}) => {
+  handleSubmit: (values, {props, resetForm}) => {
     const {openAddPaPower3} = props;
 
     openAddPaPower3(values);
+    resetForm();
   },
   validationSchema,
 })(

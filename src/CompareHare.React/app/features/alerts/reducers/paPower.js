@@ -55,9 +55,41 @@ export default stateReducer(initialState, {
       map.set('addStage', 2);
     }),
 
-  //UPDATE FROM 2 HERE
+  [OPEN_ADD_PA_POWER_3]: (state, payload) =>
+    state.withMutations(map => {
+      const {
+        filterRenewable,
+        hasRenewable,
+        minimumRenewablePercent,
+        maximumRenewablePercent,
+        filterCancellationFee,
+        hasCancellationFee,
+        filterMonthlyFee,
+        hasMonthlyFee,
+        filterEnrollmentFee,
+        hasEnrollmentFee,
+        filterRequiresDeposit,
+        requiresDeposit,
+        filterBulkDiscounts,
+        hasBulkDiscounts,
+      } = payload;
 
-  [OPEN_ADD_PA_POWER_3]: state => state.set('addStage', 3),
+      map.setIn(['alertModel', 'filterRenewable'], filterRenewable);
+      map.setIn(['alertModel', 'hasRenewable'], hasRenewable);
+      map.setIn(['alertModel', 'minimumRenewablePercent'], minimumRenewablePercent);
+      map.setIn(['alertModel', 'maximumRenewablePercent'], maximumRenewablePercent);
+      map.setIn(['alertModel', 'filterCancellationFee'], filterCancellationFee);
+      map.setIn(['alertModel', 'hasCancellationFee'], hasCancellationFee);
+      map.setIn(['alertModel', 'filterMonthlyFee'], filterMonthlyFee);
+      map.setIn(['alertModel', 'hasMonthlyFee'], hasMonthlyFee);
+      map.setIn(['alertModel', 'filterEnrollmentFee'], filterEnrollmentFee);
+      map.setIn(['alertModel', 'hasEnrollmentFee'], hasEnrollmentFee);
+      map.setIn(['alertModel', 'filterRequiresDeposit'], filterRequiresDeposit);
+      map.setIn(['alertModel', 'requiresDeposit'], requiresDeposit);
+      map.setIn(['alertModel', 'filterBulkDiscounts'], filterBulkDiscounts);
+      map.setIn(['alertModel', 'hasBulkDiscounts'], hasBulkDiscounts);
+      map.set('addStage', 3)
+    }),
 
   //SUBMIT TO SERVER HERE
 

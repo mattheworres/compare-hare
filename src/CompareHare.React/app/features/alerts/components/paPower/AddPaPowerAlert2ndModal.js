@@ -26,6 +26,10 @@ class AddPaPowerAlert2ndModal extends React.Component {
     autobind(this);
   }
 
+  componentDidMount() {
+    this.props.resetForm();
+  }
+
   onClose() {
     const {closeAddPaPower, resetForm} = this.props;
 
@@ -82,10 +86,11 @@ const mapDispatchToProps = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(withFormik({
   mapPropsToValues,
-  handleSubmit: (values, {props}) => {
+  handleSubmit: (values, {props, resetForm}) => {
     const {openAddPaPower3} = props;
 
     openAddPaPower3(values);
+    resetForm();
   },
   validationSchema,
 })(

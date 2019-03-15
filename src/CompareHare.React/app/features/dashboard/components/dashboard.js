@@ -7,6 +7,7 @@ import {AddAlertModal} from '../../alerts/components';
 import {
   AddPaPowerAlert1stModal,
   AddPaPowerAlert2ndModal,
+  AddPaPowerAlert3rdModal,
 } from '../../alerts/components/paPower';
 
 class Dashboard extends React.Component {
@@ -23,6 +24,7 @@ class Dashboard extends React.Component {
         <AddAlertModal />
         <AddPaPowerAlert1stModal />
         <AddPaPowerAlert2ndModal />
+        <AddPaPowerAlert3rdModal />
       </Page>
     );
   }

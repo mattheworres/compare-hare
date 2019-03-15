@@ -8,14 +8,26 @@ export const paPower1stFormValidationSchema = Yup.object({
   minimumPrice: Yup.number()
     .when(['hasMaximumPrice', 'hasMinimumPrice'], {
       is: true,
-      then: Yup.number().lessThan([Yup.ref('maximumPrice'), null], 'Cannot be greater than max'),
+      then: Yup.number().test('should-be-less-than-max', 'Cannot be greater than max', function (value) {
+        const max = this.parent.maximumPrice;
+
+        if (!max) return true;
+
+        return value < max;
+      }),
       otherwise: Yup.number().min(0, 'Minimum price must be positive')
     }),
   hasMaximumPrice: Yup.boolean(),
   maximumPrice: Yup.number()
     .when(['hasMaximumPrice', 'hasMinimumPrice'], {
       is: true,
-      then: Yup.number().moreThan([Yup.ref('minimumPrice'), null], 'Cannot be less than min'),
+      then: Yup.number().test('should-be-greater-than-min', 'Cannot be less than min', function (value) {
+        const max = this.parent.minimumPrice;
+
+        if (!max) return true;
+
+        return value > max;
+      }),
       otherwise: Yup.number().min(0, 'Maximum price must be positive')
     }),
   hasMinimumMonthLength: Yup.boolean(),
@@ -55,7 +67,6 @@ export const paPower2ndFormValidationSchema = Yup.object({
     .integer('Must be a whole number')
     .when(['filterRenewable', 'hasRenewable'], {
       is: true,
-      //then: Yup.number().lessThan([Yup.ref('maximumRenewablePercent'), null], `${[Yup.ref('minimumRenewablePercent'), null]} be greater than ${Yup.ref('maximumRenewablePercent')}`),
       then: Yup.number().test('should-be-less-than-max', 'Cannot be greater than max', function (value) {
         const min = this.parent.maximumRenewablePercent;
 
@@ -70,7 +81,6 @@ export const paPower2ndFormValidationSchema = Yup.object({
     .max(100, 'Maximum renewable percent cannot be greater than 100')
     .when(['filterRenewable', 'hasRenewable'], {
       is: true,
-      //then: Yup.number().moreThan([Yup.ref('minimumRenewablePercent'), null], 'Cannot be less than min'),
       then: Yup.number().test('should-be-greater-than-min', 'Cannot be less than min', function (value) {
         const min = this.parent.minimumRenewablePercent;
 

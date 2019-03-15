@@ -30,6 +30,9 @@ const styles = theme => ({
     paddingTop: '20px',
     paddingBottom: 0,
   },
+  dynamicGridCell: {
+    height: '72px',
+  }
 })
 
 class PaPowerAlert1stForm extends React.Component {
@@ -70,7 +73,7 @@ class PaPowerAlert1stForm extends React.Component {
         </Grid>
         <Grid item xs={2}>
           <Button
-            type="button"
+            type="submit"
             variant="contained"
             color="primary"
             onClick={handleSubmit}
@@ -95,7 +98,7 @@ class PaPowerAlert1stForm extends React.Component {
     return (
       <form className={classes.paper}>
         <Typography variant="h5">
-          {isNew ? 'New ' : null}Alert: PA Power
+          {isNew ? 'New' : 'Edit'} Alert: PA Power
         </Typography>
         <Stepper className={classes.stepper}>
           <Step active>
@@ -125,7 +128,7 @@ class PaPowerAlert1stForm extends React.Component {
           Here are a few values you can choose which new offers you want notified about:
         </Typography>
         <Grid container>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.dynamicGridCell}>
             <FormControlLabel
               control={
                 <Switch
@@ -138,7 +141,7 @@ class PaPowerAlert1stForm extends React.Component {
               label="Minimum price"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.dynamicGridCell}>
             {values.hasMinimumPrice && <TextField
               id="minimumPrice"
               label="Minimum Price"
@@ -153,7 +156,7 @@ class PaPowerAlert1stForm extends React.Component {
               }}
               margin="normal" />}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.dynamicGridCell}>
             <FormControlLabel
               control={
                 <Switch
@@ -166,7 +169,7 @@ class PaPowerAlert1stForm extends React.Component {
               label="Maximum price"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.dynamicGridCell}>
             {values.hasMaximumPrice && <TextField
               id="maximumPrice"
               label="Maximum Price"
@@ -181,7 +184,7 @@ class PaPowerAlert1stForm extends React.Component {
               }}
               margin="normal" />}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.dynamicGridCell}>
             <FormControlLabel
               control={
                 <Switch
@@ -194,7 +197,7 @@ class PaPowerAlert1stForm extends React.Component {
               label="Min month length"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.dynamicGridCell}>
             {values.hasMinimumMonthLength && <TextField
               id="minimumMonthLength"
               label="Min Month Length"
@@ -208,7 +211,7 @@ class PaPowerAlert1stForm extends React.Component {
               }}
               margin="normal" />}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.dynamicGridCell}>
             <FormControlLabel
               control={
                 <Switch
@@ -221,7 +224,7 @@ class PaPowerAlert1stForm extends React.Component {
               label="Max month length"
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={6} className={classes.dynamicGridCell}>
             {values.hasMaximumMonthLength && <TextField
               id="maximumMonthLength"
               label="Max Month Length"

@@ -4,7 +4,6 @@ import {
   Typography,
   Button,
   TextField,
-  Paper,
   FormControl,
   InputLabel,
   Input,
@@ -92,7 +91,7 @@ class AddAlertForm extends React.Component {
         </Grid>
         <Grid item xs={5} className={classes.rightAligned}>
           <Button
-            type="button"
+            type="submit"
             variant="contained"
             color="primary"
             onClick={onSubmit}

@@ -89,10 +89,12 @@ const mapDispatchToProps = {
 
 export default connect(mapStateToProps, mapDispatchToProps)(withFormik({
   mapPropsToValues,
-  handleSubmit: (values, {props}) => {
+  handleSubmit: (values, {props, resetForm}) => {
     const {openAddPaPower2} = props;
 
     openAddPaPower2(values);
+
+    resetForm();
   },
   validationSchema,
 })(
