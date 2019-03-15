@@ -1,12 +1,13 @@
 #region usings
 
 using System;
-using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
-using System.Transactions;
 using Autofac.Features.OwnedInstances;
 using CompareHare.Domain.Sql.Interfaces;
+using Microsoft.EntityFrameworkCore.Storage;
+using Dapper;
+using Microsoft.EntityFrameworkCore;
 
 #endregion
 
@@ -15,81 +16,134 @@ namespace CompareHare.Domain.Sql
     public class SqlExecutor : ISqlExecutor
     {
         private readonly Lazy<Func<Owned<DbConnection>>> _connectionFactory;
+        private readonly Lazy<IExecutionStrategy> _executionStrategy;
 
         public SqlExecutor(
+            Lazy<IExecutionStrategy> executionStrategy,
             Lazy<Func<Owned<DbConnection>>> connectionFactory)
         {
+            _executionStrategy = executionStrategy;
             _connectionFactory = connectionFactory;
         }
 
-        public async Task Execute(ISqlCommand sqlCommand, bool startTransaction)
+        public async Task Execute(ISqlCommand sqlCommand, SqlExecutionContext context = null)
         {
-            if (!startTransaction)
+            if (context != null)
             {
-                await Execute(sqlCommand, null);
+                await sqlCommand.Execute(context.Connection, context.Transaction);
                 return;
             }
 
-            await Execute(sqlCommand, null);
+            await _executionStrategy.Value.ExecuteAsync(
+                async () =>
+                {
+                    using (var connection = _connectionFactory.Value.Invoke())
+                    {
+                        await connection.Value.OpenAsync();
+
+                        var dbTransaction = connection.Value.BeginTransaction();
+
+                        try
+                        {
+                            await sqlCommand.Execute(connection.Value, dbTransaction);
+
+                            dbTransaction.Commit();
+                        }
+                        finally
+                        {
+                            dbTransaction.Dispose();
+                        }
+                    }
+                });
         }
 
-        private async Task Execute(ISqlCommand sqlCommand, TransactionScope transactionScope)
+        public void Execute(ISyncSqlCommand sqlCommand, SqlExecutionContext context = null)
         {
-            using (var connection = _connectionFactory.Value.Invoke())
+            if (context != null)
             {
-                await connection.Value.OpenAsync();
-                await sqlCommand.Execute(connection.Value);
-                transactionScope?.Complete();
-                connection.Value.Close();
+                sqlCommand.Execute(context.Connection, context.Transaction);
+                return;
             }
+
+            _executionStrategy.Value.Execute(
+                () =>
+                {
+                    using (var connection = _connectionFactory.Value.Invoke())
+                    {
+                        connection.Value.Open();
+
+                        var dbTransaction = connection.Value.BeginTransaction();
+
+                        try
+                        {
+                            sqlCommand.Execute(connection.Value, dbTransaction);
+
+                            dbTransaction.Commit();
+                        }
+                        finally
+                        {
+                            dbTransaction.Dispose();
+                        }
+                    }
+                });
         }
 
-        public async Task<TReturn> Execute<TReturn>(ISqlCommand<TReturn> sqlCommand, bool startTransaction)
+        public async Task<TReturn> Execute<TReturn>(ISqlCommand<TReturn> sqlCommand, SqlExecutionContext context = null)
         {
-            if (!startTransaction) return await Execute(sqlCommand, null);
+            if (context != null) return await sqlCommand.Execute(context.Connection, context.Transaction);
 
-            var result = await Execute(sqlCommand);
-            return result;
+            return await _executionStrategy.Value.ExecuteAsync(
+                       async () =>
+                       {
+                           using (var connection = _connectionFactory.Value.Invoke())
+                           {
+                               await connection.Value.OpenAsync();
+
+                               var dbTransaction = connection.Value.BeginTransaction();
+
+                               try
+                               {
+                                   var result = await sqlCommand.Execute(connection.Value, dbTransaction);
+
+                                   dbTransaction.Commit();
+
+                                   return result;
+                               }
+                               finally
+                               {
+                                   dbTransaction.Dispose();
+                               }
+                           }
+                       });
         }
 
-        private async Task<TReturn> Execute<TReturn>(ISqlCommand<TReturn> sqlCommand)
+        public async Task<TReturn> Execute<TReturn>(ISqlQuery<TReturn> sqlQuery, SqlExecutionContext context = null)
         {
-            using (var connection = _connectionFactory.Value.Invoke())
-            {
-                await connection.Value.OpenAsync();
-                var result = await sqlCommand.Execute(connection.Value);
-                connection.Value.Close();
-                return result;
-            }
-        }
+            if (context != null) return await sqlQuery.Execute(context.Connection, context.Transaction);
 
-        private async Task<TReturn> Execute<TReturn>(ISqlCommand<TReturn> sqlCommand, TransactionScope transactionScope)
-        {
-            using (var connection = _connectionFactory.Value.Invoke())
-            {
-                await connection.Value.OpenAsync();
-                var result = await sqlCommand.Execute(connection.Value);
-                transactionScope?.Complete();
-                connection.Value.Close();
-                return result;
-            }
-        }
+            return await _executionStrategy.Value.ExecuteAsync(
+                       async () =>
+                       {
+                           using (var connection = _connectionFactory.Value.Invoke())
+                           {
+                               await connection.Value.OpenAsync();
 
-        public async Task<TReturn> Execute<TReturn>(IBufferedSqlQuery<TReturn> sqlQuery)
-        {
-            using (var connection = _connectionFactory.Value.Invoke())
-            {
-                await connection.Value.OpenAsync();
-                var result = await sqlQuery.Execute(connection.Value);
-                connection.Value.Close();
-                return result;
-            }
-        }
+                               var dbTransaction = connection.Value.BeginTransaction();
 
-        public async Task<TReturn> Execute<TReturn>(IUnbufferedSqlQuery<TReturn> sqlQuery, DbConnection connection)
-        {
-            if (connection.State == ConnectionState.Closed)  await connection.OpenAsync();
-            return await sqlQuery.Execute(connection);
+                               try
+                               {
+                                   var result = await sqlQuery.Execute(connection.Value, dbTransaction);
+
+                                   dbTransaction.Commit();
+
+                                   return result;
+                               }
+                               finally
+                               {
+                                   dbTransaction.Dispose();
+                               }
+                           }
+                       });
         }
     }
 }

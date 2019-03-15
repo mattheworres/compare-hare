@@ -7,7 +7,6 @@ using CompareHare.Api.Features.Offers.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
-using CompareHare.Domain.Services.Interfaces;
 using AutoMapper;
 
 namespace CompareHare.Api.Features.Offers.Services
@@ -16,17 +15,14 @@ namespace CompareHare.Api.Features.Offers.Services
     {
         private readonly CompareHareDbContext _dbContext;
         private readonly IConfiguration _configuration;
-        private readonly IObjectHasher _objectHasher;
         private readonly IMapper _mapper;
 
         public OfferPersister(
             CompareHareDbContext dbContext,
             IConfiguration configuration,
-            IObjectHasher objectHasher,
             IMapper mapper) {
             _dbContext = dbContext;
             _configuration = configuration;
-            _objectHasher = objectHasher;
             _mapper = mapper;
         }
 
@@ -43,15 +39,23 @@ namespace CompareHare.Api.Features.Offers.Services
                 context.RemoveRange(existingOffers);
 
                 //TODO: Remove once done figuring this shit out
-                var existingHistoricals = await context.UtilityPriceHistories.Where(x => x.StateUtilityIndexId == utilityIndexId).ToListAsync();
-                context.RemoveRange(existingHistoricals);
+                //var existingHistoricals = await context.UtilityPriceHistories.Where(x => x.StateUtilityIndexId == utilityIndexId).ToListAsync();
+                //context.RemoveRange(existingHistoricals);
 
                 //Log.Logger.Information("Mapping to histories");
 
-                var historicalPrices = _mapper.Map<IEnumerable<UtilityPriceHistory>>(utilityPrices);
+                //var historicalPrices = _mapper.Map<IEnumerable<UtilityPriceHistory>>(utilityPrices);
 
-                await context.UtilityPrices.AddRangeAsync(utilityPrices);
-                await context.UtilityPriceHistories.AddRangeAsync(historicalPrices);
+                //Hefty, but cheapest way to get link between them for assessors later
+                foreach(var utilityPrice in utilityPrices) {
+                    var historical = _mapper.Map<UtilityPriceHistory>(utilityPrice);
+                    utilityPrice.UtilityPriceHistory = historical;
+
+                    await context.UtilityPriceHistories.AddAsync(historical);
+                    await context.UtilityPrices.AddAsync(utilityPrice);
+                }
+                // await context.UtilityPrices.AddRangeAsync(utilityPrices);
+                // await context.UtilityPriceHistories.AddRangeAsync(historicalPrices);
 
                 //Log.Logger.Information("Save new additions");
 

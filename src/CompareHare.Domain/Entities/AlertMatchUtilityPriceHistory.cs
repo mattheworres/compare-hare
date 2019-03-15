@@ -1,6 +1,6 @@
 namespace CompareHare.Domain.Entities
 {
-    public class AlertUtilityPriceHistory
+    public class AlertMatchUtilityPriceHistory
     {
         public int AlertMatchId { get; set; }
         public AlertMatch AlertMatch { get; set; }

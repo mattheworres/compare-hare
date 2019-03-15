@@ -8,5 +8,6 @@ namespace CompareHare.Domain.Features.Authentication.Interfaces
         Task<User> GetUserAsync();
         Task<int> GetUserIdAsync();
         User GetUserSync();
+        int GetUserIdSync();
     }
 }

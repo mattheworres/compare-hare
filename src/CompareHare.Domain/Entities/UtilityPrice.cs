@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using CompareHare.Domain.Entities.Constants;
 using CompareHare.Domain.Services;
 
 namespace CompareHare.Domain.Entities
@@ -11,6 +10,9 @@ namespace CompareHare.Domain.Entities
 
         public int StateUtilityIndexId { get; set; }
         public StateUtilityIndex StateUtilityIndex { get; set; }
+
+        public int UtilityPriceHistoryId { get; set; }
+        public virtual UtilityPriceHistory UtilityPriceHistory { get; set; }
 
         [Required, MaxLength(256)]
         public string Name { get; set; }

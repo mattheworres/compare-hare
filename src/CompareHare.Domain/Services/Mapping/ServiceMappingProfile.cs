@@ -2,11 +2,11 @@ using AutoMapper;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Services.Models;
 
-namespace CompareHare.Api.Features.Offers.Mapping
+namespace CompareHare.Domain.Services.Mapping
 {
-    public class OfferMappingProfile : Profile
+    public class ServiceMappingProfile : Profile
     {
-        public OfferMappingProfile() {
+        public ServiceMappingProfile() {
             CreateMap<UtilityPrice, UtilityPriceHashModel>()
             ;
 
@@ -15,6 +15,10 @@ namespace CompareHare.Api.Features.Offers.Mapping
 
             CreateMap<UtilityPrice, UtilityPriceHistory>()
                 .ForMember(d => d.Id, mce => mce.Ignore())
+            ;
+
+            CreateMap<UtilityPriceHistory, AlertMatchUtilityPriceHistory>()
+                .ForMember(d => d.UtilityPriceHistoryId, mce => mce.MapFrom(s => s.Id))
             ;
         }
     }

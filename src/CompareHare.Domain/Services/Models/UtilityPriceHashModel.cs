@@ -1,6 +1,6 @@
 using System;
 
-namespace CompareHare.Api.Features.Offers.Models
+namespace CompareHare.Domain.Services.Models
 {
     //For purposes of hashing new data and determining if it has changed
     public class UtilityPriceHashModel

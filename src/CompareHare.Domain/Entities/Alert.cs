@@ -20,6 +20,8 @@ namespace CompareHare.Domain.Entities
         [MaxLength(40)]
         public string StateUtilityIndexHash { get; set; }
 
+        public bool Active { get; set; }
+
         public decimal? MinimumPrice { get; set; }
         public decimal? MaximumPrice { get; set; }
         public bool? HasRenewable { get; set; }

@@ -1,11 +1,10 @@
 using System.Collections.Generic;
 using AutoMapper;
-using CompareHare.Api.Features.Offers.Models;
-using CompareHare.Api.Features.Offers.Services.Interfaces;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Services.Interfaces;
+using CompareHare.Domain.Services.Models;
 
-namespace CompareHare.Api.Features.Offers.Services
+namespace CompareHare.Domain.Services
 {
     public class UtilityPriceHasherHelper : IUtilityPriceHasherHelper
     {
@@ -24,9 +23,21 @@ namespace CompareHare.Api.Features.Offers.Services
             return modelHash == existingHash;
         }
 
+        public bool AreOffersDifferent(IEnumerable<UtilityPriceHistory> histories, string existingHash) {
+            var modelHash = GetModelHash(histories);
+
+            return modelHash == existingHash;
+        }
+
         public string GetModelHash(IEnumerable<UtilityPrice> utilityPrices)
         {
             var models = _mapper.Map<IEnumerable<UtilityPriceHashModel>>(utilityPrices);
+
+            return _objectHasher.HashObject(models);
+        }
+
+        public string GetModelHash(IEnumerable<UtilityPriceHistory> histories) {
+            var models = _mapper.Map<IEnumerable<UtilityPriceHashModel>>(histories);
 
             return _objectHasher.HashObject(models);
         }
