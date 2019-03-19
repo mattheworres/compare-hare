@@ -9,6 +9,7 @@ using CompareHare.Domain.Features.AlertAssessors.Interfaces;
 using CompareHare.Domain.Features.AlertAssessors.Models;
 using CompareHare.Domain.Features.AlertAssessors.Queries;
 using CompareHare.Domain.Services.Interfaces;
+using CompareHare.Domain.Services.Models;
 using CompareHare.Domain.Sql.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,6 +50,9 @@ namespace CompareHare.Domain.Features.AlertAssessors
             var matchingHistoryIds = await GetMatches(alert, sui);
 
             var match = await _dbContext.AlertMatches.FirstOrDefaultAsync(x => x.AlertId == alert.Id);
+                                    // .Where(x => x.AlertId == alert.Id)
+                                    // .Include(x => x.UtilityPriceHistories)
+                                    // .FirstOrDefaultAsync();
 
             if (match == null && matchingHistoryIds.Count() == 0) {
                 returnModel.ReturnType = AlertAssessorReturnType.NoNewMatchesFound;
@@ -70,7 +74,7 @@ namespace CompareHare.Domain.Features.AlertAssessors
             }
 
             if (_hasherHelper.AreOffersDifferent(matchingHistories, match.AlertOfferHash)) {
-                RemoveExistingHistories(match);
+                await RemoveExistingHistories(match);
 
                 match.UtilityPriceHistories = _mapper.Map<IEnumerable<AlertMatchUtilityPriceHistory>>(matchingHistories);
                 match.AlertOfferHash = _hasherHelper.GetModelHash(matchingHistories);
@@ -78,7 +82,7 @@ namespace CompareHare.Domain.Features.AlertAssessors
                 await _dbContext.SaveChangesAsync();
 
                 returnModel.ReturnType = AlertAssessorReturnType.NewMatchesAvailable;
-                returnModel.UpdatedMatches = matchingHistories;
+                returnModel.UpdatedMatches = _mapper.Map<IEnumerable<UtilityPriceHashModel>>(matchingHistories);
 
                 return returnModel;
             } else {
@@ -96,10 +100,17 @@ namespace CompareHare.Domain.Features.AlertAssessors
             throw new InvalidOperationException("State or utility not supported");
         }
 
-        private void RemoveExistingHistories(AlertMatch match) {
-            if (match.UtilityPriceHistories.Any() == false) return;
+        private async Task RemoveExistingHistories(AlertMatch match) {
+            //if (match.UtilityPriceHistories == null || match.UtilityPriceHistories.Any() == false) return;
 
-            _dbContext.RemoveRange(match.UtilityPriceHistories);
+            await _sqlExecutor.Execute(new RemoveAllPriceLinkers(match.Id));
+
+            //_dbContext.AlertMatchUtilityPriceHistories.RemoveRange(match.UtilityPriceHistories);
+            //_dbContext.RemoveRange(match.UtilityPriceHistories);
+            // foreach(var manyToMany in match.UtilityPriceHistories) {
+            //     _dbContext.Remove(manyToMany);
+            // }
+            //await _dbContext.SaveChangesAsync();
         }
     }
 }

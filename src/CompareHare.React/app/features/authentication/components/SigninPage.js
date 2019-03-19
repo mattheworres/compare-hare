@@ -14,6 +14,7 @@ import {signIn} from '../actions/signin';
 //import {handleApiError} from '../../shared/services';
 import autobind from 'class-autobind';
 import {withSnackbar} from 'material-ui-snackbar-provider';
+import toastr from 'toastr';
 
 const defaultPageAfterSignin = '/dashboard';
 
@@ -78,7 +79,7 @@ class SigninPage extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
-    const {authenticate, history, location, signIn, snackbar} = this.props;
+    const {authenticate, history, location, signIn/*, snackbar*/} = this.props;
     const {email, password} = this.state;
 
     const model = {email, password};
@@ -89,7 +90,8 @@ class SigninPage extends React.Component {
       .then(response => {
         authenticate(response.value);
 
-        snackbar.showMessage('Welcome back!');
+        //snackbar.showMessage('Welcome back!');
+        toastr.success('Welcome back!');
 
         let redirectTo;
 
@@ -105,9 +107,8 @@ class SigninPage extends React.Component {
         }
       })
       .catch(() => {
-        snackbar.showMessage(
-          'Uh oh: An error occurred while attempting to sign in.',
-        );
+        //snackbar.showMessage('Uh oh: An error occurred while attempting to sign in.');
+        toastr.error('Uh oh: An error occurred while attempting to sign in.');
       })
       .finally(() => {
         this.setState({submitting: false});

@@ -2,14 +2,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CompareHare.Domain.Entities;
-using CompareHare.Domain.Entities.Constants;
 using CompareHare.Domain.Features.Interfaces;
-using CompareHare.Domain.Features.OfferLoaders.Interfaces;
 using CompareHare.Api.Features.Offers.Services.Interfaces;
 using CompareHare.Domain.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using CompareHare.Domain.Features.OfferLoaders;
 using RateLimiter;
 
 namespace CompareHare.Api.Features.OfferLoaders
@@ -20,23 +17,23 @@ namespace CompareHare.Api.Features.OfferLoaders
         private const int THROTTLE_SECONDS = 15;
 
         private readonly CompareHareDbContext _dbContext;
-        private readonly Lazy<PAPowerOfferLoader> _pAPowerOfferLoader;
         private readonly IObjectHasher _objectHasher;
         private readonly IOfferPersister _offerPersister;
         private readonly IUtilityPriceHasherHelper _hasherHelper;
+        private readonly IOfferLoaderPicker _offerLoaderPicker;
 
         public OfferLoaderRunner(
             CompareHareDbContext dbContext,
-            Lazy<PAPowerOfferLoader> pAPowerOfferLoader,
             IObjectHasher objectHasher,
             IOfferPersister offerPersister,
-            IUtilityPriceHasherHelper hasherHelper)
+            IUtilityPriceHasherHelper hasherHelper,
+            IOfferLoaderPicker offerLoaderPicker)
         {
             _dbContext = dbContext;
-            _pAPowerOfferLoader = pAPowerOfferLoader;
             _objectHasher = objectHasher;
             _offerPersister = offerPersister;
             _hasherHelper = hasherHelper;
+            _offerLoaderPicker = offerLoaderPicker;
         }
 
         public async Task LoadAllOffers()
@@ -58,21 +55,10 @@ namespace CompareHare.Api.Features.OfferLoaders
             }
         }
 
-        private IOfferLoader PickOfferLoader(StateUtilityIndex index) {
-            switch(index.UtilityState) {
-                case UtilityStates.Pennsylvania:
-                    if (index.UtilityType == UtilityTypes.Power) return this._pAPowerOfferLoader.Value;
-                    return null;
-
-                default:
-                return null;
-            }
-        }
-
         private async Task LoadOffersForIndex(StateUtilityIndex index) {
             try
             {
-                var offerLoader = PickOfferLoader(index);
+                var offerLoader = _offerLoaderPicker.PickOfferLoader(index);
 
                 //Log.Logger.Information("Ok, got a loader for {0}... {1}", index.LoaderDataIdentifier, offerLoader.GetType());
 

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CompareHare.Api.Features.Alerts
 {
-    [Route("api/[controller]")]
+    [Route("api/alerts")]
     public class AlertsController : SpaApiController
     {
         private readonly IMediator _mediator;

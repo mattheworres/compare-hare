@@ -24,6 +24,8 @@ namespace CompareHare.Domain.Entities
         public DbSet<UtilityPrice> UtilityPrices { get; set; }
         public DbSet<UtilityPriceHistory> UtilityPriceHistories { get; set; }
 
+        public DbSet<AlertMatchUtilityPriceHistory> AlertMatchUtilityPriceHistories { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var userBuilder = modelBuilder.Entity<User>();

@@ -20,13 +20,13 @@ namespace CompareHare.Domain.Services
         {
             var modelHash = GetModelHash(utilityPrices);
 
-            return modelHash == existingHash;
+            return modelHash != existingHash;
         }
 
         public bool AreOffersDifferent(IEnumerable<UtilityPriceHistory> histories, string existingHash) {
             var modelHash = GetModelHash(histories);
 
-            return modelHash == existingHash;
+            return modelHash != existingHash;
         }
 
         public string GetModelHash(IEnumerable<UtilityPrice> utilityPrices)

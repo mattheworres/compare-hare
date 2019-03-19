@@ -51,7 +51,7 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.CreateAlert
 
             var assessorResponse = await _alertAssessor.Value.AssessMatches(alert.Id);
 
-            return Ok(new CreateAlertResponseModel(false, alert.Id, assessorResponse.UpdatedMatches.Count()));
+            return Ok(new CreateAlertResponseModel(false, alert.Id, assessorResponseType: (int?)assessorResponse.ReturnType, matches: assessorResponse.UpdatedMatches.Count()));
         }
     }
 }
