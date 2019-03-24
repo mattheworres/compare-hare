@@ -34,3 +34,5 @@ yarn-error.log*
 # Misc
 .DS_Store
 /.vagrant
+yarn-error.log
+devnotes.md

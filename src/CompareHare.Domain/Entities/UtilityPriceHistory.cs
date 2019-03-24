@@ -62,7 +62,7 @@ namespace CompareHare.Domain.Entities
         [MaxLength(512)]
         public string Comments { get; set; }
 
-        public IEnumerable<AlertUtilityPriceHistory> Alerts { get; set; }
+        public IEnumerable<AlertMatchUtilityPriceHistory> Alerts { get; set; }
 
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset? ModifiedDate { get; set; }

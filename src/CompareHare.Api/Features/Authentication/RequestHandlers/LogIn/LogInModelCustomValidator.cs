@@ -4,11 +4,9 @@ using System.Threading.Tasks;
 using CompareHare.Api.Features.Authentication.Models;
 using CompareHare.Api.Features.Shared.Validation;
 using CompareHare.Api.Features.Shared.Validation.Interfaces;
-using CompareHare.Api.Resources;
 using CompareHare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Localization;
 
 #endregion
 

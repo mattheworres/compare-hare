@@ -20,20 +20,22 @@ namespace CompareHare.Domain.Entities
         [MaxLength(40)]
         public string StateUtilityIndexHash { get; set; }
 
-        public decimal MinimumPrice { get; set; }
-        public decimal MaximumPrice { get; set; }
-        public bool HasRenewable { get; set; }
-        public decimal MinimumRenewablePercent { get; set; }
-        public decimal MaximumRenewablePercent { get; set; }
-        public int MinimumMonthLength { get; set; }
-        public int MaximumMonthLength { get; set; }
+        public bool Active { get; set; }
 
-        public bool HasCancellationFee { get; set; }
-        public bool HasMonthlyFee { get; set; }
-        public bool HasEnrollmentFee { get; set; }
-        public bool HasNetMetering { get; set; }
-        public bool RequiresDeposit { get; set; }
-        public bool HasBulkDiscounts { get; set; }
+        public decimal? MinimumPrice { get; set; }
+        public decimal? MaximumPrice { get; set; }
+        public bool? HasRenewable { get; set; }
+        public decimal? MinimumRenewablePercent { get; set; }
+        public decimal? MaximumRenewablePercent { get; set; }
+        public int? MinimumMonthLength { get; set; }
+        public int? MaximumMonthLength { get; set; }
+
+        public bool? HasCancellationFee { get; set; }
+        public bool? HasMonthlyFee { get; set; }
+        public bool? HasEnrollmentFee { get; set; }
+        public bool? HasNetMetering { get; set; }
+        public bool? RequiresDeposit { get; set; }
+        public bool? HasBulkDiscounts { get; set; }
 
         [MaxLength(512)]
         public string Comments { get; set; }

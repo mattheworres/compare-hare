@@ -22,34 +22,36 @@ namespace CompareHare.Api.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<bool>("Active");
+
                     b.Property<string>("Comments")
                         .HasMaxLength(512);
 
                     b.Property<DateTimeOffset>("CreatedDate");
 
-                    b.Property<bool>("HasBulkDiscounts");
+                    b.Property<bool?>("HasBulkDiscounts");
 
-                    b.Property<bool>("HasCancellationFee");
+                    b.Property<bool?>("HasCancellationFee");
 
-                    b.Property<bool>("HasEnrollmentFee");
+                    b.Property<bool?>("HasEnrollmentFee");
 
-                    b.Property<bool>("HasMonthlyFee");
+                    b.Property<bool?>("HasMonthlyFee");
 
-                    b.Property<bool>("HasNetMetering");
+                    b.Property<bool?>("HasNetMetering");
 
-                    b.Property<bool>("HasRenewable");
+                    b.Property<bool?>("HasRenewable");
 
-                    b.Property<int>("MaximumMonthLength");
+                    b.Property<int?>("MaximumMonthLength");
 
-                    b.Property<decimal>("MaximumPrice");
+                    b.Property<decimal?>("MaximumPrice");
 
-                    b.Property<decimal>("MaximumRenewablePercent");
+                    b.Property<decimal?>("MaximumRenewablePercent");
 
-                    b.Property<int>("MinimumMonthLength");
+                    b.Property<int?>("MinimumMonthLength");
 
-                    b.Property<decimal>("MinimumPrice");
+                    b.Property<decimal?>("MinimumPrice");
 
-                    b.Property<decimal>("MinimumRenewablePercent");
+                    b.Property<decimal?>("MinimumRenewablePercent");
 
                     b.Property<DateTimeOffset?>("ModifiedDate");
 
@@ -57,7 +59,7 @@ namespace CompareHare.Api.Migrations
                         .IsRequired()
                         .HasMaxLength(256);
 
-                    b.Property<bool>("RequiresDeposit");
+                    b.Property<bool?>("RequiresDeposit");
 
                     b.Property<string>("StateUtilityIndexHash")
                         .HasMaxLength(40);
@@ -72,7 +74,7 @@ namespace CompareHare.Api.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Alert");
+                    b.ToTable("Alerts");
                 });
 
             modelBuilder.Entity("CompareHare.Domain.Entities.AlertMatch", b =>
@@ -105,7 +107,7 @@ namespace CompareHare.Api.Migrations
                     b.ToTable("AlertMatches");
                 });
 
-            modelBuilder.Entity("CompareHare.Domain.Entities.AlertUtilityPriceHistory", b =>
+            modelBuilder.Entity("CompareHare.Domain.Entities.AlertMatchUtilityPriceHistory", b =>
                 {
                     b.Property<int>("AlertMatchId");
 
@@ -117,7 +119,7 @@ namespace CompareHare.Api.Migrations
 
                     b.HasIndex("UtilityPriceHistoryId");
 
-                    b.ToTable("AlertUtilityPriceHistory");
+                    b.ToTable("AlertMatchUtilityPriceHistories");
                 });
 
             modelBuilder.Entity("CompareHare.Domain.Entities.PendingAlertNotification", b =>
@@ -345,9 +347,13 @@ namespace CompareHare.Api.Migrations
 
                     b.Property<int>("TermMonthLength");
 
+                    b.Property<int>("UtilityPriceHistoryId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("StateUtilityIndexId");
+
+                    b.HasIndex("UtilityPriceHistoryId");
 
                     b.ToTable("UtilityPrices");
                 });
@@ -541,7 +547,7 @@ namespace CompareHare.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("CompareHare.Domain.Entities.AlertUtilityPriceHistory", b =>
+            modelBuilder.Entity("CompareHare.Domain.Entities.AlertMatchUtilityPriceHistory", b =>
                 {
                     b.HasOne("CompareHare.Domain.Entities.AlertMatch", "AlertMatch")
                         .WithMany("UtilityPriceHistories")
@@ -579,6 +585,11 @@ namespace CompareHare.Api.Migrations
                     b.HasOne("CompareHare.Domain.Entities.StateUtilityIndex", "StateUtilityIndex")
                         .WithMany()
                         .HasForeignKey("StateUtilityIndexId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CompareHare.Domain.Entities.UtilityPriceHistory", "UtilityPriceHistory")
+                        .WithMany()
+                        .HasForeignKey("UtilityPriceHistoryId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

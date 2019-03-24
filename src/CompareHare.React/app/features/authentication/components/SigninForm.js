@@ -13,6 +13,7 @@ import {
   InputLabel,
   Paper,
   Typography,
+  CircularProgress,
 } from '@material-ui/core';
 import autobind from 'class-autobind';
 
@@ -53,8 +54,36 @@ class SigninForm extends React.Component {
     );
   }
 
+  getValidationErrorText(fieldName) {
+    const {validationErrors} = this.props;
+    const hasError = this.hasValidationErrors(fieldName);
+
+    return hasError ? validationErrors[fieldName].join(' ') : '';
+  }
+
+  renderButton() {
+    const {classes, onSubmit, submitting} = this.props;
+    const text = submitting
+      ? <CircularProgress color="secondary" />
+      : "Sign In";
+
+    return (
+      <Button
+        type="submit"
+        fullWidth
+        variant="contained"
+        color="primary"
+        className={classes.submit}
+        onClick={onSubmit}
+        disabled={submitting}
+      >
+        {text}
+          </Button>
+    )
+  }
+
   render() {
-    const {classes, onSubmit, onFieldChange} = this.props;
+    const {classes, onFieldChange} = this.props;
 
     return (
       <Paper className={classes.paper}>
@@ -62,6 +91,9 @@ class SigninForm extends React.Component {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
+          CompareHare (Alpha)
+        </Typography>
+        <Typography component="h1" variant="h4">
           Sign in
         </Typography>
         <form className={classes.form}>
@@ -97,16 +129,7 @@ class SigninForm extends React.Component {
             }
             label="Remember me"
           />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-            onClick={onSubmit}
-          >
-            Sign in
-          </Button>
+          {this.renderButton()}
         </form>
       </Paper>
     );
@@ -115,7 +138,7 @@ class SigninForm extends React.Component {
 
 SigninForm.propTypes = {
   disabled: PropTypes.bool,
-  validationErrors: PropTypes.instanceOf(Map).isRequired,
+  validationErrors: PropTypes.object.isRequired,
   onFieldChange: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,

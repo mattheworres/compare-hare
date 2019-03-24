@@ -18,7 +18,7 @@ namespace CompareHare.Domain.Entities
         public int StateUtilityIndexId { get; set; }
         public StateUtilityIndex StateUtilityIndex { get; set; }
 
-        public virtual IEnumerable<AlertUtilityPriceHistory> UtilityPriceHistories { get; set; }
+        public virtual IEnumerable<AlertMatchUtilityPriceHistory> UtilityPriceHistories { get; set; }
 
         [Required, MaxLength(40)]
         public string AlertOfferHash { get; set; }

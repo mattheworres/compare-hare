@@ -4,15 +4,15 @@ import {Switch, Route} from 'react-router';
 import {Dashboard} from '../../dashboard/components';
 import {NotFound, AuthenticatedRoute} from './index';
 import {
-  RedirectToDashboard,
   SigninPage,
   LogoutPage,
   LoadIdentityPage,
 } from '../../authentication/components';
+import LandingPage from '../../landing/components/LandingPage';
 
 export default () => (
   <Switch>
-    <Route exact path="/" component={RedirectToDashboard} />
+    <Route exact path="/" component={LandingPage} />
 
     <Route path="/load-identity" component={LoadIdentityPage} />
     <Route path="/signin" component={SigninPage} />

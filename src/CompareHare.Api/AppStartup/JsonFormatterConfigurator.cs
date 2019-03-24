@@ -17,6 +17,7 @@ namespace CompareHare.Api.AppStartup
             serializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
             serializerSettings.DateParseHandling = DateParseHandling.DateTimeOffset;
             serializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+            serializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
         }
     }
 }

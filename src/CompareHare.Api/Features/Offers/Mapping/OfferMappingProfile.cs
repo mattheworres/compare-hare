@@ -1,6 +1,6 @@
 using AutoMapper;
-using CompareHare.Api.Features.Offers.Models;
 using CompareHare.Domain.Entities;
+using CompareHare.Domain.Services.Models;
 
 namespace CompareHare.Api.Features.Offers.Mapping
 {
@@ -8,6 +8,9 @@ namespace CompareHare.Api.Features.Offers.Mapping
     {
         public OfferMappingProfile() {
             CreateMap<UtilityPrice, UtilityPriceHashModel>()
+            ;
+
+            CreateMap<UtilityPriceHistory, UtilityPriceHashModel>()
             ;
 
             CreateMap<UtilityPrice, UtilityPriceHistory>()

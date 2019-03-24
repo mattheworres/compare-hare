@@ -7,7 +7,10 @@ import {
   Button,
   Typography,
 } from '@material-ui/core';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
+import {openAddAlert} from '../../alerts/actions/addAlert';
+import autobind from 'class-autobind';
 
 const styles = {
   card: {
@@ -16,6 +19,16 @@ const styles = {
 };
 
 class AlertsCard extends React.Component {
+  constructor(props) {
+    super(props);
+
+    autobind(this);
+  }
+
+  handleAddClick() {
+    this.props.openAddAlert();
+  }
+
   render() {
     const {classes} = this.props;
     return (
@@ -27,15 +40,19 @@ class AlertsCard extends React.Component {
           <Typography component="p">Get started by clicking below!</Typography>
         </CardContent>
         <CardActions>
-          <Button size="small">Add one now!</Button>
+          <Button size="small" onClick={this.handleAddClick}>Add one now!</Button>
         </CardActions>
       </Card>
     );
   }
 }
 
-AlertsCard.PropTypes = {
-  classes: PropTypes.object.required,
+AlertsCard.propTypes = {
+  classes: PropTypes.object,
 };
 
-export default withStyles(styles)(AlertsCard);
+const mapDispatchToProps = {
+  openAddAlert,
+}
+
+export default connect(null, mapDispatchToProps)(withStyles(styles)(AlertsCard));

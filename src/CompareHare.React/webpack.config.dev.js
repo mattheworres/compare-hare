@@ -18,11 +18,11 @@ export default {
     new HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({template: 'app/index.ejs'}),
   ],
-  // resolve: {
-  //   alias: {
-  //     'react-dom': '@hot-loader/react-dom',
-  //   },
-  // },
+  resolve: {
+    alias: {
+      'react-dom': '@hot-loader/react-dom',
+    },
+  },
   module: {
     rules: [
       {
@@ -31,17 +31,17 @@ export default {
         use: {
           loader: 'babel-loader',
           options: {
-            // cacheDirectory: true,
-            // presets: [
-            //   [
-            //     '@babel/preset-env',
-            //     {
-            //       useBuiltIns: 'entry',
-            //       modules: false,
-            //     },
-            //   ],
-            //   '@babel/preset-react',
-            // ],
+            cacheDirectory: true,
+            presets: [
+              [
+                '@babel/preset-env',
+                {
+                  useBuiltIns: 'entry',
+                  modules: false,
+                },
+              ],
+              '@babel/preset-react',
+            ],
             plugins: [
               [
                 '@babel/plugin-proposal-decorators',
@@ -50,7 +50,7 @@ export default {
               '@babel/plugin-syntax-dynamic-import',
               '@babel/plugin-proposal-object-rest-spread',
               '@babel/plugin-external-helpers',
-              'babel-plugin-transform-react-remove-prop-types',
+              'react-hot-loader/babel',
             ],
           },
         },
