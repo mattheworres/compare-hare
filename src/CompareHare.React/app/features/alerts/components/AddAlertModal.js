@@ -7,7 +7,7 @@ import {
 import {zipLookup} from '../services';
 import autobind from 'class-autobind';
 import {AddAlertForm} from './index';
-import {openSelector} from '../selectors/addAlert';
+import {addOpenSelector} from '../selectors/addAlert';
 import {closeAddAlert} from '../actions/addAlert';
 import {openAddPaPower, initializeAddPaPower} from '../actions/paPower';
 
@@ -105,7 +105,7 @@ class AddAlertModal extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    open: openSelector(state),
+    open: addOpenSelector(state),
   };
 }
 

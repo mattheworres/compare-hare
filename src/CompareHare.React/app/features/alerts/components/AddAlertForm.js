@@ -125,6 +125,7 @@ class AddAlertForm extends React.Component {
             onChange={onZipChange}
           />
         </FormControl>
+        {this.renderState()}
         <FormControl margin="normal" required fullWidth>
           <InputLabel htmlFor="utilityType">Utility Type</InputLabel>
           <Select
@@ -140,7 +141,6 @@ class AddAlertForm extends React.Component {
               </MenuItem>
           </Select>
         </FormControl>
-        {this.renderState()}
         {this.renderStateCode()}
         {this.renderButton()}
       </form>

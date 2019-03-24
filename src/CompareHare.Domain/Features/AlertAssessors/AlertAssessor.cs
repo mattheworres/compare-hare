@@ -50,9 +50,6 @@ namespace CompareHare.Domain.Features.AlertAssessors
             var matchingHistoryIds = await GetMatches(alert, sui);
 
             var match = await _dbContext.AlertMatches.FirstOrDefaultAsync(x => x.AlertId == alert.Id);
-                                    // .Where(x => x.AlertId == alert.Id)
-                                    // .Include(x => x.UtilityPriceHistories)
-                                    // .FirstOrDefaultAsync();
 
             if (match == null && matchingHistoryIds.Count() == 0) {
                 returnModel.ReturnType = AlertAssessorReturnType.NoNewMatchesFound;
@@ -82,7 +79,7 @@ namespace CompareHare.Domain.Features.AlertAssessors
                 await _dbContext.SaveChangesAsync();
 
                 returnModel.ReturnType = AlertAssessorReturnType.NewMatchesAvailable;
-                returnModel.UpdatedMatches = _mapper.Map<IEnumerable<UtilityPriceHashModel>>(matchingHistories);
+                returnModel.MatchesCount = matchingHistories.Count();
 
                 return returnModel;
             } else {
@@ -101,16 +98,7 @@ namespace CompareHare.Domain.Features.AlertAssessors
         }
 
         private async Task RemoveExistingHistories(AlertMatch match) {
-            //if (match.UtilityPriceHistories == null || match.UtilityPriceHistories.Any() == false) return;
-
             await _sqlExecutor.Execute(new RemoveAllPriceLinkers(match.Id));
-
-            //_dbContext.AlertMatchUtilityPriceHistories.RemoveRange(match.UtilityPriceHistories);
-            //_dbContext.RemoveRange(match.UtilityPriceHistories);
-            // foreach(var manyToMany in match.UtilityPriceHistories) {
-            //     _dbContext.Remove(manyToMany);
-            // }
-            //await _dbContext.SaveChangesAsync();
         }
     }
 }

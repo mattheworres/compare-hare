@@ -1,7 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {addOpen3rdSelector, alertModelSelector} from '../../selectors/paPower';
-import {closeAddPaPower, openAddPaPower3} from '../../actions/paPower';
+import {closeAddPaPower} from '../../actions/paPower';
+import {saveAlert} from '../../actions/addAlert';
 import {Modal, withStyles} from '@material-ui/core';
 import {withFormik} from 'formik';
 import {
@@ -85,15 +86,18 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   closeAddPaPower,
-  openAddPaPower3,
+  saveAlert,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withFormik({
   mapPropsToValues,
   handleSubmit: (values, {props, resetForm}) => {
-    const {openAddPaPower3} = props;
+    const {closeAddPaPower, saveAlert, alertModel} = props;
 
-    openAddPaPower3(values);
+    alertModel.comments = values.comments;
+
+    saveAlert(alertModel);
+    closeAddPaPower();
     resetForm();
   },
   validationSchema,

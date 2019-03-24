@@ -3,7 +3,7 @@ import {Page} from '../../layout/components';
 import {connect} from 'react-redux';
 import {AlertsCard} from './index';
 import {Grid} from '@material-ui/core';
-import {AddAlertModal} from '../../alerts/components';
+import {AddAlertModal, SaveAlertProgressModal} from '../../alerts/components';
 import {
   AddPaPowerAlert1stModal,
   AddPaPowerAlert2ndModal,
@@ -25,6 +25,7 @@ class Dashboard extends React.Component {
         <AddPaPowerAlert1stModal />
         <AddPaPowerAlert2ndModal />
         <AddPaPowerAlert3rdModal />
+        <SaveAlertProgressModal />
       </Page>
     );
   }

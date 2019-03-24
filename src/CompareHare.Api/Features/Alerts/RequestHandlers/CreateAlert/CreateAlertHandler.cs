@@ -49,9 +49,11 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.CreateAlert
                 return Ok(new CreateAlertResponseModel(true, alert.Id));
             }
 
+            //Very purposefully I have split calling just assessor vs needing to call offer loader + assessor
+            //for UI reasons, the latter may be really expensive and take a long time.
             var assessorResponse = await _alertAssessor.Value.AssessMatches(alert.Id);
 
-            return Ok(new CreateAlertResponseModel(false, alert.Id, assessorResponseType: (int?)assessorResponse.ReturnType, matches: assessorResponse.UpdatedMatches.Count()));
+            return Ok(new CreateAlertResponseModel(false, alert.Id, assessorResponseType: (int?)assessorResponse.ReturnType, matchesCount: assessorResponse.MatchesCount));
         }
     }
 }

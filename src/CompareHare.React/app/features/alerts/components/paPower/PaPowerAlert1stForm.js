@@ -125,7 +125,7 @@ class PaPowerAlert1stForm extends React.Component {
           error={this.hasError('name')}
           helperText={this.getErrorText('name')} />
         <Typography>
-          Here are a few values you can choose which new offers you want notified about:
+          Now, tell us what kind of offers you want us to notify you about:
         </Typography>
         <Grid container>
           <Grid item xs={6} className={classes.dynamicGridCell}>

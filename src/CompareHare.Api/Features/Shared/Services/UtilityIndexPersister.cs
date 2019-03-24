@@ -50,6 +50,8 @@ namespace CompareHare.Api.Features.Shared.Services
                 //If it exists, we gotta update it then just return false
                 if (stateUtility != null) {
                     stateUtility.Active = true;
+                    //Wiping this out lets future processes (PopulateHandler) know to load new offers
+                    stateUtility.LastUpdatedHash = string.Empty;
                     await _dbContext.SaveChangesAsync();
 
                     return false;
