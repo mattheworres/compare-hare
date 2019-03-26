@@ -37,6 +37,8 @@ namespace CompareHare.Domain.Entities
         public bool? RequiresDeposit { get; set; }
         public bool? HasBulkDiscounts { get; set; }
 
+        public AlertMatch AlertMatch { get; set; }
+
         [MaxLength(512)]
         public string Comments { get; set; }
 

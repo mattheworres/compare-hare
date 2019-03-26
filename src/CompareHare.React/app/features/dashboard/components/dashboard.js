@@ -1,7 +1,7 @@
 import React from 'react';
 import {Page} from '../../layout/components';
 import {connect} from 'react-redux';
-import {AlertsCard} from './index';
+import {AlertsTable} from './index';
 import {Grid} from '@material-ui/core';
 import {AddAlertModal, SaveAlertProgressModal} from '../../alerts/components';
 import {
@@ -17,7 +17,7 @@ class Dashboard extends React.Component {
         <Grid container spacing={16}>
           <Grid item xs={2} />
           <Grid item xs={8}>
-            <AlertsCard />
+            <AlertsTable />
           </Grid>
           <Grid item xs={2} />
         </Grid>
