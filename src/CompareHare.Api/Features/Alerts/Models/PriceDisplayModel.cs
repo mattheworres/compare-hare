@@ -1,31 +1,22 @@
 using System;
-using System.ComponentModel.DataAnnotations;
-using CompareHare.Domain.Services;
 
-namespace CompareHare.Domain.Entities
+namespace CompareHare.Api.Features.Alerts.Models
 {
-    public class UtilityPrice : ICreatedDateTimeTracker, IModifiedDateTimeTracker
+    public class PriceDisplayModel
     {
         public int Id { get; set; }
 
-        public int StateUtilityIndexId { get; set; }
-        public StateUtilityIndex StateUtilityIndex { get; set; }
+        public string UtilityState { get; set; }
+        public string UtilityType { get; set; }
 
-        public int UtilityPriceHistoryId { get; set; }
-        public virtual UtilityPriceHistory UtilityPriceHistory { get; set; }
-
-        [Required, MaxLength(256)]
         public string Name { get; set; }
 
-        [MaxLength(50)]
         public string PriceUnit { get; set; }
 
         public float? PricePerUnit { get; set; }
 
-        [MaxLength(120)]
         public string FlatRate { get; set; }
 
-        [MaxLength(255)]
         public string PriceStructure { get; set; }
 
         public bool? HasCancellationFee { get; set; }
@@ -49,22 +40,14 @@ namespace CompareHare.Domain.Entities
 
         public int? TermMonthLength { get; set; }
 
-        [MaxLength(40)]
         public string SupplierPhone { get; set; }
 
-        public bool HasTermEndDate { get; set; }
+        public bool? HasTermEndDate { get; set; }
         public DateTime? TermEndDate { get; set; }
 
-        [MaxLength(64)]
         public string OfferId { get; set; }
 
-        [MaxLength(512)]
         public string OfferUrl { get; set; }
 
-        [MaxLength(512)]
-        public string Comments { get; set; }
-
-        public DateTimeOffset CreatedDate { get; set; }
-        public DateTimeOffset? ModifiedDate { get; set; }
     }
 }

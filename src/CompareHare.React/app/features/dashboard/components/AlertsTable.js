@@ -15,6 +15,7 @@ import {
   TableBody,
   Fab,
 } from '@material-ui/core';
+import {Link} from 'react-router-dom';
 import moment from 'moment';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
@@ -23,6 +24,7 @@ import autobind from 'class-autobind';
 import loadingSelector from '../selectors/alertsTable/loadingSelector';
 import hasErrorSelector from '../selectors/alertsTable/hasErrorSelector';
 import alertsSelector from '../selectors/alertsTable/alertsSelector';
+import {Delete, Edit} from '@material-ui/icons';
 
 const styles = theme => ({
   card: {
@@ -93,12 +95,15 @@ class AlertsTable extends React.Component {
   renderAlert(alert) {
     return (
       <TableRow key={alert.id}>
-        <TableCell>{alert.name}</TableCell>
+        <TableCell><Link to={`/alerts/${alert.id}/display`}>{alert.name}</Link></TableCell>
         <TableCell>{alert.utilityState}</TableCell>
         <TableCell>{alert.utilityType}</TableCell>
         <TableCell>{moment(alert.lastEdited).fromNow()}</TableCell>
         <TableCell>{alert.matchesCount}</TableCell>
-        <TableCell><Fab></Fab></TableCell>
+        <TableCell>
+          <Fab size="medium" color="primary"><Edit /></Fab>&nbsp;
+          <Fab size="medium" color="secondary"><Delete /></Fab>
+        </TableCell>
       </TableRow>
     )
   }

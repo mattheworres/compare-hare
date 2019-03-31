@@ -8,6 +8,6 @@ export const LOAD_ALERTS_REJECTED = `${LOAD_ALERTS}_REJECTED`;
 export function loadAlerts() {
   return {
     type: LOAD_ALERTS,
-    payload: get('alerts'),
+    payload: get('alerts/list'),
   };
 }

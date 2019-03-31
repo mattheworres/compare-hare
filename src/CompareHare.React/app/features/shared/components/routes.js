@@ -1,7 +1,7 @@
 import React from 'react';
 import {Switch, Route} from 'react-router';
 
-import {Dashboard} from '../../dashboard/components';
+import {Dashboard, AlertDisplay} from '../../dashboard/components';
 import {NotFound, AuthenticatedRoute} from './index';
 import {
   SigninPage,
@@ -20,6 +20,7 @@ export default () => (
 
     {/* Authenticated routes start below here */}
     <AuthenticatedRoute path="/dashboard" component={Dashboard} />
+    <AuthenticatedRoute path="/alerts/:alertId/display" component={AlertDisplay} />
 
     <Route component={NotFound} />
   </Switch>

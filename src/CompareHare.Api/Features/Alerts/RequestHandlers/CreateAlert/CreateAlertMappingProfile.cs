@@ -27,7 +27,6 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.CreateAlert
                 .ForMember(d => d.HasEnrollmentFee, mce => mce.MapFrom(s => s.FilterEnrollmentFee ? (bool?)s.HasEnrollmentFee : null))
                 .ForMember(d => d.RequiresDeposit, mce => mce.MapFrom(s => s.FilterRequiresDeposit ? (bool?)s.RequiresDeposit : null))
                 .ForMember(d => d.HasBulkDiscounts, mce => mce.MapFrom(s => s.FilterBulkDiscounts ? (bool?)s.HasBulkDiscounts : null))
-                //here, map teh models hopefully with just straight MapFrom's and not crazy resolvers everywhere
             ;
         }
     }
