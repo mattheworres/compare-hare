@@ -3,8 +3,8 @@ export function translateBooleanForDisplay(boolean) {
 }
 
 export function retrieveAttributeValue(domEvent, valueName) {
-  return domEvent && domEvent.target
-    ? domEvent.target.getAttribute(valueName)
+  return domEvent && domEvent.currentTarget
+    ? domEvent.currentTarget.getAttribute(valueName)
     : null;
 }
 

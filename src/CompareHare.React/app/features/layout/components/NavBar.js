@@ -2,6 +2,7 @@ import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import {withStyles, IconButton, Menu, MenuItem} from '@material-ui/core';
 import {AccountCircle} from '@material-ui/icons';
@@ -11,15 +12,27 @@ import {
   currentUserSelector,
 } from '../../authentication/selectors/currentUser';
 
-const styles = {
+const styles = theme => ({
   title: {
     flex: 1,
+  },
+  link: {
+    flex: 1,
+  },
+  linkText: {
+    color: theme.palette.primary.contrastText,
+    '&:visited': {
+      color: theme.palette.primary.contrastText,
+    },
+    '&:active': {
+      color: theme.palette.primary.contrastText,
+    },
   },
   bar: {
     margin: 0,
     marginBottom: 20,
   },
-};
+});
 
 class NavBar extends React.Component {
   constructor(props) {
@@ -55,8 +68,13 @@ class NavBar extends React.Component {
               variant="title"
               color="inherit"
             >
-              CompareHare (Alpha)
+              <Link className={classes.linkText} to="/">CompareHare (Alpha)</Link>
             </Typography>
+            {isAuthenticated && (
+              <Typography color="inherit" className={classes.link}>
+                <Link className={classes.linkText} to="/dashboard">Dashboard</Link>
+              </Typography>
+            )}
             {isAuthenticated && (
               <Typography color="inherit">
                 {currentUser.firstName} {currentUser.lastName.charAt(0)}.&nbsp;

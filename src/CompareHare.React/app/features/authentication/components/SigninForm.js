@@ -1,5 +1,4 @@
 import React from 'react';
-import {Map} from 'immutable';
 import PropTypes from 'prop-types';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
