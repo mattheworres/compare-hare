@@ -12,6 +12,7 @@ using CompareHare.Domain.Services.Interfaces;
 using CompareHare.Domain.Services.Models;
 using CompareHare.Domain.Sql.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace CompareHare.Domain.Features.AlertAssessors
 {
@@ -44,8 +45,12 @@ namespace CompareHare.Domain.Features.AlertAssessors
 
             if (!string.IsNullOrEmpty(alert.StateUtilityIndexHash) && alert.StateUtilityIndexHash == sui.LastUpdatedHash) {
                 returnModel.ReturnType = AlertAssessorReturnType.NoChangeAtStateIndexLevel;
+                //Log.Logger.Information($"Hey, for SUI #{sui.Id} and Alert #{alertId} we got a matching hash");
                 return returnModel;
             }
+
+            alert.StateUtilityIndexHash = sui.LastUpdatedHash;
+            await _dbContext.SaveChangesAsync();
 
             var matchingHistoryIds = await GetMatches(alert, sui);
 
@@ -53,6 +58,7 @@ namespace CompareHare.Domain.Features.AlertAssessors
 
             if (match == null && matchingHistoryIds.Count() == 0) {
                 returnModel.ReturnType = AlertAssessorReturnType.NoNewMatchesFound;
+                //Log.Logger.Information($"Ok, no match previously OR no matches found this time for alert {alertId}");
                 return returnModel;
             } else if (match == null) {
                 match = new AlertMatch() {
@@ -78,12 +84,16 @@ namespace CompareHare.Domain.Features.AlertAssessors
 
                 await _dbContext.SaveChangesAsync();
 
+                //Log.Logger.Information($"New matches for {alertId}!");
+
                 returnModel.ReturnType = AlertAssessorReturnType.NewMatchesAvailable;
                 returnModel.MatchesCount = matchingHistories.Count();
 
                 return returnModel;
             } else {
                 returnModel.ReturnType = AlertAssessorReturnType.NoChangeAtMatchLevel;
+
+                //Log.Logger.Information($"No new matches for {alertId} sadly...");
 
                 return returnModel;
             }

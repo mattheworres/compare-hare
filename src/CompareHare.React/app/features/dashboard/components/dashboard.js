@@ -15,11 +15,11 @@ class Dashboard extends React.Component {
     return (
       <Page>
         <Grid container spacing={16}>
-          <Grid item xs={0} sm={0} md={0} lg={1} />
+          <Grid item xs={false} sm={false} md={false} lg={1} />
           <Grid item xs={12} sm={12} md={12} lg={10}>
             <AlertsTable />
           </Grid>
-          <Grid item xs={0} sm={0} md={0} lg={1}/>
+          <Grid item xs={false} sm={false} md={false} lg={1}/>
         </Grid>
         <AddAlertModal />
         <AddPaPowerAlert1stModal />

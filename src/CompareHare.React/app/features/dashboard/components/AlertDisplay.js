@@ -42,6 +42,9 @@ const styles = () => ({
   price: {
     marginBottom: '20px',
   },
+  priceParamDisabled: {
+    opacity: '0.25',
+  }
 });
 
 class AlertDisplay extends React.Component {
@@ -92,8 +95,20 @@ class AlertDisplay extends React.Component {
     if (price.priceStructure === 'Variable') priceStructureColor = 'default';
     if (price.priceStructure === 'Unlimited') priceStructureColor = 'secondary';
 
+    const hasFlatRate = price.flatRate !== null;
+    const hasCancellationFee = price.hasCancellationFee !== null;
+    const hasMonthlyFee = price.hasMonthlyFee !== null;
+    const hasEnrollmentFee = price.hasEnrollmentFee !== null;
+    const hasNetMetering = price.hasNetMetering !== null;
+    const requiresDeposit = price.requiresDeposit !== null;
+    const hasBulkDiscounts = price.hasBulkDiscounts !== null;
+    const isIntroductoryPrice = price.isIntroductoryPrice !== null;
+    const hasRenewable = price.hasRenewable !== null;
+    const hasTermMonthLength = price.termMonthLength !== null;
+    const hasTermEndDate = price.hasTermEndDate !== null && price.hasTermEndDate;
+
     return (
-      <Card className={classes.price} style={{flex: `0 1 calc(${width} - 1em)`}}>
+      <Card key={price.id} className={classes.price} style={{flex: `0 1 calc(${width} - 1em)`}}>
         <CardContent>
           <Grid container spacing={8}>
             <Grid item xs={8}>
@@ -112,69 +127,72 @@ class AlertDisplay extends React.Component {
                 &nbsp;${price.pricePerUnit}/{price.priceUnit}
               </Typography>
             </Grid>
-            {price.flatRate !== null && (<Grid item xs={6}>
+            <Grid item xs={6} className={hasFlatRate ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
                 <strong>Flat Rate: </strong>
-                &nbsp;${price.fatRate}
+                &nbsp;{this.renderNullableParameter(hasFlatRate, hasFlatRate, `${price.flatRate}`)}
               </Typography>
-            </Grid>)}
-            {price.hasCancellationFee !== null && price.hasCancellationFee && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={12} className={hasCancellationFee ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
                 <strong>Cancellation Fee: </strong>
-                &nbsp;{price.cancellationFee}
+                &nbsp;{this.renderNullableParameter(hasCancellationFee, price.hasCancellationFee, price.cancellationFee)}
               </Typography>
-            </Grid>)}
-            {price.hasMonthlyFee !== null && price.hasMonthlyFee && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={hasCancellationFee ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
                 <strong>Monthly Fee: </strong>
-                &nbsp;{price.monthlyFee}
+                &nbsp;{this.renderNullableParameter(hasMonthlyFee, price.hasMonthlyFee, price.monthlyFee)}
               </Typography>
-            </Grid>)}
-            {price.hasEnrollmentFee !== null && price.hasEnrollmentFee && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={hasEnrollmentFee ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
                 <strong>Enrollment Fee: </strong>
-                &nbsp;{price.enrollmentFee}
+                &nbsp;{this.renderNullableParameter(hasEnrollmentFee, price.hasEnrollmentFee, price.enrollmentFee)}
               </Typography>
-            </Grid>)}
-            {price.hasNetMetering !== null && price.hasNetMetering && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={hasNetMetering ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
                 <strong>Net Metering: </strong>
-                &nbsp;{price.netMetering}
+                &nbsp;{this.renderNullableParameter(hasNetMetering, price.hasNetMetering, price.netMetering)}
               </Typography>
-            </Grid>)}
-            {price.requiresDeposit !== null && price.requiresDeposit && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={requiresDeposit ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
-                <strong>Requires Deposit: </strong> Yes
+                <strong>Requires Deposit: </strong>
+                &nbsp;{this.renderNullableParameter(requiresDeposit, price.requiresDeposit, 'Yes')}
               </Typography>
-            </Grid>)}
-            {price.hasBulkDiscounts !== null && price.hasBulkDiscounts && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={hasBulkDiscounts ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
-                <strong>Bulk Discounts: </strong> Yes
+                <strong>Bulk Discounts: </strong>
+                &nbsp;{this.renderNullableParameter(hasBulkDiscounts, price.hasBulkDiscounts, 'Yes')}
               </Typography>
-            </Grid>)}
-            {price.isIntroductoryPrice !== null && price.isIntroductoryPrice && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={isIntroductoryPrice ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
-                <strong>Is Introductory: </strong> Yes
+                <strong>Is Introductory: </strong>
+                &nbsp;{this.renderNullableParameter(isIntroductoryPrice, price.isIntroductoryPrice, 'Yes')}
               </Typography>
-            </Grid>)}
-            {price.hasRenewable !== null && price.hasRenewable && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={hasRenewable ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
                 <strong>Renewable Energy: </strong>
-                &nbsp;{price.renewablePercentage}%
+                &nbsp;{this.renderNullableParameter(hasRenewable, price.hasRenewable, `${price.renewablePercentage}%`)}
               </Typography>
-            </Grid>)}
-            {price.termMonthLength !== null && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={hasTermMonthLength ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
                 <strong>Term Length: </strong>
-                &nbsp;{price.termMonthLength} mos.
+                &nbsp;{this.renderNullableParameter(hasTermMonthLength, price.termMonthLength, `${price.termMonthLength} mos.`)}
               </Typography>
-            </Grid>)}
-            {price.hasTermEndDate !== null && price.hasTermEndDate && (<Grid item xs={6}>
+            </Grid>
+            <Grid item xs={6} className={hasTermEndDate ? null : classes.priceParamDisabled}>
               <Typography variant="body1">
                 <strong>Term End Date: </strong>
-                &nbsp;{moment(price.termEndDate).format('MMMM Do YYYY')}
+                &nbsp;{this.renderNullableParameter(hasTermEndDate, price.hasTermEndDate, moment(price.termEndDate || '12/12/1900').format('MMMM Do YYYY'))}
               </Typography>
-            </Grid>)}
+            </Grid>
           </Grid>
         </CardContent>
         <CardActions>
@@ -183,6 +201,14 @@ class AlertDisplay extends React.Component {
         </CardActions>
       </Card>
     );
+  }
+
+  renderNullableParameter(hasField, parameter, evaluatedTrueFieldValue) {
+    if (!hasField) return <>&ndash;</>;
+
+    return parameter
+      ? evaluatedTrueFieldValue
+      : 'No';
   }
 
   renderPrices() {

@@ -39,8 +39,8 @@ namespace CompareHare.Api.Features.Offers.Services
                 context.RemoveRange(existingOffers);
 
                 //TODO: Remove once done figuring this shit out
-                //var existingHistoricals = await context.UtilityPriceHistories.Where(x => x.StateUtilityIndexId == utilityIndexId).ToListAsync();
-                //context.RemoveRange(existingHistoricals);
+                var existingHistoricals = await context.UtilityPriceHistories.Where(x => x.StateUtilityIndexId == utilityIndexId).ToListAsync();
+                context.RemoveRange(existingHistoricals);
 
                 //Log.Logger.Information("Mapping to histories");
 

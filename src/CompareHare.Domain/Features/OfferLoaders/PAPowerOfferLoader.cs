@@ -80,8 +80,7 @@ namespace CompareHare.Domain.Features.OfferLoaders
                 utilityPrice.FlatRate = supplierRateElement.QuerySelector("span.unlimited-rate").Text();
             } else {
                 //var word = supplierRateElement.QuerySelector("span.unit span.word").Text();
-                var unit = supplierRateElement.QuerySelector("span.unit span#unit").Text();
-                utilityPrice.PriceUnit = $"{unit}";
+                utilityPrice.PriceUnit = supplierRateElement.QuerySelector("span.unit span#unit").Text();
             }
 
             return utilityPrice;
@@ -110,33 +109,24 @@ namespace CompareHare.Domain.Features.OfferLoaders
 
         private UtilityPrice ParseMiddleCopy(IElement element, UtilityPrice utilityPrice) {
             var cancellationText = element.QuerySelector("span.cancellation strong").Text();
-            var cancellationFeeExists = cancellationText != NO_ANSWER;
-            if (cancellationFeeExists) {
-                utilityPrice.HasCancellationFee = true;
-                utilityPrice.CancellationFee = cancellationText;
-            }
+            utilityPrice.HasCancellationFee = cancellationText != NO_ANSWER;
+            if (utilityPrice.HasCancellationFee.Value) utilityPrice.CancellationFee = cancellationText;
 
             var termLengthText = element.QuerySelector("span.term-length strong").Text();
 
             if (termLengthText != NO_ANSWER && termLengthText != NO_TERM_LENGTH) utilityPrice.TermMonthLength = _parserHelper.ParseFirstIntegerFromString(termLengthText);
 
             var monthlyFeeText = element.QuerySelector("span.monthly-fee strong").Text();
-            var monthlyFeeExists = monthlyFeeText != NO_ANSWER;
-            if (monthlyFeeExists) {
-                utilityPrice.HasMonthlyFee = true;
-                utilityPrice.MonthlyFee = monthlyFeeText;
-            }
+            utilityPrice.HasMonthlyFee = monthlyFeeText != NO_ANSWER;
+            if (utilityPrice.HasMonthlyFee.Value) utilityPrice.MonthlyFee = monthlyFeeText;
 
             var termEndDateText = element.QuerySelector("span.term-end-date strong").Text();
             utilityPrice.HasTermEndDate = termEndDateText != NO_ANSWER;
             if (utilityPrice.HasTermEndDate) utilityPrice.TermEndDate = DateTime.Parse(element.QuerySelector("span.term-end-date strong span").Text());
 
             var enrollmentFeeText = element.QuerySelector("span.enrollment-fee strong").Text();
-            var enrollmentFeeExists = enrollmentFeeText != NO_ANSWER && !string.IsNullOrEmpty(enrollmentFeeText);
-            if (enrollmentFeeExists) {
-                utilityPrice.HasEnrollmentFee = true;
-                utilityPrice.EnrollmentFee = enrollmentFeeText;
-            }
+            utilityPrice.HasEnrollmentFee = enrollmentFeeText != NO_ANSWER && !string.IsNullOrEmpty(enrollmentFeeText);
+            if (utilityPrice.HasEnrollmentFee.Value) utilityPrice.EnrollmentFee = enrollmentFeeText;
 
             return utilityPrice;
         }
@@ -159,12 +149,9 @@ namespace CompareHare.Domain.Features.OfferLoaders
             utilityPrice.IsIntroductoryPrice = element.QuerySelector("span.introductory strong").Text() == YES_ANSWER;
 
             var renewableText = element.QuerySelector("span.renewable strong").Text();
-            var renewableFeeExists = renewableText != NO_ANSWER;
+            utilityPrice.HasRenewable = renewableText != NO_ANSWER;
 
-            if (renewableFeeExists) {
-                utilityPrice.HasRenewable = true;
-                utilityPrice.RenewablePercentage = _parserHelper.ParseFirstFloatFromString(renewableText);
-            }
+            if (utilityPrice.HasRenewable.Value) utilityPrice.RenewablePercentage = _parserHelper.ParseFirstFloatFromString(renewableText);
 
             return utilityPrice;
         }

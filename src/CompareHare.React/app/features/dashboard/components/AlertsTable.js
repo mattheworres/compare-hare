@@ -14,17 +14,25 @@ import {
   TableCell,
   TableBody,
   Fab,
+  TableFooter,
 } from '@material-ui/core';
 import {Link} from 'react-router-dom';
 import moment from 'moment';
 import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
-import {loadAlerts} from '../actions/alertsTable';
+import {loadAlerts, deleteAlert} from '../actions/alertsTable';
+import {openAddAlert} from '../../alerts/actions/addAlert';
 import autobind from 'class-autobind';
-import loadingSelector from '../selectors/alertsTable/loadingSelector';
-import hasErrorSelector from '../selectors/alertsTable/hasErrorSelector';
-import alertsSelector from '../selectors/alertsTable/alertsSelector';
-import {Delete, Edit} from '@material-ui/icons';
+import {
+  loadingSelector,
+  hasErrorSelector,
+  alertsSelector,
+  deletingSelector
+} from '../selectors/alertsTable';
+import {Delete, Edit, Add} from '@material-ui/icons';
+import {retrieveAttributeValue} from '../../shared/services/displayHelpers';
+import {ConfirmModal, LoadingModal} from '../../shared/components';
+import toastr from 'toastr';
 
 const styles = theme => ({
   card: {
@@ -35,6 +43,9 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3,
     overflowX: 'auto',
   },
+  paddedTypography: {
+    padding: '15px',
+  }
 });
 
 class AlertsTable extends React.Component {
@@ -42,6 +53,11 @@ class AlertsTable extends React.Component {
     super(props);
 
     autobind(this);
+
+    this.state = {
+      alertId: null,
+      showDeleteConfirm: false,
+    };
   }
 
   componentDidMount() {
@@ -52,18 +68,35 @@ class AlertsTable extends React.Component {
     this.props.openAddAlert();
   }
 
-  //Left off here: Make this a table, start loading user's alerts and displaying them
-  //Then, we can work on the Alert Details page to list out specifics of the alert
-  //(SUI-specific components for display, similar to the summary modal in the Creator)
-  //as well as fixed-width cards that fill the screen in even rows to show SUI-specific
-  //matches
+  handleDeleteClick(event) {
+    const alertId = retrieveAttributeValue(event, 'data-alert-id');
+
+    this.setState({
+      showDeleteConfirm: true,
+      alertId: alertId,
+    });
+  }
+
+  confirmDeleteAlert() {
+    const {alertId} = this.state;
+
+    this.setState({showDeleteConfirm: false});
+
+    this.props.deleteAlert(alertId).then(() => {
+      this.setState({alertId: null});
+      toastr.success('Alert deleted!');
+      this.props.loadAlerts();
+    }).catch(() => {
+      toastr.error('Crap!', 'Couldnt delete your alert, sorry');
+    });
+  }
 
   renderEmptyContent() {
     const {classes} = this.props;
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography variant="h5" component="h2">
+          <Typography variant="h5" component="h2" className={this.props.paddedTypography}>
             You have no alerts!
           </Typography>
           <Typography component="p">Get started by clicking below!</Typography>
@@ -79,7 +112,7 @@ class AlertsTable extends React.Component {
     return (
       <Paper>
         <CircularProgress />
-        <Typography variant="h5">Loading...</Typography>
+        <Typography variant="h5" className={this.props.paddedTypography}>Loading...</Typography>
       </Paper>
     );
   }
@@ -87,7 +120,7 @@ class AlertsTable extends React.Component {
   renderError() {
     return (
       <Paper>
-        <Typography variant="h5">Whoops, we can&apos;t load your alerts...</Typography>
+        <Typography variant="h5" className={this.props.paddedTypography}>Whoops, we can&apos;t load your alerts...</Typography>
       </Paper>
     )
   }
@@ -99,17 +132,18 @@ class AlertsTable extends React.Component {
         <TableCell>{alert.utilityState}</TableCell>
         <TableCell>{alert.utilityType}</TableCell>
         <TableCell>{moment(alert.lastEdited).fromNow()}</TableCell>
-        <TableCell>{alert.matchesCount}</TableCell>
-        <TableCell>
+        <TableCell align="center">{alert.matchesCount}</TableCell>
+        <TableCell align="right">
           <Fab size="medium" color="primary"><Edit /></Fab>&nbsp;
-          <Fab size="medium" color="secondary"><Delete /></Fab>
+          <Fab size="medium" color="secondary" onClick={this.handleDeleteClick} data-alert-id={alert.id}><Delete /></Fab>
         </TableCell>
       </TableRow>
     )
   }
 
   render() {
-    const {classes, alerts, loading, hasError} = this.props;
+    const {classes, alerts, loading, deleting, hasError} = this.props;
+    const {showDeleteConfirm} = this.state;
 
     if (loading) return this.renderLoading();
 
@@ -133,7 +167,21 @@ class AlertsTable extends React.Component {
           <TableBody>
             {alerts.map(this.renderAlert)}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              <TableCell colSpan={6}>
+                <Button size="small" color="primary" onClick={this.handleAddClick}><Add />&nbsp;Add a new alert</Button>
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
+        <ConfirmModal
+          open={showDeleteConfirm}
+          title="Delete Alert"
+          confirmButtonText="Delete"
+          onCancel={() => this.setState({showDeleteConfirm: false, alertId: null})}
+          onConfirm={this.confirmDeleteAlert} />
+        <LoadingModal open={loading || deleting} />
       </Paper>
     );
   }
@@ -146,6 +194,7 @@ AlertsTable.propTypes = {
 function mapStateToProps(state) {
   return {
     loading: loadingSelector(state),
+    deleting: deletingSelector(state),
     hasError: hasErrorSelector(state),
     alerts: alertsSelector(state),
   };
@@ -153,6 +202,8 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   loadAlerts,
+  openAddAlert,
+  deleteAlert,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(AlertsTable));
