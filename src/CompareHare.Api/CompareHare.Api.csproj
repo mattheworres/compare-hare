@@ -3,11 +3,11 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <RootNamespace>CompareHare.Api</RootNamespace>
     <AssemblyName>CompareHare.Api</AssemblyName>
-    <Company>Truefit, Inc.</Company>
+    <Company>Matthew Orres</Company>
     <Product>CompareHare</Product>
     <Description/>
-    <Copyright>Copyright © Truefit, Inc. 2018</Copyright>
-    <Authors>Truefit, Inc.</Authors>
+    <Copyright>Copyright © Matthew Orres 2016</Copyright>
+    <Authors>Matthew Orres</Authors>
     <StartupObject>CompareHare.Api.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -23,7 +23,7 @@
     <PackageReference Include="Dapper" Version="1.60.1"/>
     <PackageReference Include="FluentValidation.AspNetcore" Version="7.2.0"/>
     <PackageReference Include="JetBrains.Annotations" Version="11.0.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.All"/>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="2.2.0"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0"/>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="2.2.0"/>

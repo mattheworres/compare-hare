@@ -40,6 +40,8 @@ I forgot how to do this, here's how:
 4. If you hit issues, tag a `--verbose` on the end to debug the issue (very common - fix your code!)
 
 5. Once the migration Up/Down that was created is sufficient, run the migration: `dotnet ef database update`
+
+6. If anything fails, you can select to rollback changes with `dotnet ef database update <FULL text name of last successful migration>` (includes the numbers in the migration file name)
 ## Testing
 
 1. Ensure all packages are restored: `cd src` then `dotnet restore`

@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <Authors>Truefit, Inc.</Authors>
-    <Company>Truefit, Inc.</Company>
+    <Company>Matthew Orres</Company>
+    <Authors>Matthew Orres</Authors>
+    <Version>0.0.1</Version>
     <Description/>
-    <Product>Truefit ASP.NET Core API Template</Product>
-    <Copyright>Copyright © Truefit, Inc. 2017</Copyright>
+    <Product>CompareHare</Product>
+    <Copyright>Copyright © Matthew Orres 2016</Copyright>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1603;1701;1702;1705;NU1603;NU1701</NoWarn>
@@ -14,7 +15,7 @@
     <PackageReference Include="Autofac" Version="4.8.1"/>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.1"/>
     <PackageReference Include="AutoMapper" Version="8.0.0"/>
-    <PackageReference Include="Microsoft.AspNetCore.All"/>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.2.0"/>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.2.0"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools.DotNet" Version="2.0.0"/>

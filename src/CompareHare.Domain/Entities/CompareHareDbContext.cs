@@ -15,12 +15,15 @@ namespace CompareHare.Domain.Entities
     public class CompareHareDbContext : IdentityDbContext<User, Role, int>
     {
         public CompareHareDbContext(
-            DbContextOptions<CompareHareDbContext> dbContextOptions) : base(dbContextOptions) {}
+            DbContextOptions<CompareHareDbContext> dbContextOptions) : base(dbContextOptions) { }
 
         public DbSet<AlertMatch> AlertMatches { get; set; }
         public DbSet<Alert> Alerts { get; set; }
         public DbSet<PendingAlertNotification> PendingAlertNotifications { get; set; }
+        public DbSet<ProductRetailerPriceHistory> ProductRetailerPriceHistories { get; set; }
         public DbSet<StateUtilityIndex> StateUtilityIndices { get; set; }
+        public DbSet<TrackedProduct> TrackedProducts { get; set; }
+        public DbSet<TrackedProductRetailer> TrackedProductRetailers { get; set; }
         public DbSet<UtilityPrice> UtilityPrices { get; set; }
         public DbSet<UtilityPriceHistory> UtilityPriceHistories { get; set; }
 
@@ -37,7 +40,7 @@ namespace CompareHare.Domain.Entities
               ;
 
             modelBuilder.Entity<AlertMatchUtilityPriceHistory>()
-              .HasKey(x => new {x.AlertMatchId, x.UtilityPriceHistoryId});
+              .HasKey(x => new { x.AlertMatchId, x.UtilityPriceHistoryId });
 
             modelBuilder.Entity<AlertMatchUtilityPriceHistory>()
               .HasOne(x => x.AlertMatch)
@@ -48,6 +51,17 @@ namespace CompareHare.Domain.Entities
               .HasOne(x => x.UtilityPriceHistory)
               .WithMany(x => x.Alerts)
               .HasForeignKey(x => x.UtilityPriceHistoryId);
+
+            modelBuilder.Entity<TrackedProductRetailer>()
+              .HasOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<TrackedProduct>()
+              .HasMany(x => x.Retailers)
+              .WithOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<TrackedProduct>()
+              .HasMany(x => x.PriceHistories)
+              .WithOne(x => x.TrackedProduct);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -75,7 +89,7 @@ namespace CompareHare.Domain.Entities
                 if (entity.State == EntityState.Added && entity.Entity is ICreatedDateTimeTracker)
                     ((ICreatedDateTimeTracker)entity.Entity).CreatedDate = DateTime.UtcNow;
 
-                if(entity.State == EntityState.Modified && entity.Entity is IModifiedDateTimeTracker)
+                if (entity.State == EntityState.Modified && entity.Entity is IModifiedDateTimeTracker)
                     ((IModifiedDateTimeTracker)entity.Entity).ModifiedDate = DateTime.UtcNow;
             }
         }
