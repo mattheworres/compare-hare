@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {addOpen1stSelector} from '../../selectors/paPower';
-import {closeAddPaPower, openAddPaPower2} from '../../actions/paPower';
+import {closePaPower, openAddPaPower2} from '../../actions/paPower';
 import {openAddAlert} from '../../actions/addAlert';
 import {Modal, withStyles} from '@material-ui/core';
 import {withFormik} from 'formik';
@@ -29,10 +29,10 @@ class AddPaPowerAlert1stModal extends React.Component {
   }
 
   onClose() {
-    const {closeAddPaPower, resetForm} = this.props;
+    const {closePaPower, resetForm} = this.props;
 
     resetForm();
-    closeAddPaPower();
+    closePaPower();
   }
 
   render() {
@@ -82,7 +82,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = {
-  closeAddPaPower,
+  closePaPower,
   openAddAlert,
   openAddPaPower2,
 };

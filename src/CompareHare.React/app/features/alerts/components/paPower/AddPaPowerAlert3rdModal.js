@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {addOpen3rdSelector, alertModelSelector} from '../../selectors/paPower';
-import {closeAddPaPower} from '../../actions/paPower';
+import {closePaPower} from '../../actions/paPower';
 import {saveAlert} from '../../actions/addAlert';
 import {Modal, withStyles} from '@material-ui/core';
 import {withFormik} from 'formik';
@@ -33,10 +33,10 @@ class AddPaPowerAlert3rdModal extends React.Component {
   }
 
   onClose() {
-    const {closeAddPaPower, resetForm} = this.props;
+    const {closePaPower, resetForm} = this.props;
 
     resetForm();
-    closeAddPaPower();
+    closePaPower();
   }
 
   render() {
@@ -85,19 +85,19 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = {
-  closeAddPaPower,
+  closePaPower,
   saveAlert,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withFormik({
   mapPropsToValues,
   handleSubmit: (values, {props, resetForm}) => {
-    const {closeAddPaPower, saveAlert, alertModel} = props;
+    const {closePaPower, saveAlert, alertModel} = props;
 
     alertModel.comments = values.comments;
 
     saveAlert(alertModel);
-    closeAddPaPower();
+    closePaPower();
     resetForm();
   },
   validationSchema,

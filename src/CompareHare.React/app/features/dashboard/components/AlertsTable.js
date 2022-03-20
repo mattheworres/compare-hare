@@ -22,6 +22,7 @@ import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import {loadAlerts, deleteAlert} from '../actions/alertsTable';
 import {openAddAlert} from '../../alerts/actions/addAlert';
+import {openEditAlert} from '../../alerts/actions/editAlert';
 import autobind from 'class-autobind';
 import {
   loadingSelector,
@@ -29,6 +30,7 @@ import {
   alertsSelector,
   deletingSelector
 } from '../selectors/alertsTable';
+import {loadingSelector as loadingEditSelector} from '../../alerts/selectors/editAlert';
 import {Delete, Edit, Add} from '@material-ui/icons';
 import {retrieveAttributeValue} from '../../shared/services/displayHelpers';
 import {ConfirmModal, LoadingModal} from '../../shared/components';
@@ -66,6 +68,13 @@ class AlertsTable extends React.Component {
 
   handleAddClick() {
     this.props.openAddAlert();
+  }
+
+  handleEditClick() {
+    const {openEditAlert} = this.props;
+    const alertId = retrieveAttributeValue(event, 'data-alert-id');
+
+    openEditAlert(alertId);
   }
 
   handleDeleteClick(event) {
@@ -134,7 +143,7 @@ class AlertsTable extends React.Component {
         <TableCell>{moment(alert.lastEdited).fromNow()}</TableCell>
         <TableCell align="center">{alert.matchesCount}</TableCell>
         <TableCell align="right">
-          <Fab size="medium" color="primary"><Edit /></Fab>&nbsp;
+          <Fab size="medium" color="primary" onClick={this.handleEditClick} data-alert-id={alert.id}><Edit /></Fab>&nbsp;
           <Fab size="medium" color="secondary" onClick={this.handleDeleteClick} data-alert-id={alert.id}><Delete /></Fab>
         </TableCell>
       </TableRow>
@@ -142,7 +151,7 @@ class AlertsTable extends React.Component {
   }
 
   render() {
-    const {classes, alerts, loading, deleting, hasError} = this.props;
+    const {classes, alerts, loading, loadingEdit, deleting, hasError} = this.props;
     const {showDeleteConfirm} = this.state;
 
     if (loading) return this.renderLoading();
@@ -182,6 +191,7 @@ class AlertsTable extends React.Component {
           onCancel={() => this.setState({showDeleteConfirm: false, alertId: null})}
           onConfirm={this.confirmDeleteAlert} />
         <LoadingModal open={loading || deleting} />
+        <LoadingModal open={loadingEdit} message="Loading alert..." />
       </Paper>
     );
   }
@@ -194,6 +204,7 @@ AlertsTable.propTypes = {
 function mapStateToProps(state) {
   return {
     loading: loadingSelector(state),
+    loadingEdit: loadingEditSelector(state),
     deleting: deletingSelector(state),
     hasError: hasErrorSelector(state),
     alerts: alertsSelector(state),
@@ -203,6 +214,7 @@ function mapStateToProps(state) {
 const mapDispatchToProps = {
   loadAlerts,
   openAddAlert,
+  openEditAlert,
   deleteAlert,
 }
 

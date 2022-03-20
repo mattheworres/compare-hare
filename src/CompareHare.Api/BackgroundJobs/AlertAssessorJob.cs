@@ -7,15 +7,16 @@ namespace CompareHare.Api.BackgroundJobs
 {
     public class AlertAssessorJob : IAlertAssessorJob
     {
-        private readonly IAlertAssessorRunner _offerLoaderRunner;
+        private readonly IAlertAssessorRunner _alertAssessorRunner;
 
-        public AlertAssessorJob(IAlertAssessorRunner offerLoaderRunner) {
-            _offerLoaderRunner = offerLoaderRunner;
+        public AlertAssessorJob(IAlertAssessorRunner alertAssessorRunner)
+        {
+            _alertAssessorRunner = alertAssessorRunner;
         }
 
         public async Task Run(CancellationToken ct)
         {
-            await _offerLoaderRunner.AssessAllOffers();
+            await _alertAssessorRunner.AssessAllOffers();
         }
     }
 }

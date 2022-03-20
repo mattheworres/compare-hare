@@ -8,7 +8,11 @@ import {
   AddPaPowerAlert1stModal,
   AddPaPowerAlert2ndModal,
   AddPaPowerAlert3rdModal,
+  EditPaPowerAlert1stModal,
+  EditPaPowerAlert2ndModal,
+  EditPaPowerAlert3rdModal,
 } from '../../alerts/components/paPower';
+import UpdateAlertProgressModal from '../../alerts/components/UpdateAlertProgressModal';
 
 class Dashboard extends React.Component {
   render() {
@@ -25,7 +29,11 @@ class Dashboard extends React.Component {
         <AddPaPowerAlert1stModal />
         <AddPaPowerAlert2ndModal />
         <AddPaPowerAlert3rdModal />
+        <EditPaPowerAlert1stModal />
+        <EditPaPowerAlert2ndModal />
+        <EditPaPowerAlert3rdModal />
         <SaveAlertProgressModal />
+        <UpdateAlertProgressModal />
       </Page>
     );
   }

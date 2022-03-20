@@ -4,10 +4,9 @@
     "active": true,
     "firstName": "Matt",
     "lastName": "Orres",
-    "email": "morres@truefit.io",
-    "userName": "morres@truefit.io",
-    "passwordHash":
-      "AQAAAAEAACcQAAAAEAiWo4Iwm3qOU+T+iETvXzskyiwKpb+aNTYe4QkSKtG6tyzjg4IHxAF9D5JqHIdGwQ==",
+    "email": "matthew.orres@gmail.com",
+    "userName": "matthew.orres@gmail.com",
+    "passwordHash": "AQAAAAEAACcQAAAAEAiWo4Iwm3qOU+T+iETvXzskyiwKpb+aNTYe4QkSKtG6tyzjg4IHxAF9D5JqHIdGwQ==",
     "lockoutEnabled": true,
     "emailConfirmed": true,
     "phoneNumberConfirmed": true,

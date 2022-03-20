@@ -13,7 +13,6 @@ import {
   CircularProgress,
   Button,
 } from '@material-ui/core';
-import {zipLookup} from '../services';
 import autobind from 'class-autobind';
 import {
   saveAlertOpenSelector,
@@ -25,6 +24,7 @@ import {
   saveErrorSelector,
 } from '../selectors/addAlert';
 import {closeAddAlert} from '../actions/addAlert';
+import {loadAlerts} from '../../dashboard/actions/alertsTable';
 import {CheckCircle} from '@material-ui/icons';
 
 const styles = theme => ({
@@ -58,28 +58,11 @@ class SaveAlertProgressModal extends React.Component {
     autobind(this);
   }
 
-  handleFieldChange(event) {
-    const {name, value} = event.target;
-
-    this.setState({[name]: value, touched: true});
-  }
-
-  handleZipChange(event) {
-    const {value} = event.target;
-
-    this.setState({zip: value});
-
-    if (value && value.length === 5) {
-      const zipValue = zipLookup(value);
-
-      this.setState({state: zipValue.state, stateCode: zipValue.stateCode, touched: true});
-    } else {
-      this.setState({state: null, stateCode: null, touched: false});
-    }
-  }
-
   onClose() {
-    this.props.closeAddAlert();
+    const {closeAddAlert, loadAlerts} = this.props;
+
+    loadAlerts();
+    closeAddAlert();
   }
 
   renderStepIcon(active) {
@@ -186,6 +169,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   closeAddAlert,
+  loadAlerts,
 };
 
 export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(SaveAlertProgressModal));

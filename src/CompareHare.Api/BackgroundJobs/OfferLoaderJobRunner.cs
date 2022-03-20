@@ -1,8 +1,7 @@
 using Autofac;
-using CompareHare.Api.BackgroundJobs;
 using CompareHare.Api.BackgroundJobs.Interfaces;
 
-namespace Bookendz.Api.BackgroundJobs.JobRunners
+namespace CompareHare.Api.BackgroundJobs.JobRunners
 {
     public class OfferLoaderJobRunner : JobRunner<IOfferLoaderJob>
     {

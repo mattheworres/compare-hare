@@ -5,6 +5,7 @@ using CompareHare.Api.Features.Alerts.RequestHandlers.CreateAlert;
 using CompareHare.Api.Features.Alerts.RequestHandlers.DeleteAlert;
 using CompareHare.Api.Features.Alerts.RequestHandlers.GetAlert;
 using CompareHare.Api.Features.Alerts.RequestHandlers.GetAlerts;
+using CompareHare.Api.Features.Alerts.RequestHandlers.GetEditAlert;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,5 +36,9 @@ namespace CompareHare.Api.Features.Alerts
         [HttpDelete("{alertId:int}")]
         public async Task<IActionResult> DeleteAlert(int alertId)
             => await _mediator.Send(new DeleteAlertMessage(new DeleteAlertModel(alertId)));
+
+        // [HttpGet("{alertId:int}/edit")]
+        // public async Task<IActionResult> GetAlertEdit(int alertId)
+        //     => await _mediator.Send(new GetEditAlertMessage(new EditAlertModel(alertId)));
     }
 }

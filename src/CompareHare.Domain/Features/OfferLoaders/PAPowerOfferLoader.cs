@@ -15,6 +15,7 @@ namespace CompareHare.Domain.Features.OfferLoaders
     public class PAPowerOfferLoader : IOfferLoader
     {
         //TODO: Remove once live.....
+        //TODO: UPDATE to use JSON source instead: https://www.papowerswitch.com/umbraco/Api/ShopApi/ZipSearch?zipcode={0}&servicetype=residential
         private const string URL = "http://localhost:8000/public/PA_Response.html";
         //private const string URL = "https://www.papowerswitch.com/shop-for-electricity/shop-for-your-home?zipcode={0}";
         private const string SPACE = " ";
@@ -27,12 +28,14 @@ namespace CompareHare.Domain.Features.OfferLoaders
         private readonly IParserWrapper _parserWrapper;
         private readonly ParserHelper _parserHelper;
 
-        public PAPowerOfferLoader(IParserWrapper parserWrapper, ParserHelper parserHelper) {
+        public PAPowerOfferLoader(IParserWrapper parserWrapper, ParserHelper parserHelper)
+        {
             _parserWrapper = parserWrapper;
             _parserHelper = parserHelper;
         }
 
-        public async Task<List<UtilityPrice>> LoadOffers(int utilityIndexId, string loaderIdentifier, IRequester requester = null) {
+        public async Task<List<UtilityPrice>> LoadOffers(int utilityIndexId, string loaderIdentifier, IRequester requester = null)
+        {
             var url = string.Format(URL, loaderIdentifier);
             var document = await _parserWrapper.OpenUrlAsync(url, requester);
 
@@ -41,14 +44,18 @@ namespace CompareHare.Domain.Features.OfferLoaders
             //var fieldContents = document.QuerySelectorAll("div.views-field-nothing div.shop-inner span.field-content");
             var fieldContents = document.QuerySelectorAll("div.views-field-nothing span.field-content");
 
-            foreach(var fieldContent in fieldContents) {
-                try {
+            foreach (var fieldContent in fieldContents)
+            {
+                try
+                {
                     var utilityPrice = ParseSupplier(fieldContent, utilityIndexId);
                     utilityPrice = ParseRates(fieldContent, utilityPrice);
                     utilityPrice = ParseCopy(fieldContent, utilityPrice);
 
                     offers.Add(utilityPrice);
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     Log.Logger.Error(ex, "PAPower Parse Error for {0}", loaderIdentifier);
                 }
             }
@@ -56,11 +63,13 @@ namespace CompareHare.Domain.Features.OfferLoaders
             return offers;
         }
 
-        private UtilityPrice ParseSupplier(IElement element, int utilityIndexId) {
+        private UtilityPrice ParseSupplier(IElement element, int utilityIndexId)
+        {
             var supplierElement = element.QuerySelector("div.supplier-name");
             var uniqueIdentifier = _parserHelper.GetElementClassStartingWith(supplierElement, "nid");
 
-            return new UtilityPrice {
+            return new UtilityPrice
+            {
                 Id = 0,
                 Name = supplierElement.QuerySelector("span.name a").Text().Trim(),
                 SupplierPhone = supplierElement.QuerySelector("span.phone").Text().Trim(),
@@ -69,16 +78,20 @@ namespace CompareHare.Domain.Features.OfferLoaders
             };
         }
 
-        private UtilityPrice ParseRates(IElement element, UtilityPrice utilityPrice) {
+        private UtilityPrice ParseRates(IElement element, UtilityPrice utilityPrice)
+        {
             var supplierRateElement = element.QuerySelector("div.supplier-rate");
             var rateText = supplierRateElement.QuerySelector("span.rate").Text();
 
             utilityPrice.PricePerUnit = float.Parse(rateText.Substring(1, rateText.Length - 1), CultureInfo.InvariantCulture.NumberFormat);
 
-            if (utilityPrice.PricePerUnit == 0) {
+            if (utilityPrice.PricePerUnit == 0)
+            {
                 utilityPrice.PricePerUnit = null;
                 utilityPrice.FlatRate = supplierRateElement.QuerySelector("span.unlimited-rate").Text();
-            } else {
+            }
+            else
+            {
                 //var word = supplierRateElement.QuerySelector("span.unit span.word").Text();
                 utilityPrice.PriceUnit = supplierRateElement.QuerySelector("span.unit span#unit").Text();
             }
@@ -86,7 +99,8 @@ namespace CompareHare.Domain.Features.OfferLoaders
             return utilityPrice;
         }
 
-        private UtilityPrice ParseCopy(IElement element, UtilityPrice utilityPrice) {
+        private UtilityPrice ParseCopy(IElement element, UtilityPrice utilityPrice)
+        {
             var copyElement = element.QuerySelector("div.copy");
             var rightCopyElement = copyElement.QuerySelector("div.right");
             var middleCopyElement = copyElement.QuerySelector("div.middle");
@@ -98,16 +112,19 @@ namespace CompareHare.Domain.Features.OfferLoaders
             return ParseLeftCopy(leftCopyElement, utilityPrice);
         }
 
-        private UtilityPrice ParseRightCopy(IElement element, UtilityPrice utilityPrice) {
+        private UtilityPrice ParseRightCopy(IElement element, UtilityPrice utilityPrice)
+        {
             var signUpElement = element.QuerySelector("span.sign-up a");
-            if (signUpElement != null) {
+            if (signUpElement != null)
+            {
                 utilityPrice.OfferUrl = signUpElement.GetAttribute("href");
             }
 
             return utilityPrice;
         }
 
-        private UtilityPrice ParseMiddleCopy(IElement element, UtilityPrice utilityPrice) {
+        private UtilityPrice ParseMiddleCopy(IElement element, UtilityPrice utilityPrice)
+        {
             var cancellationText = element.QuerySelector("span.cancellation strong").Text();
             utilityPrice.HasCancellationFee = cancellationText != NO_ANSWER;
             if (utilityPrice.HasCancellationFee.Value) utilityPrice.CancellationFee = cancellationText;
@@ -131,15 +148,19 @@ namespace CompareHare.Domain.Features.OfferLoaders
             return utilityPrice;
         }
 
-        private UtilityPrice ParseLeftCopy(IElement element, UtilityPrice utilityPrice) {
+        private UtilityPrice ParseLeftCopy(IElement element, UtilityPrice utilityPrice)
+        {
             var priceStructure = FIXED_PRICE_STRUCTURE_CLASS;
             var priceStructureElement = element.QuerySelector("span.price.price-structure");
             var includesVariableClass = _parserHelper.ElementHasClass(priceStructureElement, VARIABLE_PRICE_STRUCTURE_CLASS);
             var includesUnlimitedClass = _parserHelper.ElementHasClass(priceStructureElement, UNLIMITED_PRICE_STRUCTURE_CLASS);
 
-            if (includesVariableClass) {
+            if (includesVariableClass)
+            {
                 priceStructure = VARIABLE_PRICE_STRUCTURE_CLASS;
-            } else if (includesUnlimitedClass) {
+            }
+            else if (includesUnlimitedClass)
+            {
                 priceStructure = UNLIMITED_PRICE_STRUCTURE_CLASS;
             }
 

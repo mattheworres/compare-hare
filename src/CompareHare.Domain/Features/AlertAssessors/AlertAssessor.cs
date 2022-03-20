@@ -9,14 +9,12 @@ using CompareHare.Domain.Features.AlertAssessors.Interfaces;
 using CompareHare.Domain.Features.AlertAssessors.Models;
 using CompareHare.Domain.Features.AlertAssessors.Queries;
 using CompareHare.Domain.Services.Interfaces;
-using CompareHare.Domain.Services.Models;
 using CompareHare.Domain.Sql.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Serilog;
 
 namespace CompareHare.Domain.Features.AlertAssessors
 {
-    public class AlertAssessor : IAlertAssessor
+  public class AlertAssessor : IAlertAssessor
     {
         private readonly CompareHareDbContext _dbContext;
         private readonly ISqlExecutor _sqlExecutor;

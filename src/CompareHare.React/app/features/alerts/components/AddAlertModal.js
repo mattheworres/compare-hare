@@ -9,7 +9,7 @@ import autobind from 'class-autobind';
 import {AddAlertForm} from './index';
 import {addOpenSelector} from '../selectors/addAlert';
 import {closeAddAlert} from '../actions/addAlert';
-import {openAddPaPower, initializeAddPaPower} from '../actions/paPower';
+import {openAddPaPower, initializePaPower} from '../actions/paPower';
 
 const styles = () => ({
   modal: {
@@ -63,7 +63,7 @@ class AddAlertModal extends React.Component {
     const {
       closeAddAlert,
       openAddPaPower,
-      initializeAddPaPower,
+      initializePaPower,
     } = this.props;
 
     const {
@@ -76,7 +76,7 @@ class AddAlertModal extends React.Component {
 
     switch(this.state.stateCode) {
       case 1:
-        initializeAddPaPower({zip, utilityType, utilityState: stateCode});
+        initializePaPower({zip, utilityType, utilityState: stateCode});
         openAddPaPower();
         break;
     }
@@ -111,7 +111,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   closeAddAlert,
-  initializeAddPaPower,
+  initializePaPower,
   openAddPaPower,
 };
 

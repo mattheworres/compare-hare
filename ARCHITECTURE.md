@@ -1,6 +1,6 @@
 # Compare Hare
 
-An app to create &amp; manage power and gas price notifications.
+An app to create &amp; manage power and gas price notifications. (March 2022: also, to add product price tracking history/alerting)
 
 Some US states have [deregulated power and/or gas utilities](http://www.deregulationofenergy.org/) in order to allow consumers to have a choice in how much they pay for their energy. Depending on how a particular consumer prefers to pay for their utilities, it'd be nice to have a service that notifies you of when a lower priced plan becomes available. Enter the Compare Hare.
 
@@ -50,7 +50,7 @@ Then, they add 1 new offer. The OfferLoader offer hash will have changed, but wh
 
 **AlertCriteria** - tied to a user (is private to that user), stores the distributor/ratetype key for that user as well as any other specific criteria that should trigger an alert. Includes the StateUtilityIndex hash from the last time the alert criteria was checked. Keys: distributor_id, user_id
 
-**Alerts** - Specific offer information that is generated from the alert job described below. Only contains "active" or matching offers. In addition to getting email notifications, the user will have a "dashboard" of current alerts. Keys: alert_criteria_id (parent), user_id, utility_price_history_id (utility prices are wiped often, so the history entry should be used for all displays). Also contains the AlertOffer hash from the matching offer data.
+**AlertMatch** - Specific offer information that is generated from the alert job described below. Only contains "active" or matching offers. In addition to getting email notifications, the user will have a "dashboard" of current alerts. Keys: alert_criteria_id (parent), user_id, utility_price_history_id (utility prices are wiped often, so the history entry should be used for all displays). Also contains the AlertOffer hash from the matching offer data.
 
 **PendingAlertNotifications** - a message table where each row denotes a notification that needs sent to a specific user. Only generated when a "new" alert is found (part 2 of the alert comp service below). Will also queue one or more "new" price hits into a single notification. Will contain some sort of information pertaining to new prices found - either just a "We found 3 new prices that match your alert "Bob's Alert", click here for info" or a "We found 3 new offers from these companies: [company list] click here for more info" message in the email. Once email has been sent, the row is deleted.
 

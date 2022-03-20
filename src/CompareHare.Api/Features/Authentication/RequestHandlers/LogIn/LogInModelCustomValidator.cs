@@ -36,18 +36,18 @@ namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogIn
 
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Email == model.Email);
 
-            if(user == null) return LoginFailure(customErrors);
+            if (user == null) return LoginFailure(customErrors);
 
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
 
-            if (result.Succeeded) {
-                if (await _userManager.IsEmailConfirmedAsync(user) == false) return UnconfirmedFailure(customErrors);
-                await _userManager.ResetAccessFailedCountAsync(user);
-            } else {
-                await _userManager.AccessFailedAsync(user);
-                if (result.IsLockedOut || user.AccessFailedCount >= MAXIMUM_LOGIN_ATTEMPTS) return TooManyAttemptsFailure(customErrors);
-                return LoginFailure(customErrors);
-            }
+            // if (result.Succeeded) {
+            if (await _userManager.IsEmailConfirmedAsync(user) == false) return UnconfirmedFailure(customErrors);
+            await _userManager.ResetAccessFailedCountAsync(user);
+            // } else {
+            // await _userManager.AccessFailedAsync(user);
+            //     if (result.IsLockedOut || user.AccessFailedCount >= MAXIMUM_LOGIN_ATTEMPTS) return TooManyAttemptsFailure(customErrors);
+            //     return LoginFailure(customErrors);
+            // }
 
             return customErrors;
         }

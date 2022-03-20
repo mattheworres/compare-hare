@@ -1,27 +1,29 @@
 import {stateReducer} from 'truefit-react-utils';
 import {Map} from 'immutable';
 import {
-  INITIALIZE_ADD_PA_POWER,
+  INITIALIZE_PA_POWER,
   OPEN_ADD_PA_POWER,
   OPEN_ADD_PA_POWER_2,
   OPEN_ADD_PA_POWER_3,
-  CLOSE_ADD_PA_POWER,
+  CLOSE_PA_POWER,
+  OPEN_EDIT_PA_POWER,
+  OPEN_EDIT_PA_POWER_2,
+  OPEN_EDIT_PA_POWER_3,
 } from '../actions/paPower';
 import {AlertModel} from '../models';
 
 const initialState = new Map({
   addOpen: false,
+  editOpen: false,
   addStage: 1,
+  editStage: 1,
   alertModel: new AlertModel(),
 });
 
 export default stateReducer(initialState, {
-  [INITIALIZE_ADD_PA_POWER]: (state, payload) =>
+  [INITIALIZE_PA_POWER]: (state, payload) =>
     state.withMutations(map => {
-      const {zip, utilityType, utilityState} = payload;
-      map.setIn(['alertModel', 'zip'], zip);
-      map.setIn(['alertModel', 'utilityType'], utilityType);
-      map.setIn(['alertModel', 'utilityState'], utilityState);
+      map.set('alertModel', new AlertModel(payload));
     }),
 
   [OPEN_ADD_PA_POWER]: state =>
@@ -29,6 +31,15 @@ export default stateReducer(initialState, {
       map.set('addOpen', true);
       map.set('addStage', 1);
     }),
+
+  [OPEN_EDIT_PA_POWER]: state =>
+    state.withMutations(map => {
+      map.set('editOpen', true);
+      map.set('editStage', 1);
+    }),
+
+  [OPEN_EDIT_PA_POWER_2]: state => state.set('editStage', 2),
+  [OPEN_EDIT_PA_POWER_3]: state => state.set('editStage', 3),
 
   [OPEN_ADD_PA_POWER_2]: (state, payload) =>
     state.withMutations(map => {
@@ -91,7 +102,5 @@ export default stateReducer(initialState, {
       map.set('addStage', 3)
     }),
 
-  //SUBMIT TO SERVER HERE
-
-  [CLOSE_ADD_PA_POWER]: () => initialState,
+  [CLOSE_PA_POWER]: () => initialState,
 });
