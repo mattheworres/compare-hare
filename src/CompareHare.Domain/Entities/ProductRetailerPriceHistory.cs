@@ -15,6 +15,11 @@ namespace CompareHare.Domain.Entities
 
         public float? Price { get; set; }
 
+        public bool HasScrapingFootnote { get; set; }
+
+        // TODO: like, AppliancesConnection hiding the "true" price
+        public string Footnote { get; set; }
+
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset? ModifiedDate { get; set; }
     }

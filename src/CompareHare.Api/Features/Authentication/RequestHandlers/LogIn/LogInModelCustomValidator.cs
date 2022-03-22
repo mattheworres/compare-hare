@@ -40,6 +40,7 @@ namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogIn
 
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
 
+            // TODO: uncomment... looks like testing...
             // if (result.Succeeded) {
             if (await _userManager.IsEmailConfirmedAsync(user) == false) return UnconfirmedFailure(customErrors);
             await _userManager.ResetAccessFailedCountAsync(user);

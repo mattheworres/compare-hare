@@ -21,6 +21,10 @@
 
   <ItemGroup>
     <None Update="Domain\Features\OfferLoaders\PA_Response.html" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Domain\MockDocs\Products\Lowes_Response.html" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Domain\MockDocs\Products\HD_Response.html" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Domain\MockDocs\Products\BB_Response.html" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Domain\MockDocs\Products\AppliancesConnection_Response.html" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

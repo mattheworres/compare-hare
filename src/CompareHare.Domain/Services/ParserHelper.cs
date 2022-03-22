@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -47,6 +46,26 @@ namespace CompareHare.Domain.Services
             var matches = Regex.Matches(text, NUMBER_PATTERN);
 
             return int.Parse(matches[0].Value);
+        }
+
+        // Don't really care for this solution, but I'm tired of kicking CultureInfo code around to solve it.
+        // PUNT in favor of my Culture for now :-/
+        // EDIT: this may not be necessary - might have been blocked by my own bad unit
+        // testing skills; other, better methods may now "work"
+        public string RemoveCommasFromString(string text)
+        {
+            bool hasCommas = false;
+            int index = text.IndexOf(',');
+
+            hasCommas = index != -1;
+
+            while (hasCommas)
+            {
+                text = text.Remove(index, 1);
+                index = text.IndexOf(',');
+                hasCommas = index != -1;
+            }
+            return text;
         }
     }
 }

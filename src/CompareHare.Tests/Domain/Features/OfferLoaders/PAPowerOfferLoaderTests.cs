@@ -38,7 +38,7 @@ namespace CompareHare.Tests.Domain.Features.Services
                 var fakeDocument = await GetFakeDocument();
                 mockedWrapper.Setup(x => x.OpenUrlAsync(It.IsAny<string>(), It.IsAny<IRequester>())).ReturnsAsync(fakeDocument);
                 autoMock.Provide(mockedWrapper);
-                autoMock.Provide(parserHelper);
+                autoMock.Provide<IParserHelper>(parserHelper);
 
                 var sut = autoMock.Create<PAPowerOfferLoader>();
 
@@ -73,7 +73,7 @@ namespace CompareHare.Tests.Domain.Features.Services
                 var fakeDocument = await GetFakeDocument();
                 mockedWrapper.Setup(x => x.OpenUrlAsync(It.IsAny<string>(), It.IsAny<IRequester>())).ReturnsAsync(fakeDocument);
                 autoMock.Provide(mockedWrapper);
-                autoMock.Provide(parserHelper);
+                autoMock.Provide<IParserHelper>(parserHelper);
 
                 var sut = autoMock.Create<PAPowerOfferLoader>();
 
@@ -157,7 +157,10 @@ namespace CompareHare.Tests.Domain.Features.Services
 
         private MemoryStream LoadFakeDocumentFromFile()
         {
-            using (FileStream fileStream = File.OpenRead(Path.Combine(Directory.GetCurrentDirectory(), "Domain/Features/OfferLoaders/PA_Response.html")))
+            using (FileStream fileStream = File.OpenRead(
+                Path.Combine(Directory.GetCurrentDirectory(), "Domain/Features/OfferLoaders/PA_Response.html")
+                    )
+                )
             {
                 MemoryStream memStream = new MemoryStream();
                 memStream.SetLength(fileStream.Length);

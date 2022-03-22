@@ -11,5 +11,6 @@ namespace CompareHare.Domain.Services.Interfaces
         string GetElementClassStartingWith(IElement element, string startingNeedle);
         int ParseFirstIntegerFromString(string text);
         float ParseFirstFloatFromString(string text);
+        string RemoveCommasFromString(string text);
     }
 }
