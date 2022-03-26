@@ -45,12 +45,16 @@ namespace CompareHare.Api.Features.Prices
                     await limiter;
 
                     var scrapedPriceHistory = await scraper.ScrapePrice(product.Id, productRetailer.ProductRetailer, productRetailer.ScrapeUrl, productRetailer.PriceSelector);
-                    var lastPriceHistory = await _dbContext.ProductRetailerPriceHistories.Where(x => x.TrackedProductId == product.Id && x.ProductRetailer == productRetailer.ProductRetailer).FirstOrDefaultAsync();
+                    var lastPriceHistory = await _dbContext.ProductRetailerPriceHistories
+                        .Where(x => x.TrackedProductId == product.Id && x.ProductRetailer == productRetailer.ProductRetailer)
+                        .OrderByDescending(x => x.CreatedDate)
+                        .FirstOrDefaultAsync();
+                    var lastStringee = lastPriceHistory == null || !lastPriceHistory.Price.HasValue ? "Nullee" : string.Format("${0}", lastPriceHistory.Price.Value);
 
                     // We want to persist this price as long as A) we have a price and either B) we haven't saved a price before or C) the price has changed in any way (in the future this gets more complicated)
                     if (scrapedPriceHistory.Price.HasValue && (lastPriceHistory == null || lastPriceHistory.Price.Value != scrapedPriceHistory.Price.Value))
                     {
-                        Log.Logger.Information("Huzzah, we have a new price for {0} - ${1}", productRetailer.ProductRetailer.ToString(), scrapedPriceHistory.Price.Value);
+                        Log.Logger.Information("Huzzah, we have a new price for {0} - ${1} (was {2})", productRetailer.ProductRetailer.ToString(), scrapedPriceHistory.Price.Value, lastStringee);
 
                         await _priceHistoryPersister.PersistNewPriceHistory(scrapedPriceHistory);
                     }
