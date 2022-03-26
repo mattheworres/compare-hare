@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using AngleSharp.Dom;
 using CompareHare.Domain.Services.Interfaces;
+using Serilog;
 
 namespace CompareHare.Domain.Services
 {
@@ -46,6 +49,33 @@ namespace CompareHare.Domain.Services
             var matches = Regex.Matches(text, NUMBER_PATTERN);
 
             return int.Parse(matches[0].Value);
+        }
+
+        // From: https://stackoverflow.com/a/36002027
+        public float ParseCurrencyWithSymbol(string text)
+        {
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures)
+                .GroupBy(c => c.NumberFormat.CurrencySymbol)
+                .ToDictionary(c => c.Key, c => c.First());
+
+
+            var culture = cultures.FirstOrDefault(c => text.Contains(c.Key));
+
+            float result = 0;
+            if (!culture.Equals(default(KeyValuePair<string, CultureInfo>)))
+            {
+                result = float.Parse(text, NumberStyles.Currency);
+            }
+            else
+            {
+                if (!float.TryParse(text, out result))
+                {
+                    Log.Logger.Error("Invalid number format in ParserHelper.ParseCurrencyWithSymbol, text: {0}", text);
+                    throw new Exception("Invalid number format");
+                }
+            }
+
+            return result;
         }
 
         // Don't really care for this solution, but I'm tired of kicking CultureInfo code around to solve it.

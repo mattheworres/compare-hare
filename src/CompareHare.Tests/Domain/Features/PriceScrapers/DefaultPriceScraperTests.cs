@@ -67,7 +67,7 @@ namespace CompareHare.Tests.Domain.Features.Services
         public async void ItShouldScrapeAppliancesConnectionCorrectly()
         {
             var response = await TestMockedScraper("Domain/MockDocs/Products/AppliancesConnection_Response.html", ProductRetailer.AppliancesConnection);
-            response.ShouldBe(4192.00f);
+            response.ShouldBe(2099.00f);
         }
     }
 }

@@ -27,6 +27,7 @@ namespace CompareHare.Api.AppStartup
             //ScheduleRecurringJobs<IDefaultRecurringJob>("BatchJobs", configuration, container, configuration["Hangfire:BatchJobSchedule"]);
             ScheduleRecurringJobs<IOfferLoaderJob>("OfferLoaderJob", configuration, container, configuration["Hangfire:OfferLoaderRunnerSchedule"]);
             ScheduleRecurringJobs<IAlertAssessorJob>("AlertAssessorJob", configuration, container, configuration["Hangfire:AlertAssessorRunnerSchedule"]);
+            ScheduleRecurringJobs<IPriceLoaderJob>("PriceLoaderJob", configuration, container, configuration["Hangfire:PriceScraperRunnerSchedule"]);
         }
 
         private static string BuildConnectionString(string connectionString)
@@ -39,7 +40,8 @@ namespace CompareHare.Api.AppStartup
         private static void ScheduleRecurringJobs<TJob>(string jobId, IConfiguration configuration, IContainer container, string schedule)
             where TJob : IJob
         {
-            if (!string.IsNullOrEmpty(schedule)) {
+            if (!string.IsNullOrEmpty(schedule))
+            {
                 RecurringJob.AddOrUpdate<IJobRunner<TJob>>(jobId, jobRunner => jobRunner.Run(JobCancellationToken.Null), schedule, EasternTimeZone());
             }
             else
@@ -47,16 +49,21 @@ namespace CompareHare.Api.AppStartup
                 RecurringJob.RemoveIfExists(jobId);
             }
 
-            if (configuration["Hangfire:RunJobsOnStartup"] == "True") {
-                Task.Run(async () => {
-                   try {
-                       using (var lifetimeScope = container.BeginLifetimeScope()) {
-                           await lifetimeScope.Resolve<IJobRunner<TJob>>().Run(new JobCancellationToken(false));
-                       }
-                   }
-                   catch (Exception ex) {
-                       Log.Error(ex, "Error starting jobs");
-                   }
+            if (configuration["Hangfire:RunJobsOnStartup"] == "True")
+            {
+                Task.Run(async () =>
+                {
+                    try
+                    {
+                        using (var lifetimeScope = container.BeginLifetimeScope())
+                        {
+                            await lifetimeScope.Resolve<IJobRunner<TJob>>().Run(new JobCancellationToken(false));
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Error(ex, "Error starting jobs");
+                    }
                 });
             }
         }

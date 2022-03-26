@@ -13,6 +13,8 @@ namespace CompareHare.Domain.Entities
         [Required, MaxLength(512)]
         public string Name { get; set; }
 
+        public bool Enabled { get; set; }
+
         public virtual IEnumerable<TrackedProductRetailer> Retailers { get; set; }
         public virtual IEnumerable<ProductRetailerPriceHistory> PriceHistories { get; set; }
     }

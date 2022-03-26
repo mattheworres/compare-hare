@@ -42,6 +42,9 @@ I forgot how to do this, here's how:
 5. Once the migration Up/Down that was created is sufficient, run the migration: `dotnet ef database update`
 
 6. If anything fails, you can select to rollback changes with `dotnet ef database update <FULL text name of last successful migration>` (includes the numbers in the migration file name)
+
+## Hangfire
+In order to see/trigger background jobs, go to `http://localhost:53041/background-jobs` when the API/Hangfire is running
 ## Testing
 
 1. Ensure all packages are restored: `cd src` then `dotnet restore`
