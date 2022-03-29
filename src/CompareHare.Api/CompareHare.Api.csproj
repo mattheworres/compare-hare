@@ -20,7 +20,7 @@
 		<PackageReference Include="Autofac" Version="4.8.1"/>
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.3.1"/>
 		<PackageReference Include="AutoMapper" Version="8.0.0"/>
-		<PackageReference Include="Dapper" Version="1.60.1"/>
+		<PackageReference Include="Dapper" Version="1.60.6"/>
 		<PackageReference Include="FluentValidation.AspNetcore" Version="7.2.0"/>
 		<PackageReference Include="JetBrains.Annotations" Version="11.0.0"/>
 		<PackageReference Include="Microsoft.AspNetCore.All"/>
@@ -34,18 +34,17 @@
 		<PackageReference Include="Serilog.Sinks.Async" Version="1.1.0"/>
 		<PackageReference Include="Serilog.Sinks.Console" Version="3.1.0"/>
 		<PackageReference Include="Serilog.Sinks.RollingFile" Version="3.3.0"/>
-		<PackageReference Include="MySqlConnector" Version="0.49.3"/>
-		<PackageReference Include="HangFire" Version="1.6.22"/>
+		<PackageReference Include="MySqlConnector" Version="0.69.10"/>
+		<PackageReference Include="HangFire" Version="1.7.28"/>
 		<PackageReference Include="HangFire.Autofac" Version="2.3.1"/>
 		<PackageReference Include="Hangfire.Dashboard.Authorization" Version="2.1.0"/>
-		<PackageReference Include="HangFire.Core" Version="1.6.22"/>
-		<PackageReference Include="HangFire.MySql.Core" Version="2.1.8"/>
+		<PackageReference Include="HangFire.Core" Version="1.7.28"/>
+		<PackageReference Include="HangFire.MySql.Core" Version="2.2.5"/>
 		<PackageReference Include="morelinq" Version="2.9.0"/>
-		<PackageReference Include="MediatR" Version="4.1.0"/>
-		<PackageReference Include="NodaTime" Version="2.2.3"/>
-		<PackageReference Include="Handlebars.Net" Version="1.9.5"/>
-		<PackageReference Include="Stripe.net" Version="22.9.0"/>
-		<PackageReference Include="AngleSharp" Version="0.11.0"/>
+		<PackageReference Include="MediatR" Version="9.0.0"/>
+		<PackageReference Include="NodaTime" Version="3.0.10"/>
+		<PackageReference Include="Handlebars.Net" Version="2.1.0"/>
+		<PackageReference Include="AngleSharp" Version="0.16.1"/>
 		<PackageReference Include="RateLimiter" Version="2.2.0"/>
 	</ItemGroup>
 	<ItemGroup>

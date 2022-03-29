@@ -1,6 +1,7 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogOut
 {
-    public class LogOut : IRequest { }
+    public class LogOutMessage : IRequest<IActionResult> { }
 }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using CompareHare.Api.MediatR.ValidationPipeline;
 using Autofac;
 using MediatR;
@@ -13,18 +12,11 @@ namespace CompareHare.Api.IoC
                    .As<IMediator>()
                    .InstancePerLifetimeScope();
 
-            builder.Register<SingleInstanceFactory>(
+            builder.Register<ServiceFactory>(
                 ctxt =>
                 {
                     var componentContext = ctxt.Resolve<IComponentContext>();
                     return t => componentContext.ResolveOptional(t);
-                }).InstancePerLifetimeScope();
-
-            builder.Register<MultiInstanceFactory>(
-                ctxt =>
-                {
-                    var componentContext = ctxt.Resolve<IComponentContext>();
-                    return t => (IEnumerable<object>) componentContext.ResolveOptional(typeof(IEnumerable<>).MakeGenericType(t));
                 }).InstancePerLifetimeScope();
 
             builder.RegisterAssemblyTypes(ThisAssembly)
