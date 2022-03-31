@@ -14,7 +14,7 @@ import {
 } from '../../alerts/components/paPower';
 import UpdateAlertProgressModal from '../../alerts/components/UpdateAlertProgressModal';
 
-class Dashboard extends React.Component {
+class UtilitiesDashboard extends React.Component {
   render() {
     return (
       <Page>
@@ -49,4 +49,4 @@ const mapDispatchToProps = {
 
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
+export default connect(mapStateToProps, mapDispatchToProps)(UtilitiesDashboard);

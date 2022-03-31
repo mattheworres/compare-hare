@@ -14,7 +14,8 @@ class LandingPage extends React.Component {
         <div>Also, TODO: Make NavBar respect isAuthenticated</div>
         <br />
         <div>
-          You wanna go here: <Link to="/dashboard">Dashboard</Link>
+          You wanna go here: <Link to="/utilitiesDashboard">Utilities Dashboard</Link><br/>
+          or here: <Link to="/productsDashboard">Products Dashboard</Link>
         </div>
       </Page>
     );

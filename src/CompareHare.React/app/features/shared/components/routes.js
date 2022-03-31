@@ -1,7 +1,7 @@
 import React from 'react';
 import {Switch, Route} from 'react-router';
 
-import {Dashboard, AlertDisplay} from '../../dashboard/components';
+import {UtilitiesDashboard, AlertDisplay} from '../../dashboard/components';
 import {NotFound, AuthenticatedRoute} from './index';
 import {
   SigninPage,
@@ -9,7 +9,7 @@ import {
   LoadIdentityPage,
 } from '../../authentication/components';
 import LandingPage from '../../landing/components/LandingPage';
-import {ProductsTable} from '../../products/components';
+import {ProductsDashboard} from '../../products/components';
 
 export default () => (
   <Switch>
@@ -20,9 +20,9 @@ export default () => (
     <Route path="/logout" component={LogoutPage} />
 
     {/* Authenticated routes start below here */}
-    <AuthenticatedRoute path="/dashboard" component={Dashboard} />
+    <AuthenticatedRoute path="/utilitiesDashboard" component={UtilitiesDashboard} />
     <AuthenticatedRoute path="/alerts/:alertId/display" component={AlertDisplay} />
-    <AuthenticatedRoute path="/products" component={ProductsTable} />
+    <AuthenticatedRoute path="/productsDashboard" component={ProductsDashboard} />
 
     <Route component={NotFound} />
   </Switch>
