@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using CompareHare.Api.BackgroundJobs.Interfaces;
-using CompareHare.Api.Features.Prices.Interfaces;
+using CompareHare.Api.Features.Prices.Services.Interfaces;
 
 namespace CompareHare.Api.BackgroundJobs
 {

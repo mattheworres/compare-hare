@@ -1,10 +1,10 @@
 using System;
-using CompareHare.Api.Features.Prices.Interfaces;
+using CompareHare.Api.Features.Prices.Services.Interfaces;
 using CompareHare.Domain.Entities.Constants;
 using CompareHare.Domain.Features.PriceScrapers;
 using CompareHare.Domain.Features.PriceScrapers.Interfaces;
 
-namespace CompareHare.Api.Features.Prices
+namespace CompareHare.Api.Features.Prices.Services
 {
     public class PriceScraperPicker : IPriceScraperPicker
     {

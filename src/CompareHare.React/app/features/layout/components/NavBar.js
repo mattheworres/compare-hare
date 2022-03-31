@@ -72,7 +72,12 @@ class NavBar extends React.Component {
             </Typography>
             {isAuthenticated && (
               <Typography color="inherit" className={classes.link}>
-                <Link className={classes.linkText} to="/dashboard">Dashboard</Link>
+                <Link className={classes.linkText} to="/dashboard">Utilities</Link>
+              </Typography>
+            )}
+            {isAuthenticated && (
+              <Typography color="inherit" className={classes.link}>
+                <Link className={classes.linkText} to="/products">Products</Link>
               </Typography>
             )}
             {isAuthenticated && (

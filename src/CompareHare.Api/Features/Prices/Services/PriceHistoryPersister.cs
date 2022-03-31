@@ -1,12 +1,12 @@
 using System.Reflection;
 using System.Threading.Tasks;
-using CompareHare.Api.Features.Prices.Interfaces;
+using CompareHare.Api.Features.Prices.Services.Interfaces;
 using CompareHare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace CompareHare.Api.Features.Prices
+namespace CompareHare.Api.Features.Prices.Services
 {
     public class PriceHistoryPersister : IPriceHistoryPersister
     {

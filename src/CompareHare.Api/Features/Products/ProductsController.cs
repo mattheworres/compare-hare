@@ -1,0 +1,23 @@
+using System.Threading.Tasks;
+using CompareHare.Api.Controllers;
+using CompareHare.Api.Features.Products.RequestHandlers.GetProducts;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace CompareHare.Api.Features.Products
+{
+    [Route("api/products")]
+    public class ProductsController : SpaApiController
+    {
+        private readonly IMediator _mediator;
+
+        public ProductsController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+        [HttpGet("list")]
+        public async Task<IActionResult> GetProductsList()
+            => await _mediator.Send(new GetProductsMessage());
+    }
+}

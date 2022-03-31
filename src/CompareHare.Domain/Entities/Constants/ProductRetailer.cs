@@ -48,5 +48,8 @@ namespace CompareHare.Domain.Entities.Constants
 
         [Display(Name = "Sam's Club")]
         SamsClub = 15,
+
+        [Display(Name = "Other")]
+        Other = 1001
     }
 }

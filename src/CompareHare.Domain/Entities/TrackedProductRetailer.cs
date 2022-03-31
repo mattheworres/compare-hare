@@ -15,6 +15,8 @@ namespace CompareHare.Domain.Entities
 
         public ProductRetailer ProductRetailer { get; set; }
 
+        public string OtherRetailerDisplayName { get; set; }
+
         [Required, MaxLength(512)]
         public string ScrapeUrl { get; set; }
 

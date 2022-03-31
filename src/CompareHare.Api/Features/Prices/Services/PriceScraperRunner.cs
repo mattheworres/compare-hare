@@ -1,14 +1,14 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using CompareHare.Api.Features.Prices.Interfaces;
+using CompareHare.Api.Features.Prices.Services.Interfaces;
 using CompareHare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using RateLimiter;
 using Serilog;
 using ComposableAsync;
 
-namespace CompareHare.Api.Features.Prices
+namespace CompareHare.Api.Features.Prices.Services
 {
     public class PriceScraperRunner : IPriceScraperRunner
     {
