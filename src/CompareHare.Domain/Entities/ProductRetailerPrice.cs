@@ -4,12 +4,16 @@ using CompareHare.Domain.Entities.Constants;
 
 namespace CompareHare.Domain.Entities
 {
-    public class ProductRetailerPriceHistory : ICreatedDateTimeTracker, IModifiedDateTimeTracker
+    public class ProductRetailerPrice : ICreatedDateTimeTracker, IModifiedDateTimeTracker
     {
         public int Id { get; set; }
 
         public int TrackedProductId { get; set; }
         public TrackedProduct TrackedProduct { get; set; }
+
+        // Search the Prices table, but use the history ID to never break constraints in the future
+        public int ProductRetailerPriceHistoryId { get; set; }
+        public virtual ProductRetailerPriceHistory ProductRetailerPriceHistory { get; set; }
 
         public ProductRetailer ProductRetailer { get; set; }
 

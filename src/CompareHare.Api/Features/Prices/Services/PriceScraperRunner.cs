@@ -16,13 +16,13 @@ namespace CompareHare.Api.Features.Prices.Services
 
         private readonly CompareHareDbContext _dbContext;
         private readonly IPriceScraperPicker _scraperPicker;
-        private readonly IPriceHistoryPersister _priceHistoryPersister;
+        private readonly IPricePersister _pricePersister;
 
-        public PriceScraperRunner(CompareHareDbContext dbContext, IPriceScraperPicker scraperPicker, IPriceHistoryPersister priceHistoryPersister)
+        public PriceScraperRunner(CompareHareDbContext dbContext, IPriceScraperPicker scraperPicker, IPricePersister pricePersister)
         {
             _dbContext = dbContext;
             _scraperPicker = scraperPicker;
-            _priceHistoryPersister = priceHistoryPersister;
+            _pricePersister = pricePersister;
         }
 
         public async Task LoadAllPrices()
@@ -44,26 +44,26 @@ namespace CompareHare.Api.Features.Prices.Services
 
                     await limiter;
 
-                    var scrapedPriceHistory = await scraper.ScrapePrice(product.Id, productRetailer.ProductRetailer, productRetailer.ScrapeUrl, productRetailer.PriceSelector);
-                    var lastPriceHistory = await _dbContext.ProductRetailerPriceHistories
+                    var scrapedPrice = await scraper.ScrapePrice(product.Id, productRetailer.ProductRetailer, productRetailer.ScrapeUrl, productRetailer.PriceSelector);
+                    var lastPrice = await _dbContext.ProductRetailerPrices
                         .Where(x => x.TrackedProductId == product.Id && x.ProductRetailer == productRetailer.ProductRetailer)
                         .OrderByDescending(x => x.CreatedDate)
                         .FirstOrDefaultAsync();
-                    var lastStringee = lastPriceHistory == null || !lastPriceHistory.Price.HasValue ? "Nullee" : string.Format("${0}", lastPriceHistory.Price.Value);
-
+                    var lastStringee = lastPrice == null || !lastPrice.Price.HasValue ? "Nullee" : string.Format("${0}", lastPrice.Price.Value);
+                    var lastPriceId = lastPrice != null ? (int?)lastPrice.Id : null;
                     // We want to persist this price as long as A) we have a price and either B) we haven't saved a price before or C) the price has changed in any way (in the future this gets more complicated)
-                    if (scrapedPriceHistory.Price.HasValue && (lastPriceHistory == null || lastPriceHistory.Price.Value != scrapedPriceHistory.Price.Value))
+                    if (scrapedPrice.Price.HasValue && (lastPrice == null || lastPrice.Price.Value != scrapedPrice.Price.Value))
                     {
-                        Log.Logger.Information("Huzzah, we have a new price for {0} - ${1} (was {2})", productRetailer.ProductRetailer.ToString(), scrapedPriceHistory.Price.Value, lastStringee);
+                        Log.Logger.Information("Huzzah, we have a new price for {0} - ${1} (was {2})", productRetailer.ProductRetailer.ToString(), scrapedPrice.Price.Value, lastStringee);
 
-                        await _priceHistoryPersister.PersistNewPriceHistory(scrapedPriceHistory);
+                        await _pricePersister.PersistNewPrice(scrapedPrice, lastPriceId);
                     }
                     else
                     {
-                        var hasValue = scrapedPriceHistory.Price.HasValue ? string.Format("Scraped price had value of ${0}", scrapedPriceHistory.Price.Value) : "No scraped price value";
-                        var hasLastPriceHistory = lastPriceHistory == null ? "Didn't have last price value" : string.Format("Had last price value: ${0}", lastPriceHistory.Price.Value);
+                        var hasValue = scrapedPrice.Price.HasValue ? string.Format("Scraped price had value of ${0}", scrapedPrice.Price.Value) : "No scraped price value";
+                        var hasLastPrice = lastPrice == null ? "Didn't have last price value" : string.Format("Had last price value: ${0}", lastPrice.Price.Value);
 
-                        Log.Logger.Information("Bummer, no new price. hasValue: {0} hasLastPriceHistory: {1}", hasValue, hasLastPriceHistory);
+                        Log.Logger.Information("Bummer, no new price. hasValue: {0} hasLastPrice: {1}", hasValue, hasLastPrice);
                     }
                 }
             }

@@ -4,8 +4,8 @@ using CompareHare.Domain.Features.Interfaces;
 
 namespace CompareHare.Api.Features.Prices.Services.Interfaces
 {
-    public interface IPriceHistoryPersister : IFeatureService
+    public interface IPricePersister : IFeatureService
     {
-        Task PersistNewPriceHistory(ProductRetailerPriceHistory history);
+        Task PersistNewPrice(ProductRetailerPrice price, int? currentPriceId);
     }
 }

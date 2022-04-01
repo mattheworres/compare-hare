@@ -16,6 +16,7 @@ namespace CompareHare.Domain.Entities
         public bool Enabled { get; set; }
 
         public virtual IEnumerable<TrackedProductRetailer> Retailers { get; set; }
+        public virtual IEnumerable<ProductRetailerPrice> Prices { get; set; }
         public virtual IEnumerable<ProductRetailerPriceHistory> PriceHistories { get; set; }
     }
 }

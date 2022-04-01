@@ -20,6 +20,7 @@ namespace CompareHare.Domain.Entities
         public DbSet<AlertMatch> AlertMatches { get; set; }
         public DbSet<Alert> Alerts { get; set; }
         public DbSet<PendingAlertNotification> PendingAlertNotifications { get; set; }
+        public DbSet<ProductRetailerPrice> ProductRetailerPrices { get; set; }
         public DbSet<ProductRetailerPriceHistory> ProductRetailerPriceHistories { get; set; }
         public DbSet<StateUtilityIndex> StateUtilityIndices { get; set; }
         public DbSet<TrackedProduct> TrackedProducts { get; set; }
@@ -36,8 +37,7 @@ namespace CompareHare.Domain.Entities
             userBuilder.HasIndex(u => u.Email).IsUnique();
 
             modelBuilder.Entity<UtilityPrice>()
-              .HasOne(x => x.UtilityPriceHistory)
-              ;
+              .HasOne(x => x.UtilityPriceHistory);
 
             modelBuilder.Entity<AlertMatchUtilityPriceHistory>()
               .HasKey(x => new { x.AlertMatchId, x.UtilityPriceHistoryId });
@@ -60,6 +60,13 @@ namespace CompareHare.Domain.Entities
               .WithOne(x => x.TrackedProduct);
 
             modelBuilder.Entity<TrackedProduct>()
+              .HasMany(x => x.Prices)
+              .WithOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<ProductRetailerPrice>()
+              .HasOne(x => x.ProductRetailerPriceHistory);
+
+            modelBuilder.Entity<TrackedProduct>()
               .HasMany(x => x.PriceHistories)
               .WithOne(x => x.TrackedProduct);
 
@@ -76,6 +83,12 @@ namespace CompareHare.Domain.Entities
         {
             AddTimestamps();
             return (await base.SaveChangesAsync(true, cancellationToken));
+        }
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            AddTimestamps();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
         }
 
         private void AddTimestamps()
