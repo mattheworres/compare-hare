@@ -10,6 +10,7 @@ using AngleSharp.Io;
 using System.IO;
 using Moq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 
 namespace CompareHare.Tests.Domain.Features.Services
 {
@@ -25,18 +26,23 @@ namespace CompareHare.Tests.Domain.Features.Services
             using (var autoMock = AutoMock.GetLoose())
             {
                 var mockedWrapper = autoMock.Mock<IParserWrapper>();
+                // var mockEnvironment = autoMock.Mock<IHostingEnvironment>();
+                // mockEnvironment
+                //     .Setup(m => m.EnvironmentName)
+                //     .Returns("Hosting:Development");
                 var localDocumentFaker = new LocalDocumentFaker();
                 var pathToFakeDoc = Path.Combine(Directory.GetCurrentDirectory(), relativePathToResponseFile);
                 var fakeDocument = await localDocumentFaker.GetFakeDocument(pathToFakeDoc);
                 mockedWrapper.Setup(x => x.OpenUrlAsync(It.IsAny<string>(), It.IsAny<IRequester>())).ReturnsAsync(fakeDocument);
                 autoMock.Provide(mockedWrapper);
+                // autoMock.Provide(mockEnvironment);
                 var parserHelper = new ParserHelper();
                 var productHelper = new ProductHelper();
                 autoMock.Provide<IParserHelper>(parserHelper);
                 autoMock.Provide<IProductHelper>(productHelper);
 
                 var sut = autoMock.Create<DefaultPriceScraper>();
-                var response = await sut.ScrapePrice(1, retailer, DEFAULT_URL, null);
+                var response = await sut.ScrapePrice(1, 1, retailer, DEFAULT_URL, null);
 
                 return response.Price.HasValue ? response.Price.Value : 0;
             }

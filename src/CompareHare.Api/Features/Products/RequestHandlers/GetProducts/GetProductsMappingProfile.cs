@@ -10,7 +10,7 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProducts
         public GetProductsMappingProfile()
         {
             CreateMap<TrackedProduct, ProductListModel>()
-                .ForMember(d => d.Retailers, mce => mce.MapFrom<RetailersNameValueResolver>())
+                .ForMember(d => d.Retailers, mce => mce.MapFrom<ProductRetailersNameValueResolver>())
             ;
         }
     }

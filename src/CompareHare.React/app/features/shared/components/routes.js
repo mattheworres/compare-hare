@@ -9,7 +9,7 @@ import {
   LoadIdentityPage,
 } from '../../authentication/components';
 import LandingPage from '../../landing/components/LandingPage';
-import {ProductsDashboard} from '../../products/components';
+import {ProductDisplay, ProductsDashboard} from '../../products/components';
 
 export default () => (
   <Switch>
@@ -23,6 +23,7 @@ export default () => (
     <AuthenticatedRoute path="/utilitiesDashboard" component={UtilitiesDashboard} />
     <AuthenticatedRoute path="/alerts/:alertId/display" component={AlertDisplay} />
     <AuthenticatedRoute path="/productsDashboard" component={ProductsDashboard} />
+    <AuthenticatedRoute path="/products/:trackedProductId/display" component={ProductDisplay} />
 
     <Route component={NotFound} />
   </Switch>

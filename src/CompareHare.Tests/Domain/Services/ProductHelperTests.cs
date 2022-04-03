@@ -15,9 +15,9 @@ namespace CompareHare.Tests.Domain.Services
             {
                 var sut = autoMock.Create<ProductHelper>();
 
-                var result = sut.GetRetailerSelector(ProductRetailer.Lowes);
+                var result = sut.GetRetailerSelector(ProductRetailer.HomeDepot);
 
-                result.ShouldBe("span.aPrice span:nth-of-type(2)");
+                result.ShouldBe("div.price-format__large.price-format__main-price span:nth-of-type(2)");
             }
         }
 

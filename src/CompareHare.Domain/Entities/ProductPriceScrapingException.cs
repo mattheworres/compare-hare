@@ -4,7 +4,7 @@ using CompareHare.Domain.Entities.Constants;
 
 namespace CompareHare.Domain.Entities
 {
-    public class ProductRetailerPriceHistory : ICreatedDateTimeTracker, IModifiedDateTimeTracker
+    public class ProductPriceScrapingException : ICreatedDateTimeTracker
     {
         public int Id { get; set; }
 
@@ -16,16 +16,11 @@ namespace CompareHare.Domain.Entities
 
         public ProductRetailer ProductRetailer { get; set; }
 
-        public float? Price { get; set; }
+        public string Url { get; set; }
+        public string Selector { get; set; }
 
-        public float? AmountChange { get; set; }
-        public float? PercentChange { get; set; }
-
-        // TODO: like, AppliancesConnection hiding the "true" price
-        public bool HasScrapingFootnote { get; set; }
-        public string Footnote { get; set; }
+        public string Error { get; set; }
 
         public DateTimeOffset CreatedDate { get; set; }
-        public DateTimeOffset? ModifiedDate { get; set; }
     }
 }

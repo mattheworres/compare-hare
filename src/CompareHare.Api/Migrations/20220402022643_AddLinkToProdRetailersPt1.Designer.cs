@@ -3,14 +3,16 @@ using System;
 using CompareHare.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CompareHare.Api.Migrations
 {
     [DbContext(typeof(CompareHareDbContext))]
-    partial class CompareHareDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220402022643_AddLinkToProdRetailersPt1")]
+    partial class AddLinkToProdRetailersPt1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,8 +208,6 @@ namespace CompareHare.Api.Migrations
 
                     b.HasIndex("TrackedProductId");
 
-                    b.HasIndex("TrackedProductRetailerId");
-
                     b.ToTable("ProductRetailerPrices");
                 });
 
@@ -239,8 +239,6 @@ namespace CompareHare.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("TrackedProductId");
-
-                    b.HasIndex("TrackedProductRetailerId");
 
                     b.ToTable("ProductRetailerPriceHistories");
                 });
@@ -746,11 +744,6 @@ namespace CompareHare.Api.Migrations
                         .WithMany("Prices")
                         .HasForeignKey("TrackedProductId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CompareHare.Domain.Entities.TrackedProductRetailer", "TrackedProductRetailer")
-                        .WithMany("ProductRetailerPrices")
-                        .HasForeignKey("TrackedProductRetailerId")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CompareHare.Domain.Entities.ProductRetailerPriceHistory", b =>
@@ -758,11 +751,6 @@ namespace CompareHare.Api.Migrations
                     b.HasOne("CompareHare.Domain.Entities.TrackedProduct", "TrackedProduct")
                         .WithMany("PriceHistories")
                         .HasForeignKey("TrackedProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("CompareHare.Domain.Entities.TrackedProductRetailer", "TrackedProductRetailer")
-                        .WithMany("ProductRetailerPriceHistories")
-                        .HasForeignKey("TrackedProductRetailerId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

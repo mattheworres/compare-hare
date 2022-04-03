@@ -22,6 +22,7 @@ namespace CompareHare.Domain.Entities
         public DbSet<PendingAlertNotification> PendingAlertNotifications { get; set; }
         public DbSet<ProductRetailerPrice> ProductRetailerPrices { get; set; }
         public DbSet<ProductRetailerPriceHistory> ProductRetailerPriceHistories { get; set; }
+        public DbSet<ProductPriceScrapingException> ProductPriceScrapingExceptions { get; set; }
         public DbSet<StateUtilityIndex> StateUtilityIndices { get; set; }
         public DbSet<TrackedProduct> TrackedProducts { get; set; }
         public DbSet<TrackedProductRetailer> TrackedProductRetailers { get; set; }
@@ -55,6 +56,14 @@ namespace CompareHare.Domain.Entities
             modelBuilder.Entity<TrackedProductRetailer>()
               .HasOne(x => x.TrackedProduct);
 
+            modelBuilder.Entity<TrackedProductRetailer>()
+              .HasMany(x => x.ProductRetailerPrices)
+              .WithOne(x => x.TrackedProductRetailer);
+
+            modelBuilder.Entity<TrackedProductRetailer>()
+              .HasMany(x => x.ProductRetailerPriceHistories)
+              .WithOne(x => x.TrackedProductRetailer);
+
             modelBuilder.Entity<TrackedProduct>()
               .HasMany(x => x.Retailers)
               .WithOne(x => x.TrackedProduct);
@@ -69,6 +78,12 @@ namespace CompareHare.Domain.Entities
             modelBuilder.Entity<TrackedProduct>()
               .HasMany(x => x.PriceHistories)
               .WithOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<ProductPriceScrapingException>()
+              .HasOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<ProductPriceScrapingException>()
+              .HasOne(x => x.TrackedProductRetailer);
 
             base.OnModelCreating(modelBuilder);
         }

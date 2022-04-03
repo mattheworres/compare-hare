@@ -11,6 +11,9 @@ namespace CompareHare.Domain.Entities
         public int TrackedProductId { get; set; }
         public TrackedProduct TrackedProduct { get; set; }
 
+        public int TrackedProductRetailerId { get; set; }
+        public TrackedProductRetailer TrackedProductRetailer { get; set; }
+
         // Search the Prices table, but use the history ID to never break constraints in the future
         public int ProductRetailerPriceHistoryId { get; set; }
         public virtual ProductRetailerPriceHistory ProductRetailerPriceHistory { get; set; }

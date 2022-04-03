@@ -17,6 +17,9 @@ namespace CompareHare.Domain.Entities
 
         public string OtherRetailerDisplayName { get; set; }
 
+        public virtual IEnumerable<ProductRetailerPrice> ProductRetailerPrices { get; set; }
+        public virtual IEnumerable<ProductRetailerPriceHistory> ProductRetailerPriceHistories { get; set; }
+
         [Required, MaxLength(512)]
         public string ScrapeUrl { get; set; }
 

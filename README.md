@@ -52,3 +52,7 @@ In order to see/trigger background jobs, go to `http://localhost:53041/backgroun
 2. Then, you should be able to run all XUnit tests with `dotnet test`
 
 3. TBD: Front end testing with Jest
+
+## Tricky stuff
+
+* Getting "second selector undefined"? Yeah, this likely means you either fat-fingered the name of a base selector, OR, you need to stop and re-start `yarn start` so it can run all of those goofy scripts that re-generates the index files (including reducers)

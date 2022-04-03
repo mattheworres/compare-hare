@@ -6,11 +6,11 @@ namespace CompareHare.Domain.Services
     public class ProductHelper : IProductHelper
     {
         public string GetRetailerSelector(ProductRetailer retailer)
-        {
+        {// TODO: provide array of selectors to try
             switch (retailer)
             {
                 case ProductRetailer.Lowes:
-                    return "span.aPrice span:nth-of-type(2)";
+                    return "div.newPriceWrapper div.main-price span.item-price-dollar";
 
                 case ProductRetailer.HomeDepot:
                     return "div.price-format__large.price-format__main-price span:nth-of-type(2)";

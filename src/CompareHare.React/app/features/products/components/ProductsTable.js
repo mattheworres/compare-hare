@@ -1,7 +1,8 @@
 import React from 'react';
 import autobind from 'class-autobind';
-import {Button, Card, CardActions, CardContent, CircularProgress, Fab, Link, Paper, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography, withStyles} from '@material-ui/core';
+import {Button, Card, CardActions, CardContent, CircularProgress, Fab, Paper, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography, withStyles} from '@material-ui/core';
 import {connect} from 'react-redux';
+import {Link} from 'react-router-dom';
 import {loadProducts} from '../actions/productsTable';
 import {
   loadingSelector,
@@ -72,10 +73,11 @@ class ProductsTable extends React.PureComponent {
   renderProduct(product) {
     const enabledText = product.enabled ? 'Enabled' : 'Disabled';
     const retailers = product.retailers && product.retailers.length > 0 ? product.retailers.join(', ') : '(no retailers selected)';
+    const url = `/products/${product.id}/display`;
 
     return (
       <TableRow key={product.id}>
-        <TableCell><Link to={`/products/${product.id}/display`}>{product.name}</Link></TableCell>
+        <TableCell><Link to={url}>{product.name}</Link></TableCell>
         <TableCell>{enabledText}</TableCell>
         <TableCell>{retailers}</TableCell>
         <TableCell align="right">
