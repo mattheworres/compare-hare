@@ -4,14 +4,19 @@ import {Button, Card, CardActions, CardContent, CircularProgress, Fab, Paper, Ta
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {loadProducts} from '../actions/productsTable';
+import {openAddProduct} from '../actions/addProduct';
 import {
   loadingSelector,
   productsSelector,
   deletingSelector,
   hasErrorSelector
 } from '../selectors/productsTable';
+import {
+  loadingSelector as loadingAddSelector
+} from '../selectors/addProduct';
 import {Delete, Edit, Add} from '@material-ui/icons';
 import PropTypes from 'prop-types';
+import {LoadingModal} from '../../shared/components';
 
 const styles = theme => ({
   root: {
@@ -36,6 +41,10 @@ class ProductsTable extends React.PureComponent {
     this.props.loadProducts();
   }
 
+  handleAddClick() {
+    this.props.openAddProduct();
+  }
+
   renderLoading() {
     return (
       <Paper>
@@ -56,7 +65,7 @@ class ProductsTable extends React.PureComponent {
           <Typography component="p">Get started by clicking below!</Typography>
         </CardContent>
         <CardActions>
-          <Button size="small" >Add one now!</Button>
+          <Button size="small" onClick={this.handleAddClick}>Add one now!</Button>
         </CardActions>
       </Card>
     );
@@ -89,7 +98,7 @@ class ProductsTable extends React.PureComponent {
   }
 
   render() {
-    const { classes, products, loading, /*loadingEdit, deleting,*/ hasError } = this.props;
+    const { classes, products, loading, loadingAdd, hasError } = this.props;
 
     if (loading) return this.renderLoading();
 
@@ -112,23 +121,25 @@ class ProductsTable extends React.PureComponent {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={4}>
-              <Button size="small" color="primary"><Add />&nbsp;Add a new product</Button>
+              <Button size="small" color="primary" onClick={this.handleAddClick}><Add />&nbsp;Add a new product</Button>
             </TableCell>
           </TableRow>
         </TableFooter>
         </Table>
+        <LoadingModal open={loadingAdd} message="Loading retailers, one sec..." />
       </Paper>
     );
   }
 }
 
 ProductsTable.propTypes = {
-  classes: PropTypes.object
+  classes: PropTypes.object,
 };
 
 function mapStateToProps(state) {
   return {
     loading: loadingSelector(state),
+    loadingAdd: loadingAddSelector(state),
     deleting: deletingSelector(state),
     products: productsSelector(state),
     hasError: hasErrorSelector(state),
@@ -137,6 +148,7 @@ function mapStateToProps(state) {
 
 const mapDispatchToProps = {
   loadProducts,
+  openAddProduct,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ProductsTable));

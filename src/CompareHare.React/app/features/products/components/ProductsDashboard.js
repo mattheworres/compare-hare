@@ -3,6 +3,7 @@ import {Page} from '../../layout/components';
 import {connect} from 'react-redux';
 import {ProductsTable} from './index';
 import {Grid} from '@material-ui/core';
+import AddProduct1stModal from './create/AddProduct1stModal';
 
 class ProductsDashboard extends React.PureComponent {
   render() {
@@ -15,6 +16,7 @@ class ProductsDashboard extends React.PureComponent {
           </Grid>
           <Grid item xs={false} sm={false} md={false} lg={1} />
         </Grid>
+        <AddProduct1stModal />
       </Page>
     )
   }

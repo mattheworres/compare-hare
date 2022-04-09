@@ -12,7 +12,7 @@ export const OPEN_ADD_PRODUCT_4 = 'OPEN_ADD_PRODUCT_4';
 export function openAddProduct() {
   return {
     type: OPEN_ADD_PRODUCT,
-    payload: get('products'),
+    payload: get('products/create'),
   };
 }
 
