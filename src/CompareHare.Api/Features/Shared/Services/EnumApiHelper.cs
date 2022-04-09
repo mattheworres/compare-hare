@@ -14,7 +14,7 @@ namespace CompareHare.Api.Features.Shared.Services
                 var name = EnumDisplayHelper.GetDisplayName(i, enumType);
 
                 models.Add(new SelectListOptionModel() {
-                    Value = i,
+                    Value = (int)i,
                     Label = name
                 });
             }

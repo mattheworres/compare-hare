@@ -18,7 +18,7 @@ const styles = theme => ({
   paper: {
     margin: 'auto',
     transform: 'translate(0 30%)',
-    width: theme.spacing.unit * 51,
+    width: theme.spacing.unit * 71,
     backgroundColor: theme.palette.background.paper,
     boxShadow: theme.shadows[5],
     padding: theme.spacing.unit * 4,
@@ -27,11 +27,14 @@ const styles = theme => ({
   },
   stepper: {
     paddingTop: '20px',
-    paddingBottom: 0,
+    paddingBottom: '20px',
   },
+  name: {
+    paddingBottom: '20px'
+  }
 })
 
-class AddProduct1stForm extends React.Component {
+class AddProduct1stForm extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -127,6 +130,7 @@ class AddProduct1stForm extends React.Component {
             onChange={handleChange('name')}
             onBlur={handleBlur('name')}
             margin="normal"
+            autoComplete="off"
             placeholder="LG Wash Tower WKE100HWA"
             autoFocus
             error={this.hasError('name')}

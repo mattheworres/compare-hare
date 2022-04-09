@@ -69,7 +69,7 @@
     "toastr": "^2.1.4",
     "truefit-react-utils": "^0.0.15",
     "universal-cookie": "^3.0.7",
-    "yup": "^0.27.0"
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
