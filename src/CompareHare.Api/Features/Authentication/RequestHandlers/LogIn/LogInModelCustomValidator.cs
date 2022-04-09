@@ -38,6 +38,10 @@ namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogIn
 
             if (user == null) return LoginFailure(customErrors);
 
+            // TODO: also undo... just to get password set locally
+            // user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
+            // await _userManager.UpdateAsync(user);
+
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
 
             // TODO: uncomment... looks like testing...

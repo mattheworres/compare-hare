@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using CompareHare.Api.Controllers;
 using CompareHare.Api.Features.Products.Models;
+using CompareHare.Api.Features.Products.RequestHandlers.GetCreateProduct;
 using CompareHare.Api.Features.Products.RequestHandlers.GetProductCurrent;
 using CompareHare.Api.Features.Products.RequestHandlers.GetProducts;
 using MediatR;
@@ -25,5 +26,9 @@ namespace CompareHare.Api.Features.Products
         [HttpGet("current/{trackedProductId:int}")]
         public async Task<IActionResult> GetProductCurrent(int trackedProductId)
             => await _mediator.Send(new GetProductCurrentMessage(new GetProductCurrentDisplayModel(trackedProductId)));
+
+        [HttpGet("create")]
+        public async Task<IActionResult> GetProductCreate()
+            => await _mediator.Send(new GetCreateProductMessage());
     }
 }
