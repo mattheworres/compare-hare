@@ -34,7 +34,8 @@ const styles = theme => ({
   retailerContainer: {
     display: 'flex',
     marginTop: '20px',
-    marginBottom: '20px'
+    marginBottom: '20px',
+    justifyContent: 'center'
   },
   retailerItem: {
     width: '45%',
