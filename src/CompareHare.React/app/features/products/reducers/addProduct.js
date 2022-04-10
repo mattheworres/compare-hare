@@ -29,6 +29,8 @@ const initialState = new Map({
     newProductId: null,
 });
 
+const newProductRetailerModelName = 'newProductRetailer';
+
 export default stateReducer(initialState, {
   [OPEN_ADD_PRODUCT_PENDING]: state =>
     state.withMutations(map => {
@@ -66,10 +68,9 @@ export default stateReducer(initialState, {
     }),
 
   // Want to add additional retailer to new product before saving
-  [OPEN_ADD_PRODUCT_2_NEW_RETAILER]: (state, payload) =>
+  [OPEN_ADD_PRODUCT_2_NEW_RETAILER]: state =>
     state.withMutations(map => {
       map.set('addStage', 2);
-      map.set('productRetailers', state.get('productRetailers').push(new ProductRetailerModel(payload)));
       map.set('newProductRetailer', new ProductRetailerModel());
     }),
 
@@ -78,26 +79,34 @@ export default stateReducer(initialState, {
     state.withMutations(map => {
       const {productRetailer, otherRetailerDisplayName} = payload; //payload is form values
       const list = map.get('productRetailerOptions').toJS();
-      const modelName = 'newProductRetailer';
       const retailerIsOther = productRetailer === 1001; //TODO: magic number
       const productRetailerDisplayName = retailerIsOther
         ? otherRetailerDisplayName
         : list.filter(r => parseInt(r.value) === productRetailer)[0].label;
       
-      map.setIn([modelName, 'productRetailer'], productRetailer);
-      map.setIn([modelName, 'isOtherRetailer'], retailerIsOther);
-      map.setIn([modelName, 'otherRetailerDisplayName'], retailerIsOther ? otherRetailerDisplayName : null);
-      map.setIn([modelName, 'productRetailerDisplayName'], productRetailerDisplayName);
+      map.setIn([newProductRetailerModelName, 'productRetailer'], productRetailer);
+      map.setIn([newProductRetailerModelName, 'isOtherRetailer'], retailerIsOther);
+      map.setIn([newProductRetailerModelName, 'otherRetailerDisplayName'], retailerIsOther ? otherRetailerDisplayName : null);
+      map.setIn([newProductRetailerModelName, 'productRetailerDisplayName'], productRetailerDisplayName);
       map.set('addStage', 3);
     }),
 
   // Go to form 4 from 3 (review)
   [OPEN_ADD_PRODUCT_4]: (state, payload) =>
     state.withMutations(map => {
-      // const {} = payload; //payload is form values
-      if (payload === 'payloti') {
-        alert('AH');
-      }
+      const {scrapeUrl, priceSelector} = payload; //payload is form values
+      const priceSelectorValue = map.get(newProductRetailerModelName).get('isOtherRetailer') ? priceSelector : null;
+      map.setIn([newProductRetailerModelName, 'scrapeUrl'], scrapeUrl);
+      map.setIn([newProductRetailerModelName, 'priceSelector'], priceSelectorValue)
+      // const productRetailer = map.get('newProductRetailer');
+
+      // productRetailer.scrapeUrl = scrapeUrl;
+      // productRetailer.set('scrapeUrl', scrapeUrl);
+      // productRetailer.priceSelector = productRetailer.isOtherRetailer ? priceSelector : null;
+      // productRetailer.set('priceSelector', productRetailer.get('isOtherRetailer') ? priceSelector : null);
+
+      map.set('productRetailers', map.get('productRetailers').push(map.get(newProductRetailerModelName)));
+      map.set('newProductRetailer', new ProductRetailerModel());
       map.set('addStage', 4)
     }),
 

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types';
 import {
   Typography,
   Button,
-  TextField,
   withStyles,
   Grid,
   Stepper,
@@ -32,22 +31,36 @@ const styles = theme => ({
     paddingTop: '20px',
     paddingBottom: '20px',
   },
-  priceSelector: {
-    width: '50%',
+  retailerContainer: {
+    display: 'flex',
     marginTop: '20px',
     marginBottom: '20px'
   },
-  otherText: {
-    paddingTop: '20px',
+  retailerItem: {
+    width: '45%',
+    textAlign: 'center',
+    fontSize: '0.9rem',
+    fontWeight: '500',
+    alignSelf: 'center',
+    color: 'white',
+    backgroundColor: theme.palette.primary.main,
+    height: '28px',
+    borderRadius: '14px',
+    marginLeft: '5px',
+    marginRight: '5px',
+    marginBottom: '10px',
+    paddingTop: '7px'
   },
-  scrapeUrl: {
-    width: '100%',
-    marginBottom: '20px',
-    marginTop: '10px'
+  addRetailerButton: {
+    
+  },
+  submitButton: {
+    display: 'flex',
+    marginLeft: 'auto'
   }
 });
 
-class AddProduct3rdForm extends React.PureComponent {
+class AddProduct4thForm extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -66,27 +79,47 @@ class AddProduct3rdForm extends React.PureComponent {
     return touched[field] ? errors[field] : null;
   }
 
-  renderButtons() {
-    const {handleSubmit, isValid} = this.props;
+  renderRetailer(retailer, idx) {
+    return (
+      <Typography key={idx} className={this.props.classes.retailerItem}>
+        {retailer.productRetailerDisplayName}
+      </Typography>
+    );
+  }
 
-    return ( //TODO: actually wire up back instead of cancel
+  renderRetailersList() {
+    const { classes, productRetailers } = this.props;
+    
+    return (
+      <Grid container className={classes.retailerContainer}>
+        {productRetailers.map(this.renderRetailer)}
+      </Grid>
+    )
+  }
+
+  renderButtons() {
+    const {handleSubmit, classes, onAddAnotherRetailer} = this.props;
+
+    return (
       <Grid container>
-        <Grid item xs={9}>
-          {/* <Button
+        <Grid item xs={7}>
+          <Button className={classes.addRetailerButton}
             type="button"
-            variant="outlined"
-            >
-            Back
-          </Button> */}
+            variant="contained"
+            color="secondary"
+            onClick={onAddAnotherRetailer}
+          >
+            + Add Retailer
+          </Button>
         </Grid>
-        <Grid item xs={2}>
+        <Grid item xs={5}>
           <Button
             type="submit"
             variant="contained"
             color="primary"
-            onClick={handleSubmit}
-            disabled={!isValid}>
-              Next
+            className={classes.submitButton}
+            onClick={handleSubmit}>
+              Save Product
               <NavigateNext />
           </Button>
         </Grid>
@@ -97,24 +130,21 @@ class AddProduct3rdForm extends React.PureComponent {
   render() {
     const {
       classes,
-      handleChange,
-      handleBlur,
       productName,
-      newProductRetailer,
+      productRetailers
     } = this.props;
-
-    const {
-      isOtherRetailer,
-      productRetailerDisplayName
-    } = newProductRetailer.toJS();
 
     // TODO: DRY up step creation
     // TODO: DRY up common form handlers, renderButton methods across multiple components & features
 
+    const retailersWording = productRetailers.length === 1
+      ? 'this 1 retailer'
+      : `these ${productRetailers.length} retailers`;
+
     return (
       <form className={classes.paper}>
         <Typography variant="h5" className={classes.variableTitle}>
-          {productRetailerDisplayName} Details
+          Review: {productName}
         </Typography>
         <Stepper className={classes.stepper}>
           <Step completed>
@@ -123,56 +153,31 @@ class AddProduct3rdForm extends React.PureComponent {
           <Step completed>
             <StepLabel>Pick New Retailer</StepLabel>
           </Step>
-          <Step active>
+          <Step completed>
             <StepLabel>Retailer Details</StepLabel>
           </Step>
-          <Step>
+          <Step active>
             <StepLabel>Review</StepLabel>
           </Step>
         </Stepper>
         <Typography className={classes.subText}>
-          So our bunnies don&apos;t get confused, you need to provide the web URL where the price of <em>{productName}</em> is listed at {productRetailerDisplayName}:
+          Splendid! Looks like you&apos;ve given our bunnies all they need to do some price hoppin&apos; on your behalf.
         </Typography>
-        
-        <Grid container>
-          <TextField
-            id="scrapeUrl"
-            label="Product Price URL"
-            className={classes.scrapeUrl}
-            onChange={handleChange('scrapeUrl')}
-            onBlur={handleBlur('scrapeUrl')}
-            margin="normal"
-            placeholder="https://billsappliancebarn.com/product-price-page"
-            autoComplete="off"
-            error={this.hasError('scrapeUrl')}
-            helperText={this.getErrorText('scrapeUrl')} />
-          {isOtherRetailer ? <>
-            <Typography className={classes.otherText}>
-              Since {productRetailerDisplayName} isn&apos;t a retailer our bunnies are trained to hop to, we need you to tell us where on the page to get the product price, with a <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors" target="_blank">CSS Selector</a>:
-            </Typography>
-            <TextField
-              id="priceSelector"
-              label="Price CSS Selector"
-              className={classes.priceSelector}
-              onChange={handleChange('priceSelector')}
-              onBlur={handleBlur('priceSelector')}
-              margin="normal"
-              placeholder="div.price-box div.priceView-hero-price.priceView-customer-price"
-              autoComplete="off"
-              error={this.hasError('priceSelector')}
-              helperText={this.getErrorText('priceSelector')} />
-              </> : null}
-        </Grid>
+        <Typography>
+          Look over this list of {retailersWording} to make sure it looks good (or click &quot;Add Retailer&quot; below!)
+        </Typography>
+        {this.renderRetailersList()}
         {this.renderButtons()}
       </form>
     )
   }
 }
 
-AddProduct3rdForm.propTypes = {
+AddProduct4thForm.propTypes = {
   productName: PropTypes.string.isRequired,
-  newProductRetailer: PropTypes.object.isRequired,
+  productRetailers: PropTypes.array.isRequired,
   onClose: PropTypes.func.isRequired,
+  onAddAnotherRetailer: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleBlur: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
@@ -185,4 +190,4 @@ AddProduct3rdForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AddProduct3rdForm);
+export default withStyles(styles)(AddProduct4thForm);

@@ -3,17 +3,17 @@
 /* eslint-disable object-shorthand */
 import {combineReducers} from 'redux';
 import {connectRouter} from 'connected-react-router'
-import authentication from './features/authentication/reducers';
-import dashboard from './features/dashboard/reducers';
-import products from './features/products/reducers';
 import alerts from './features/alerts/reducers';
+import authentication from './features/authentication/reducers';
+import products from './features/products/reducers';
+import dashboard from './features/dashboard/reducers';
 
 const rootReducer = history => combineReducers({
   features: combineReducers({
-    authentication: authentication,
-    dashboard: dashboard,
-    products: products,
     alerts: alerts,
+    authentication: authentication,
+    products: products,
+    dashboard: dashboard,
   }),
   router: connectRouter(history),
 });
