@@ -5,10 +5,10 @@ import {
   withStyles,
 } from '@material-ui/core';
 import autobind from 'class-autobind';
-import AddProduct2ndForm from './AddProduct2ndForm';
-import {addOpen2ndSelector, loadingSelector, loadErrorSelector, productNameSelector, productRetailerOptionsSelector } from '../../selectors/addProduct';
-import {closeAddProduct, openAddProduct3} from '../../actions/addProduct';
-import {addProduct2ndFormDefaultValues, addProduct2ndFormValidationSchema} from '../../validations/AddProductValidations';
+import AddProduct3rdForm from './AddProduct3rdForm';
+import {addOpen3rdSelector, loadingSelector, loadErrorSelector, productNameSelector, newProductRetailerSelector } from '../../selectors/addProduct';
+import {closeAddProduct, openAddProduct4} from '../../actions/addProduct';
+import {addProduct3rdFormDefaultValues, addProduct3rdFormValidationSchema} from '../../validations/AddProductValidations';
 import {withFormik} from 'formik';
 import PropTypes from 'prop-types';
 
@@ -20,7 +20,7 @@ const styles = () => ({
   },
 });
 
-class AddProduct2ndModal extends React.PureComponent {
+class AddProduct3rdModal extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -47,14 +47,14 @@ class AddProduct2ndModal extends React.PureComponent {
       isSubmitting,
       isValid,
       productName,
-      productRetailerOptions
+      newProductRetailer
     } = this.props;
 
     return (
       <Modal open={open} onClose={this.onClose} className={classes.modal} >
-        <AddProduct2ndForm
+        <AddProduct3rdForm
           productName={productName}
-          productRetailerOptions={productRetailerOptions.toJS()}
+          newProductRetailer={newProductRetailer}
           values={values}
           errors={errors}
           touched={touched}
@@ -70,37 +70,37 @@ class AddProduct2ndModal extends React.PureComponent {
   }
 }
 
-AddProduct2ndModal.propTypes = {
+AddProduct3rdModal.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-const mapPropsToValues = () => addProduct2ndFormDefaultValues;
+const mapPropsToValues = () => addProduct3rdFormDefaultValues;
 
 function mapStateToProps(state) {
   return {
-    open: addOpen2ndSelector(state),
+    open: addOpen3rdSelector(state),
     loading: loadingSelector(state),
     loadError: loadErrorSelector(state),
     productName: productNameSelector(state),
-    productRetailerOptions: productRetailerOptionsSelector(state),
+    newProductRetailer: newProductRetailerSelector(state),
   };
 }
 
 const mapDispatchToProps = {
   closeAddProduct,
-  openAddProduct3,
+  openAddProduct4,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withFormik({
   mapPropsToValues,
   handleSubmit: (values, {props, resetForm}) => {
-    const {openAddProduct3} = props;
+    const {openAddProduct4} = props;
 
-    openAddProduct3(values);
+    openAddProduct4(values);
 
     resetForm();
   },
-  validationSchema: addProduct2ndFormValidationSchema,
+  validationSchema: addProduct3rdFormValidationSchema,
 })(
-  withStyles(styles)(AddProduct2ndModal)
+  withStyles(styles)(AddProduct3rdModal)
 ));

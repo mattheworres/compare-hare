@@ -29,4 +29,5 @@ export const productRetailersSelector = makeStandardSelector(addProductSelector,
 export const savingSelector = makeStandardSelector(addProductSelector, 'saving');
 export const saveErrorSelector = makeStandardSelector(addProductSelector, 'saveError');
 export const newProductIdSelector = makeStandardSelector(addProductSelector, 'newProductId');
+export const newProductRetailerSelector = makeStandardSelector(addProductSelector, 'newProductRetailer');
 

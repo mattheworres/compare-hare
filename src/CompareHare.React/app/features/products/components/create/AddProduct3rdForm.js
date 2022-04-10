@@ -11,7 +11,6 @@ import {
   Step,
   StepLabel,
   MenuItem,
-  Select,
 } from '@material-ui/core';
 import {NavigateNext} from '@material-ui/icons';
 import autobind from 'class-autobind';
@@ -34,26 +33,22 @@ const styles = theme => ({
     paddingTop: '20px',
     paddingBottom: '20px',
   },
-  productRetailer: {
+  priceSelector: {
     width: '50%',
     marginTop: '20px',
     marginBottom: '20px'
   },
-  standardRetailer: {
+  otherText: {
     paddingTop: '20px',
-    paddingBottom: '20px',
-    height: '110px'
   },
-  otherRetailerDisplayName: {
-    width: '50%',
+  scrapeUrl: {
+    width: '100%',
     marginBottom: '20px',
     marginTop: '10px'
   }
 });
 
-const OTHER_RETAILER_ID = 1001;
-
-class AddProduct2ndForm extends React.PureComponent {
+class AddProduct3rdForm extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -73,47 +68,10 @@ class AddProduct2ndForm extends React.PureComponent {
   }
 
   renderProductRetailerOptions() {  
-    return this.props.productRetailerOptions.map(option =>
+    const list = this.props.productRetailerOptions.toJS();
+    return list.map(option =>
       <MenuItem key={option.value} value={option.value}>{option.label}</MenuItem>
     );
-  }
-
-  renderRetailerOtherName() {
-    const {
-      values,
-      handleChange,
-      handleBlur,
-      productRetailerOptions,
-      classes
-    } = this.props;
-    const {productRetailer} = values;
-
-    const retailerIsOther = productRetailer === OTHER_RETAILER_ID;
-    const retailerName = !retailerIsOther
-      ? productRetailerOptions.filter(r => parseInt(r.value, 10) === productRetailer)[0].label
-      : 'Other';
-
-    return retailerIsOther
-      ? <>
-        <Typography>
-          No problem! In order to keep things straight (for you, again - the bunnies can&apos;t read!) <strong><br />
-          Go ahead and provide a name for this retailer</strong> so you remember where the prices are coming from.
-        </Typography>
-        <TextField
-          id="otherRetailerDisplayName"
-          label="Retailers Name"
-          className={classes.otherRetailerDisplayName}
-          onChange={handleChange('otherRetailerDisplayName')}
-          onBlur={handleBlur('otherRetailerDisplayName')}
-          margin="normal"
-          placeholder="Bill's Appliance Barn"
-          autoComplete="off"
-          error={this.hasError('otherRetailerDisplayName')}
-          helperText={this.getErrorText('otherRetailerDisplayName')} />
-      </>
-      : <Typography className={classes.standardRetailer}>
-        We&apos;ll ask you for details about <strong>{retailerName}&apos;s</strong> site next.
-      </Typography>
   }
 
   renderButtons() {
@@ -149,9 +107,14 @@ class AddProduct2ndForm extends React.PureComponent {
       classes,
       handleChange,
       handleBlur,
-      values,
-      productName
+      productName,
+      newProductRetailer,
     } = this.props;
+
+    const {
+      isOtherRetailer,
+      productRetailerDisplayName
+    } = newProductRetailer.toJS();
 
     // TODO: DRY up step creation
     // TODO: DRY up common form handlers, renderButton methods across multiple components & features
@@ -159,16 +122,16 @@ class AddProduct2ndForm extends React.PureComponent {
     return (
       <form className={classes.paper}>
         <Typography variant="h5" className={classes.variableTitle}>
-          Adding <em>{productName}</em>
+          {productRetailerDisplayName} Details
         </Typography>
         <Stepper className={classes.stepper}>
           <Step completed>
             <StepLabel>Product Name</StepLabel>
           </Step>
-          <Step active>
+          <Step completed>
             <StepLabel>Pick New Retailer</StepLabel>
           </Step>
-          <Step>
+          <Step active>
             <StepLabel>Retailer Details</StepLabel>
           </Step>
           <Step>
@@ -176,22 +139,37 @@ class AddProduct2ndForm extends React.PureComponent {
           </Step>
         </Stepper>
         <Typography className={classes.subText}>
-          Let&apos;s add a retailer where our bunnies will hop to and check the price of {productName}:
+          So our bunnies don&apos;t get confused, you need to provide the web URL where the price of <em>{productName}</em> is listed at {productRetailerDisplayName}:
         </Typography>
         
         <Grid container>
-          <Select
-              className={classes.productRetailer}
-              value={values.productRetailer}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              inputProps={{
-                name: 'productRetailer',
-                id: 'productRetailer',
-              }}>
-              {this.renderProductRetailerOptions()}
-          </Select>
-          {values.productRetailer ? this.renderRetailerOtherName() : null}
+          <TextField
+            id="scrapeUrl"
+            label="Product Price URL"
+            className={classes.scrapeUrl}
+            onChange={handleChange('scrapeUrl')}
+            onBlur={handleBlur('scrapeUrl')}
+            margin="normal"
+            placeholder="https://billsappliancebarn.com/product-price-page"
+            autoComplete="off"
+            error={this.hasError('scrapeUrl')}
+            helperText={this.getErrorText('scrapeUrl')} />
+          {isOtherRetailer ? <>
+            <Typography className={classes.otherText}>
+              Since {productRetailerDisplayName} isn&apos;t a retailer our bunnies are trained to hop to, we need you to tell us where on the page to get the product price, with a <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors" target="_blank">CSS Selector</a>:
+            </Typography>
+            <TextField
+              id="priceSelector"
+              label="Price CSS Selector"
+              className={classes.priceSelector}
+              onChange={handleChange('priceSelector')}
+              onBlur={handleBlur('priceSelector')}
+              margin="normal"
+              placeholder="div.price-box div.priceView-hero-price.priceView-customer-price"
+              autoComplete="off"
+              error={this.hasError('priceSelector')}
+              helperText={this.getErrorText('priceSelector')} />
+              </> : null}
         </Grid>
         {this.renderButtons()}
       </form>
@@ -199,9 +177,9 @@ class AddProduct2ndForm extends React.PureComponent {
   }
 }
 
-AddProduct2ndForm.propTypes = {
+AddProduct3rdForm.propTypes = {
   productName: PropTypes.string.isRequired,
-  productRetailerOptions: PropTypes.arrayOf(PropTypes.object).isRequired,
+  newProductRetailer: PropTypes.object.isRequired,
   onClose: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleBlur: PropTypes.func.isRequired,
@@ -215,4 +193,4 @@ AddProduct2ndForm.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(AddProduct2ndForm);
+export default withStyles(styles)(AddProduct3rdForm);

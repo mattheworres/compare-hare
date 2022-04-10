@@ -4,6 +4,7 @@ export default Record({
   id: null,
   productRetailer: null, // Corresponds to enum value
   productRetailerDisplayName: null, // For FE only, backend cares not
+  isOtherRetailer: false,
   otherRetailerDisplayName: null,
   scrapeUrl: null,
   priceSelector: null

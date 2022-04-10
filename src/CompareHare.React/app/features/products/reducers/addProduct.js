@@ -76,11 +76,19 @@ export default stateReducer(initialState, {
   // Go to form 3 from 2 or 4 (enter new retailer details)
   [OPEN_ADD_PRODUCT_3]: (state, payload) =>
     state.withMutations(map => {
-      // const {} = payload; //payload is form values
-      if (payload === 'payloti') {
-        alert('AH');
-      }
-      map.set('addStage', 3)
+      const {productRetailer, otherRetailerDisplayName} = payload; //payload is form values
+      const list = map.get('productRetailerOptions').toJS();
+      const modelName = 'newProductRetailer';
+      const retailerIsOther = productRetailer === 1001; //TODO: magic number
+      const productRetailerDisplayName = retailerIsOther
+        ? otherRetailerDisplayName
+        : list.filter(r => parseInt(r.value) === productRetailer)[0].label;
+      
+      map.setIn([modelName, 'productRetailer'], productRetailer);
+      map.setIn([modelName, 'isOtherRetailer'], retailerIsOther);
+      map.setIn([modelName, 'otherRetailerDisplayName'], retailerIsOther ? otherRetailerDisplayName : null);
+      map.setIn([modelName, 'productRetailerDisplayName'], productRetailerDisplayName);
+      map.set('addStage', 3);
     }),
 
   // Go to form 4 from 3 (review)

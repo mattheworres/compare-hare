@@ -5,6 +5,7 @@ import {ProductsTable} from './index';
 import {Grid} from '@material-ui/core';
 import AddProduct1stModal from './create/AddProduct1stModal';
 import AddProduct2ndModal from './create/AddProduct2ndModal';
+import AddProduct3rdModal from './create/AddProduct3rdModal';
 class ProductsDashboard extends React.PureComponent {
   render() {
     return (
@@ -18,6 +19,7 @@ class ProductsDashboard extends React.PureComponent {
         </Grid>
         <AddProduct1stModal />
         <AddProduct2ndModal />
+        <AddProduct3rdModal />
       </Page>
     )
   }

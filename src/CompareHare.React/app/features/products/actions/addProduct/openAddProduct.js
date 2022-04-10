@@ -31,14 +31,14 @@ export function openAddProduct2NewRetailer() {
 
 export function openAddProduct3(formValues) {
   return {
-    type: OPEN_ADD_PRODUCT_2,
+    type: OPEN_ADD_PRODUCT_3,
     payload: formValues,
   };
 }
 
 export function openAddProduct4(formValues) {
   return {
-    type: OPEN_ADD_PRODUCT_2,
+    type: OPEN_ADD_PRODUCT_4,
     payload: formValues,
   };
 }

@@ -17,23 +17,33 @@ export const addProduct2ndFormValidationSchema = Yup.object({
     .required('You must pick a retailer from the list first'),
   otherRetailerDisplayName: Yup.string()
     .when(['productRetailer'], {
-      is: 1001,
-      // is: productRetailer => {
-      //   console.log('Loggita!', productRetailer);
-      //   return parseInt(productRetailer, 10) === 1001
-      // }, // TODO: magic number
+      is: productRetailer => {
+        return parseInt(productRetailer, 10) === 1001
+      }, // TODO: magic number
       then: Yup.string()
         .required('You must give this retailer a custom display name')
-        .min(4, 'Other retailer needs a name with at least 4 characters')
-        .max(512, 'Other retailer can\'t have a name longer than 512 characters')
-        // .test('should-be-filled-out', 'You must give this retailer a custom name', function(value) {
-        //   console.log('Hey, bro, whatdup', value);
-        //   return value.length < 4;
-        // }),
+        .min(4, 'Retailer name needs to be at least 4 letters long')
+        .max(512, 'Retailer name can\'t have a name longer than 512 characters')
     })
 });
 
 export const addProduct2ndFormDefaultValues = {
-  productRetailer: null,
+  productRetailer: 0,
   otherRetailerDisplayName: ''
+};
+
+export const addProduct3rdFormValidationSchema = Yup.object({
+  scrapeUrl: Yup.string()
+    .required('You must provide a URL')
+    .url('You must provide a valid URL')
+    .max(512, 'URL cannot be longer than 512 characters'),
+  priceSelector: Yup.string()
+    .optional()
+    .min(2, 'Selector must be at least 2 characters long')
+    .max(128, 'Selector cannot be longer than 128 characters')
+})
+
+export const addProduct3rdFormDefaultValues = {
+  scrapeUrl: '',
+  priceSelector: ''
 };
