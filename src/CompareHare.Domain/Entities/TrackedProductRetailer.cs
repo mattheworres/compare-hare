@@ -23,7 +23,7 @@ namespace CompareHare.Domain.Entities
         [Required, MaxLength(512)]
         public string ScrapeUrl { get; set; }
 
-        [Required, MaxLength(128)]
+        [MaxLength(128)]
         public string PriceSelector { get; set; }
     }
 }

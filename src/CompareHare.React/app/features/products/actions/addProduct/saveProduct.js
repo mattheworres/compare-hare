@@ -8,6 +8,6 @@ export const SAVE_PRODUCT_REJECTED = `${SAVE_PRODUCT}_REJECTED`;
 export function saveProduct(productModel) {
   return {
     type: SAVE_PRODUCT,
-    payload: post('products', productModel),
+    payload: post('products/create', productModel),
   };
 }

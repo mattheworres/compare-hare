@@ -115,7 +115,7 @@ class AddProduct4thForm extends React.PureComponent {
         </Grid>
         <Grid item xs={5}>
           <Button
-            type="submit"
+            type="button"
             variant="contained"
             color="primary"
             className={classes.submitButton}

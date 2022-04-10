@@ -33,6 +33,15 @@ class AddProduct4thModal extends React.PureComponent {
     this.props.closeAddProduct();
   }
 
+  handleSubmit() {
+    const { saveProduct, productName, productRetailers } = this.props;
+
+    saveProduct({
+      name: productName,
+      productRetailers: productRetailers.toJS()
+    });
+  }
+
   render() {
     const {
       classes,
@@ -40,7 +49,6 @@ class AddProduct4thModal extends React.PureComponent {
       errors,
       handleBlur,
       handleChange,
-      handleSubmit,
       setFieldValue,
       values,
       touched,
@@ -63,7 +71,7 @@ class AddProduct4thModal extends React.PureComponent {
           setFieldValue={setFieldValue}
           handleBlur={handleBlur}
           handleChange={handleChange}
-          handleSubmit={handleSubmit}
+          handleSubmit={this.handleSubmit}
           onAddAnotherRetailer={this.onAddAnotherRetailer}
           onClose={this.onClose} />
       </Modal>

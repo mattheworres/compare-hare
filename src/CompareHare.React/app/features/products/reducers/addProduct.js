@@ -34,6 +34,7 @@ const newProductRetailerModelName = 'newProductRetailer';
 export default stateReducer(initialState, {
   [OPEN_ADD_PRODUCT_PENDING]: state =>
     state.withMutations(map => {
+      map.set('newProductId', null);
       map.set('loading', true);
       map.set('loadError', null);
     }),
@@ -98,12 +99,6 @@ export default stateReducer(initialState, {
       const priceSelectorValue = map.get(newProductRetailerModelName).get('isOtherRetailer') ? priceSelector : null;
       map.setIn([newProductRetailerModelName, 'scrapeUrl'], scrapeUrl);
       map.setIn([newProductRetailerModelName, 'priceSelector'], priceSelectorValue)
-      // const productRetailer = map.get('newProductRetailer');
-
-      // productRetailer.scrapeUrl = scrapeUrl;
-      // productRetailer.set('scrapeUrl', scrapeUrl);
-      // productRetailer.priceSelector = productRetailer.isOtherRetailer ? priceSelector : null;
-      // productRetailer.set('priceSelector', productRetailer.get('isOtherRetailer') ? priceSelector : null);
 
       map.set('productRetailers', map.get('productRetailers').push(map.get(newProductRetailerModelName)));
       map.set('newProductRetailer', new ProductRetailerModel());
@@ -126,8 +121,10 @@ export default stateReducer(initialState, {
 
   [SAVE_PRODUCT_FULFILLED]: (state, payload) =>
     state.withMutations(map => {
+      console.log('Save fulfilled, we got payload', JSON.stringify(payload));
       const {id} = payload.data;
       map.set('saving', false);
       map.set('newProductId', id);
+      map.set('addOpen', false);
     })
 });
