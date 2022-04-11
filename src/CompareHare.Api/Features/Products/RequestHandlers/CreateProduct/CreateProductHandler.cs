@@ -41,10 +41,8 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.CreateProduct
             await _dbContext.TrackedProductRetailers.AddRangeAsync(newRetailers);
             await _dbContext.SaveChangesAsync();
 
-            // TODO: left here; need to use a generic model to slim down response to client;
-            // Need to clean up the response on the client to refresh table and display success
-            // + as well as display loading during save process
-            return Ok(newProduct);
+            // TODO: update frontend to take into consideration 0 scrapes with retailers
+            return Ok(newProduct.Id);
         }
     }
 }

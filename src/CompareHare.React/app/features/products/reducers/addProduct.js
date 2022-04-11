@@ -53,6 +53,7 @@ export default stateReducer(initialState, {
       map.set('addOpen', true);
       map.set('addStage', 1);
       map.set('productName', null);
+      map.set('productRetailers', new List());
       map.set('productRetailerOptions', fromJS(retailers));
     }),
 
@@ -105,7 +106,7 @@ export default stateReducer(initialState, {
       map.set('addStage', 4)
     }),
 
-  [CLOSE_ADD_PRODUCT]: state => state.set('addOpen', false),
+  [CLOSE_ADD_PRODUCT]: () => initialState,
 
   [SAVE_PRODUCT_PENDING]: state =>
     state.withMutations(map => {
@@ -121,8 +122,7 @@ export default stateReducer(initialState, {
 
   [SAVE_PRODUCT_FULFILLED]: (state, payload) =>
     state.withMutations(map => {
-      console.log('Save fulfilled, we got payload', JSON.stringify(payload));
-      const {id} = payload.data;
+      const id = parseInt(payload.data);
       map.set('saving', false);
       map.set('newProductId', id);
       map.set('addOpen', false);

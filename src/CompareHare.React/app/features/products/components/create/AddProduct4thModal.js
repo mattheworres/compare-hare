@@ -6,9 +6,18 @@ import {
 } from '@material-ui/core';
 import autobind from 'class-autobind';
 import AddProduct4thForm from './AddProduct4thForm';
-import {addOpen4thSelector, loadingSelector, loadErrorSelector, productNameSelector, productRetailersSelector } from '../../selectors/addProduct';
+import {
+  addOpen4thSelector,
+  loadingSelector,
+  loadErrorSelector,
+  productNameSelector,
+  productRetailersSelector,
+  savingSelector
+} from '../../selectors/addProduct';
 import {closeAddProduct, openAddProduct2NewRetailer, saveProduct} from '../../actions/addProduct';
 import PropTypes from 'prop-types';
+import toastr from 'toastr';
+import {LoadingModal} from '../../../shared/components';
 
 const styles = () => ({
   modal: {
@@ -39,6 +48,8 @@ class AddProduct4thModal extends React.PureComponent {
     saveProduct({
       name: productName,
       productRetailers: productRetailers.toJS()
+    }, () => {
+      toastr.success(`Success! ${productName} was saved!`);
     });
   }
 
@@ -46,34 +57,22 @@ class AddProduct4thModal extends React.PureComponent {
     const {
       classes,
       open,
-      errors,
-      handleBlur,
-      handleChange,
-      setFieldValue,
-      values,
-      touched,
-      isSubmitting,
-      isValid,
+      saving,
       productName,
       productRetailers
     } = this.props;
 
     return (
       <Modal open={open} onClose={this.onClose} className={classes.modal} >
-        <AddProduct4thForm
-          productName={productName}
-          productRetailers={productRetailers.toJS()}
-          values={values}
-          errors={errors}
-          touched={touched}
-          isSubmitting={isSubmitting}
-          isValid={isValid}
-          setFieldValue={setFieldValue}
-          handleBlur={handleBlur}
-          handleChange={handleChange}
-          handleSubmit={this.handleSubmit}
-          onAddAnotherRetailer={this.onAddAnotherRetailer}
-          onClose={this.onClose} />
+        <>
+          <AddProduct4thForm
+            productName={productName}
+            productRetailers={productRetailers.toJS()}
+            handleSubmit={this.handleSubmit}
+            onAddAnotherRetailer={this.onAddAnotherRetailer}
+            onClose={this.onClose} />
+          <LoadingModal open={saving} message="Saving product..." />
+        </>
       </Modal>
     );
   }
@@ -90,6 +89,7 @@ function mapStateToProps(state) {
     loadError: loadErrorSelector(state),
     productName: productNameSelector(state),
     productRetailers: productRetailersSelector(state),
+    saving: savingSelector(state)
   };
 }
 

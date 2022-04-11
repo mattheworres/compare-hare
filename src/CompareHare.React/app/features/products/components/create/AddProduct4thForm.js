@@ -68,18 +68,6 @@ class AddProduct4thForm extends React.PureComponent {
     autobind(this);
   }
 
-  hasError(field) {
-    const {touched, errors} = this.props;
-
-    return Boolean(touched[field]) && Boolean(errors[field]);
-  }
-
-  getErrorText(field) {
-    const {touched, errors} = this.props;
-
-    return touched[field] ? errors[field] : null;
-  }
-
   renderRetailer(retailer, idx) {
     return (
       <Typography key={idx} className={this.props.classes.retailerItem}>
@@ -180,14 +168,6 @@ AddProduct4thForm.propTypes = {
   onClose: PropTypes.func.isRequired,
   onAddAnotherRetailer: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  handleBlur: PropTypes.func.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  setFieldValue: PropTypes.func.isRequired,
-  values: PropTypes.object.isRequired,
-  errors: PropTypes.object.isRequired,
-  touched: PropTypes.object.isRequired,
-  isSubmitting: PropTypes.bool.isRequired,
-  isValid: PropTypes.bool.isRequired,
   classes: PropTypes.object.isRequired,
 };
 

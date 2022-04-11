@@ -11,11 +11,13 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.CreateProduct
         public CreateProductMappingProfile() {
             CreateMap<CreateProductRetailerModel, TrackedProductRetailer>()
                 .ForMember(d => d.Id, mce => mce.Ignore())
+                .ForMember(d => d.Enabled, mce => mce.MapFrom(s => true))
                 .ForMember(d => d.ProductRetailer, mce => mce.MapFrom(s => (ProductRetailer)s.ProductRetailer))
             ;
 
             CreateMap<CreateProductModel, TrackedProduct>()
                 .ForMember(d => d.UserId, mce => mce.MapFrom<CurrentUserIdResolver>())
+                .ForMember(d => d.Enabled, mce => mce.MapFrom(s => true))
                 .ForMember(d => d.Id, mce => mce.Ignore())
             ;
         }
