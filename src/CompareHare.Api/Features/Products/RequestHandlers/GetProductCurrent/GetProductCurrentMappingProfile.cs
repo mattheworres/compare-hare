@@ -1,3 +1,4 @@
+using System;
 using AutoMapper;
 using CompareHare.Api.Features.Products.Mapping;
 using CompareHare.Api.Features.Products.Models;
@@ -13,13 +14,12 @@ namespace CompareHare.Api.Features.Products.GetProductCurrent
                 .ForMember(d => d.ProductName, mce => mce.MapFrom(s => s.Name))
                 .ForMember(d => d.TrackedProductId, mce => mce.MapFrom(s => s.Id));
 
-            // CreateMap<TrackedProductRetailer, ProductRetailersListModel>()
-            //     .ForMember(d => d.LastUpdated, mce => mce.Ignore())
-            //     .ForMember(d => d.PriceIsManual, mce => mce.Ignore())
-            //     .ForMember(d => d.RetailerName, mce => mce.MapFrom<RetailersNameValueResolver>())
-            //     .ForMember(d => d.TrackedProductRetailerId, mce => mce.MapFrom(s => s.Id))
-            //     .ForMember(d => d.LastUpdated, mce => mce.MapFrom<ProductPricesLastUpdatedResolver>())
-            //     ;
+            CreateMap<TrackedProductRetailer, ProductRetailersListModel>()
+                .ForMember(d => d.LastUpdated, mce => mce.Ignore())
+                .ForMember(d => d.PriceIsManual, mce => mce.Ignore())
+                .ForMember(d => d.RetailerName, mce => mce.MapFrom<RetailersNameValueResolver>())
+                .ForMember(d => d.TrackedProductRetailerId, mce => mce.MapFrom(s => s.Id))
+                ;
 
             CreateMap<ProductRetailerPrice, ProductRetailersListModel>()
                 .ForMember(d => d.RetailerName, mce => mce.MapFrom(s => s.TrackedProductRetailer.ProductRetailer.ToString()))

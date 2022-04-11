@@ -7,7 +7,7 @@ namespace CompareHare.Api.Features.Products.Models
         public int TrackedProductId { get; set; }
         public int TrackedProductRetailerId { get; set; }
         public string RetailerName { get; set; }
-        public DateTimeOffset LastUpdated { get; set; }
+        public DateTimeOffset? LastUpdated { get; set; }
         public bool Enabled { get; set; }
         public bool PriceIsManual { get; set; }
         public bool HasScrapingFootnote { get; set; }

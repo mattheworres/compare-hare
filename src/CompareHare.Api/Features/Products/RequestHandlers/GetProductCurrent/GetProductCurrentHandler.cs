@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,7 +31,15 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProductCurrent
                 .FirstAsync();
 
             var model = _mapper.Map<ProductCurrentDisplayModel>(product);
-            model.ProductRetailers = _mapper.Map<IEnumerable<ProductRetailersListModel>>(product.Prices);
+
+            // Go by retailer to ensure added retailers are shown in list without prices
+            foreach(var retailer in product.Retailers) {
+                model.ProductRetailers.Add(
+                    product.Prices.Any(x => x.ProductRetailer == retailer.ProductRetailer)
+                        ? _mapper.Map<ProductRetailersListModel>(product.Prices.First(x => x.ProductRetailer == retailer.ProductRetailer))
+                        : _mapper.Map<ProductRetailersListModel>(retailer)
+                    );
+            }
 
             return Ok(model);
         }

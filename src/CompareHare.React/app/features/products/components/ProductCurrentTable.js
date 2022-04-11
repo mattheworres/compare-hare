@@ -1,6 +1,6 @@
 import React from 'react';
 import autobind from 'class-autobind';
-import {Button, Card, CardActions, CardContent, CircularProgress, Fab, Paper, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography, withStyles} from '@material-ui/core';
+import {Button, Card, CardActions, CardContent, CircularProgress, Fab, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography, withStyles} from '@material-ui/core';
 import {connect} from 'react-redux';
 // import {loadProductCurrent} from '../actions/productDisplay';
 import {
@@ -9,12 +9,13 @@ import {
   deletingSelector,
   hasErrorSelector
 } from '../selectors/productDisplay';
-import {Delete, Edit, Add, ToggleOn, ToggleOffOutlined, ArrowDropUp, ArrowDropDown} from '@material-ui/icons';
+import {Delete, Edit, Add, AddCircle, CheckCircle, Close, ToggleOff, ToggleOn, ArrowDropUp, ArrowDropDown, MoreVert} from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import moment from 'moment';
+import {retrieveAttributeValue} from '../../shared/services/displayHelpers';
 
-const ENABLED_ICON = <ToggleOn color="primary" />
-const DISABLED_ICON = <ToggleOffOutlined color="disabled" />
+const ENABLED_ICON = <CheckCircle color="primary" />
+const DISABLED_ICON = <Close color="disabled" />
 const printMoney = amount => amount.toLocaleString('en-US', { style: 'currency', currency: 'USD'});
 
 const styles = theme => ({
@@ -46,16 +47,26 @@ class ProductCurrentTable extends React.PureComponent {
     autobind(this);
 
     this.state = {
-      productId: null
+      productId: null,
+      menuAnchor: null,
+      menuRetailerId: null
     };
   }
 
-  // componentDidMount() {
-  //   const {match, loadProductCurrent} = this.props;
-  //   const {trackedProductId} = match.params;
+  openRetailerMenu(event) {
+    const retailerId = retrieveAttributeValue(event, 'data-tracked-product-retailer-id');
+    this.setState({
+      menuAnchor: event.currentTarget,
+      menuRetailerId: retailerId
+    })
+  }
 
-  //   loadProductCurrent(trackedProductId);
-  // }
+  closeRetailerMenu() {
+    this.setState({
+      menuAnchor: null,
+      menuRetailerId: null
+    });
+  }
 
   renderLoading() {
     return (
@@ -91,40 +102,99 @@ class ProductCurrentTable extends React.PureComponent {
     );
   }
 
+  renderMenu() {
+    const {menuAnchor, menuRetailerId} = this.state;
+    const open = Boolean(menuAnchor && menuRetailerId);
+    let retailer;
+    let retailerEnabled = false;
+
+    if (open) {
+      const {productRetailers} = this.props.product || {};
+      retailer = productRetailers.filter(r => r.id === menuRetailerId)[0];
+      retailerEnabled = retailer && retailer.enabled;
+    }
+
+    return (
+      <Menu
+        id="retailer-menu"
+        anchorEl={menuAnchor}
+        open={open}
+        onClose={this.closeRetailerMenu}
+        PaperProps={{
+          style: {
+            maxHeight: 216,
+            width: 225
+          }
+        }}
+        >
+          <MenuItem>
+            <ListItemIcon><Add /></ListItemIcon>
+            <ListItemText inset primary="Add Data Manually" />
+          </MenuItem>
+          <MenuItem disabled>
+            <ListItemIcon>{retailerEnabled ? <ToggleOff /> : <ToggleOn />}</ListItemIcon>
+            <ListItemText inset primary={retailerEnabled ? 'Disable' : 'Enable'} />
+          </MenuItem>
+          <MenuItem disabled>
+            <ListItemIcon><Edit /></ListItemIcon>
+            <ListItemText inset primary="Edit" />
+          </MenuItem>
+          <MenuItem disabled>
+            <ListItemIcon><Delete /></ListItemIcon>
+            <ListItemText inset primary="Delete" />
+          </MenuItem>
+      </Menu>
+    )
+  }
+
   renderRetailer(retailer) {
     const { classes } = this.props;
     const UP_ICON = <ArrowDropUp className={classes.negative} />
     const DOWN_ICON = <ArrowDropDown className={classes.positive} />
-    const emptyDisplay = '&mdash;';
-    
+    const emptyDisplay = <>&mdash;</>;
     const enabledIcon = retailer.enabled ? ENABLED_ICON : DISABLED_ICON;
-    const priceDisplay = retailer.price ? <Typography variant="h6" color="primary">{printMoney(retailer.price)}</Typography> : emptyDisplay;
-    const amountChangePositive = retailer.amountChange && retailer.amountChange > 0;
-    const amountChangeDisplay = retailer.amountChange
-      ? <Typography variant="h6" className={amountChangePositive ? classes.negative : classes.positive}>
-          {amountChangePositive ? UP_ICON : DOWN_ICON}
-          {printMoney(retailer.amountChange)}
-        </Typography>
+    let tableData;
+
+    if (retailer.lastUpdated !== null) {
+      const priceDisplay = retailer.price ? <Typography variant="h6" color="primary">{printMoney(retailer.price)}</Typography> : emptyDisplay;
+      const amountChangePositive = retailer.amountChange && retailer.amountChange > 0;
+      const amountChangeDisplay = retailer.amountChange
+        ? <Typography variant="h6" className={amountChangePositive ? classes.negative : classes.positive}>
+            {amountChangePositive ? UP_ICON : DOWN_ICON}
+            {printMoney(retailer.amountChange)}
+          </Typography>
+        : emptyDisplay;
+      const percentChangePositive = retailer.percentChange && retailer.percentChange > 0;
+      const percentChangeDisplay = retailer.percentChange
+        ? <Typography variant="h6" className={percentChangePositive ? classes.negative : classes.positive}>
+            {percentChangePositive ? UP_ICON : DOWN_ICON}
+            {(retailer.percentChange * 100).toFixed(2)}%
+          </Typography>
       : emptyDisplay;
-    const percentChangePositive = retailer.percentChange && retailer.percentChange > 0;
-    const percentChangeDisplay = retailer.percentChange
-      ? <Typography variant="h6" className={percentChangePositive ? classes.negative : classes.positive}>
-          {percentChangePositive ? UP_ICON : DOWN_ICON}
-          {(retailer.percentChange * 100).toFixed(2)}%
-        </Typography>
-     : emptyDisplay;
+
+      tableData = <>
+        <TableCell>{moment(retailer.lastUpdated || '12/12/1900').format('MMMM Do YYYY')}</TableCell>
+        <TableCell align="right">{priceDisplay}</TableCell>
+        <TableCell align="right">{amountChangeDisplay}</TableCell>
+        <TableCell align="right">{percentChangeDisplay}</TableCell>
+      </>;
+    } else {
+      tableData = <>
+        <TableCell colSpan={4}>
+          <Typography color="textSecondary">
+            Oopy daisy, our bunnies haven&apos;t hopped out to check {retailer.retailerName} yet. Hang tight!
+          </Typography>
+        </TableCell>
+      </>
+    }
 
     return (
       <TableRow key={retailer.id}>
         <TableCell>{enabledIcon}</TableCell>
         <TableCell>{retailer.retailerName}</TableCell>
-        <TableCell>{moment(retailer.lastUpdated || '12/12/1900').format('MMMM Do YYYY')}</TableCell>
-        <TableCell align="right">{priceDisplay}</TableCell>
-        <TableCell align="right">{amountChangeDisplay}</TableCell>
-        <TableCell align="right">{percentChangeDisplay}</TableCell>
+        {tableData}
         <TableCell align="right">
-          <Fab size="medium" color="primary"  data-tracked-product-retailer-id={retailer.trackedProductRetailerId}><Edit /></Fab>&nbsp;
-          <Fab size="medium" color="secondary"  data-tracked-product-retailer-id={retailer.trackedProductRetailerId}><Delete /></Fab>
+          <Fab size="small" color="default" data-tracked-product-retailer-id={retailer.trackedProductRetailerId} onClick={this.openRetailerMenu}><MoreVert /></Fab>
         </TableCell>
       </TableRow>
     );
@@ -162,11 +232,12 @@ class ProductCurrentTable extends React.PureComponent {
         <TableFooter>
           <TableRow>
             <TableCell colSpan={4}>
-              <Button size="small" color="primary"><Add />&nbsp;Add a new product</Button>
+              <Button size="small" color="primary"><AddCircle />&nbsp;Add a new retailer</Button>
             </TableCell>
           </TableRow>
         </TableFooter>
         </Table>
+        {this.renderMenu()}
       </Paper>
     );
   }
