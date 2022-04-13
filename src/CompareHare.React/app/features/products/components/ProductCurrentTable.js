@@ -110,9 +110,14 @@ class ProductCurrentTable extends React.PureComponent {
 
     if (open) {
       const {productRetailers} = this.props.product || {};
-      retailer = productRetailers.filter(r => r.id === menuRetailerId)[0];
+      retailer = productRetailers.filter(r => r.trackedProductRetailerId === menuRetailerId)[0];
       retailerEnabled = retailer && retailer.enabled;
     }
+
+    // Left here: need to add:
+    // - manual data entry modal
+    // - manual data entry endpoint
+    // - check dem scrapes
 
     return (
       <Menu
@@ -189,7 +194,7 @@ class ProductCurrentTable extends React.PureComponent {
     }
 
     return (
-      <TableRow key={retailer.id}>
+      <TableRow key={retailer.trackedProductRetailerId}>
         <TableCell>{enabledIcon}</TableCell>
         <TableCell>{retailer.retailerName}</TableCell>
         {tableData}
