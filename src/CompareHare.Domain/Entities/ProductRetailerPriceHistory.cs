@@ -25,6 +25,8 @@ namespace CompareHare.Domain.Entities
         public bool HasScrapingFootnote { get; set; }
         public string Footnote { get; set; }
 
+        public bool PriceIsManual { get; set; }
+
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset? ModifiedDate { get; set; }
     }
