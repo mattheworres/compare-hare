@@ -24,8 +24,9 @@ namespace CompareHare.Api.Features.Products.GetProductCurrent
             CreateMap<ProductRetailerPrice, ProductRetailersListModel>()
                 .ForMember(d => d.RetailerName, mce => mce.MapFrom(s => s.TrackedProductRetailer.ProductRetailer.ToString()))
                 .ForMember(d => d.TrackedProductRetailerId, mce => mce.MapFrom(s => s.TrackedProductRetailerId))
-                .ForMember(d => d.LastUpdated, mce => mce.MapFrom(s => s.ModifiedDate))
+                .ForMember(d => d.LastUpdated, mce => mce.MapFrom(s => s.PriceDate))
                 .ForMember(d => d.Enabled, mce => mce.MapFrom(s => s.TrackedProductRetailer.Enabled))
+                .ForMember(d => d.Price, mce => mce.MapFrom(s => s.Price))
                 ;
         }
     }

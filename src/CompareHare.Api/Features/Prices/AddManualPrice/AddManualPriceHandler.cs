@@ -42,6 +42,8 @@ namespace CompareHare.Api.Features.Prices.AddManualPrice
 
             var newPriceHistory = _mapper.Map<ProductRetailerPriceHistory>(model);
             _mapper.Map(trackedProductRetailer, newPriceHistory);
+            await _dbContext.ProductRetailerPriceHistories.AddAsync(newPriceHistory);
+            await _dbContext.SaveChangesAsync();
 
             // If there's a previous price, use it to calc our diff fields on the new ph
             if (closestPreviousPriceHistory != null) {

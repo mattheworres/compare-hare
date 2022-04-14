@@ -14,6 +14,8 @@ import {AddManualPriceModel} from '../models';
 
 const initialState = new Map({
     addManualOpen: false,
+    trackedProductId: null,
+    trackedProductRetailerId: null,
     loading: false,
     dateChecking: false,
     dateCheck: null,
@@ -25,7 +27,9 @@ const initialState = new Map({
 export default stateReducer(initialState, {
   [OPEN_ADD_MANUAL]: (state, payload) =>
     state.withMutations(map => {
-      map.setIn(['manualModel', 'trackedProductRetailerId'], payload.trackedProductRetailerId);
+      const {trackedProductId, trackedProductRetailerId} = payload;
+      map.set('trackedProductId', trackedProductId);
+      map.set('trackedProductRetailerId', trackedProductRetailerId);
       map.set('addManualOpen', true);
     }),
 
@@ -41,7 +45,9 @@ export default stateReducer(initialState, {
 
   [SAVE_MANUAL_REJECTED]: (state, payload) =>
     state.withMutations(map => {
-      console.log('Error:', payload.data);
+      const { response } = payload;
+      console.log('Error:', response.data);
+      map.set('saveError', response.data);
       map.set('saving', false);
     }),
 

@@ -30,8 +30,8 @@ namespace CompareHare.Domain.Features.PriceScrapers
         public async Task<ProductRetailerPrice> ScrapePrice(int trackedProductId, int trackedProductRetailerId, ProductRetailer productRetailer, string productUrl, string priceSelector, IRequester requester = null)
         {
             // var urlToScrape = _hostingEnvironment.IsDevelopment() ? GetLocalhostProductUrl(productRetailer) : productUrl;
-            // var urlToScrape = productUrl;
-            var urlToScrape = GetLocalhostProductUrl(productRetailer);
+            var urlToScrape = productUrl;
+            // var urlToScrape = GetLocalhostProductUrl(productRetailer);
             Log.Logger.Information("Scraping price, URL of {0} for retailer {1}", urlToScrape, productRetailer.ToString());
             var document = await _parserWrapper.OpenUrlAsync(urlToScrape, requester);
             Log.Logger.Information("URL opening complete, waiting now...");
@@ -40,7 +40,7 @@ namespace CompareHare.Domain.Features.PriceScrapers
             var selector = _productHelper.GetRetailerSelector(productRetailer);
             var priceElement = document.QuerySelector(selector == null ? priceSelector : selector);
 
-            if (productUrl.IndexOf("localhost") != -1 && priceElement == null) {
+            if (/*productUrl.IndexOf("localhost") != -1 &&*/ priceElement == null) {
                 throw new Exception(document.DocumentElement.OuterHtml);
             }
             // var message = priceElement != null ? "we have an element!!" : "no element to speak of, sad panda";
@@ -52,7 +52,8 @@ namespace CompareHare.Domain.Features.PriceScrapers
                 TrackedProductId = trackedProductId,
                 TrackedProductRetailerId = trackedProductRetailerId,
                 ProductRetailer = productRetailer,
-                Price = ParsePriceByRetailer(priceElement, productRetailer)
+                Price = ParsePriceByRetailer(priceElement, productRetailer),
+                PriceDate = DateTime.Now.Date
             };
         }
 

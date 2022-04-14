@@ -40,13 +40,13 @@ namespace CompareHare.Api.Features.Prices.Services
             foreach (var product in activeProducts)
             {
                 var random = new Random();
-                var throttleSeconds = random.Next(THROTTLE_MIN, THROTTLE_MAX);
-
-                var limiter = TimeLimiter.GetFromMaxCountByInterval(1, TimeSpan.FromSeconds(throttleSeconds));
+                
                 var enabledRetailers = await _dbContext.TrackedProductRetailers.Where(x => x.TrackedProductId == product.Id && x.Enabled == true).ToListAsync();
                 Log.Logger.Information("For product #{0} we have {1} retailers...", product.Id, enabledRetailers.Count());
                 foreach (var productRetailer in enabledRetailers)
                 {
+                    var throttleSeconds = random.Next(THROTTLE_MIN, THROTTLE_MAX);
+                    var limiter = TimeLimiter.GetFromMaxCountByInterval(1, TimeSpan.FromSeconds(throttleSeconds));
                     Log.Logger.Information("About to scrape for retailer {0} for product {1}...", productRetailer.ProductRetailer.ToString(), product.Id);
                     var scraper = _scraperPicker.PickPriceScraper(productRetailer.ProductRetailer);
 

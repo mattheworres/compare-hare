@@ -41,7 +41,10 @@ namespace CompareHare.Api.Features.Prices.AddManualPrice
             }
 
             var dateAlreadyExists = await _dbContext.ProductRetailerPriceHistories.AnyAsync(x =>
-                x.CreatedDate.Date == model.PriceDate.Date
+                x.TrackedProductRetailerId == model.TrackedProductRetailerId &&
+                x.PriceDate.Date.Year == model.PriceDate.Date.Year &&
+                x.PriceDate.Date.Month == model.PriceDate.Date.Month &&
+                x.PriceDate.Date.Day == model.PriceDate.Date.Day
             );
 
             if (dateAlreadyExists) {

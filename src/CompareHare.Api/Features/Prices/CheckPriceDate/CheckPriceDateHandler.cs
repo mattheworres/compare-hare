@@ -6,6 +6,7 @@ using CompareHare.Domain.Features.Authentication.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace CompareHare.Api.Features.Prices.CheckPriceDate
 {
@@ -43,7 +44,9 @@ namespace CompareHare.Api.Features.Prices.CheckPriceDate
             var hasExistingPriceOnDate = await _dbContext.ProductRetailerPriceHistories.AnyAsync(x =>
                 x.TrackedProductId == trackedProduct.Id &&
                 x.TrackedProductRetailerId == trackedProductRetailer.Id &&
-                x.CreatedDate.Date == datePart);
+                x.PriceDate.Year == datePart.Year &&
+                x.PriceDate.Month == datePart.Month &&
+                x.PriceDate.Day == datePart.Day);
 
             return Ok(!hasExistingPriceOnDate);
         }

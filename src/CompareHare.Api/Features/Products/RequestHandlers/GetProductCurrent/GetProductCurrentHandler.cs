@@ -5,9 +5,11 @@ using AutoMapper;
 using CompareHare.Api.Features.Products.Models;
 using CompareHare.Api.MediatR;
 using CompareHare.Domain.Entities;
+using CompareHare.Domain.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace CompareHare.Api.Features.Products.RequestHandlers.GetProductCurrent
 {
@@ -26,8 +28,8 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProductCurrent
         {
             var product = await _dbContext.TrackedProducts
                 .Where(x => x.Id == message.Model.TrackedProductId)
-                .Include(x => x.Prices)
                 .Include(x => x.Retailers)
+                .Include(x => x.Prices)
                 .FirstAsync();
 
             var model = _mapper.Map<ProductCurrentDisplayModel>(product);
@@ -35,8 +37,8 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProductCurrent
             // Go by retailer to ensure added retailers are shown in list without prices
             foreach(var retailer in product.Retailers) {
                 model.ProductRetailers.Add(
-                    product.Prices.Any(x => x.ProductRetailer == retailer.ProductRetailer)
-                        ? _mapper.Map<ProductRetailersListModel>(product.Prices.First(x => x.ProductRetailer == retailer.ProductRetailer))
+                        product.Prices.Any(x => x.TrackedProductRetailerId == retailer.Id)
+                        ? _mapper.Map<ProductRetailersListModel>(product.Prices.FirstOrDefault(x => x.TrackedProductRetailerId == retailer.Id))
                         : _mapper.Map<ProductRetailersListModel>(retailer)
                     );
             }

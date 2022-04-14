@@ -25,7 +25,7 @@ namespace CompareHare.Domain.Services
                     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Safari/605.1.15"
                 };
                 var random = new Random();
-                var number = random.Next(4);
+                var number = random.Next(3);
                 var userAgent = USER_AGENTS[number];
                 Log.Logger.Information("Using User Agent of: " + userAgent);
                 defaultRequester = new DefaultHttpRequester(userAgent);
@@ -45,7 +45,7 @@ namespace CompareHare.Domain.Services
             loaderOptions.IsResourceLoadingEnabled = true;
 
             var angleSharpConfig = Configuration.Default
-                // .WithJs()
+                .WithJs()
                 .WithCulture("en-US")
                 .WithDefaultCookies()
                 .WithDefaultLoader(loaderOptions)
@@ -54,7 +54,7 @@ namespace CompareHare.Domain.Services
                 .With(defaultRequester);
             var angleSharpContext = BrowsingContext.New(angleSharpConfig);
             // angleSharpContext.OpenAsync()
-            return await angleSharpContext.OpenAsync(url);
+            return await angleSharpContext.OpenAsync(url).WaitUntilAvailable();
         }
     }
 

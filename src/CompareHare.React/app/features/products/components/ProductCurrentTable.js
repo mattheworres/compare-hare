@@ -2,7 +2,7 @@ import React from 'react';
 import autobind from 'class-autobind';
 import {Button, Card, CardActions, CardContent, CircularProgress, Fab, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography, withStyles} from '@material-ui/core';
 import {connect} from 'react-redux';
-// import {loadProductCurrent} from '../actions/productDisplay';
+import {openAddManual} from '../actions/addManual';
 import {
   loadingSelector,
   productSelector,
@@ -13,6 +13,7 @@ import {Delete, Edit, Add, AddCircle, CheckCircle, Close, ToggleOff, ToggleOn, A
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {retrieveAttributeValue} from '../../shared/services/displayHelpers';
+import AddManualPriceModal from './addManual/AddManualPriceModal';
 
 const ENABLED_ICON = <CheckCircle color="primary" />
 const DISABLED_ICON = <Close color="disabled" />
@@ -37,7 +38,9 @@ const styles = theme => ({
   negative: {
     color: '#f44336'
   },
-
+  emptyRow: {
+    textAlign: 'center'
+  }
 });
 
 class ProductCurrentTable extends React.PureComponent {
@@ -53,11 +56,18 @@ class ProductCurrentTable extends React.PureComponent {
     };
   }
 
+  handleAddPriceClick() {
+    const { product } = this.props;
+    this.props.openAddManual(product.trackedProductId, this.state.menuRetailerId)
+    this.closeRetailerMenu();
+  }
+
   openRetailerMenu(event) {
     const retailerId = retrieveAttributeValue(event, 'data-tracked-product-retailer-id');
+
     this.setState({
       menuAnchor: event.currentTarget,
-      menuRetailerId: retailerId
+      menuRetailerId: retailerId,
     })
   }
 
@@ -115,8 +125,6 @@ class ProductCurrentTable extends React.PureComponent {
     }
 
     // Left here: need to add:
-    // - manual data entry modal
-    // - manual data entry endpoint
     // - check dem scrapes
 
     return (
@@ -132,9 +140,9 @@ class ProductCurrentTable extends React.PureComponent {
           }
         }}
         >
-          <MenuItem>
+          <MenuItem onClick={this.handleAddPriceClick}>
             <ListItemIcon><Add /></ListItemIcon>
-            <ListItemText inset primary="Add Data Manually" />
+            <ListItemText inset primary="Add Price (manual)" />
           </MenuItem>
           <MenuItem disabled>
             <ListItemIcon>{retailerEnabled ? <ToggleOff /> : <ToggleOn />}</ListItemIcon>
@@ -186,7 +194,7 @@ class ProductCurrentTable extends React.PureComponent {
     } else {
       tableData = <>
         <TableCell colSpan={4}>
-          <Typography color="textSecondary">
+          <Typography color="textSecondary" className={classes.emptyRow}>
             Oopy daisy, our bunnies haven&apos;t hopped out to check {retailer.retailerName} yet. Hang tight!
           </Typography>
         </TableCell>
@@ -199,7 +207,9 @@ class ProductCurrentTable extends React.PureComponent {
         <TableCell>{retailer.retailerName}</TableCell>
         {tableData}
         <TableCell align="right">
-          <Fab size="small" color="default" data-tracked-product-retailer-id={retailer.trackedProductRetailerId} onClick={this.openRetailerMenu}><MoreVert /></Fab>
+          <Fab size="small" color="default"
+            data-tracked-product-retailer-id={retailer.trackedProductRetailerId}
+            onClick={this.openRetailerMenu}><MoreVert /></Fab>
         </TableCell>
       </TableRow>
     );
@@ -243,6 +253,7 @@ class ProductCurrentTable extends React.PureComponent {
         </TableFooter>
         </Table>
         {this.renderMenu()}
+        <AddManualPriceModal />
       </Paper>
     );
   }
@@ -262,7 +273,7 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = {
-  // loadProductCurrent,
+  openAddManual
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ProductCurrentTable));

@@ -5,10 +5,18 @@ import {
   withStyles,
 } from '@material-ui/core';
 import autobind from 'class-autobind';
-import AddProduct1stForm from './AddProduct1stForm';
-import {addOpen1stSelector, loadingSelector, loadErrorSelector } from '../../selectors/addProduct';
-import {closeAddProduct, openAddProduct2} from '../../actions/addProduct';
-import {addProduct1stFormDefaultValues, addProduct1stFormValidationSchema} from '../../validations/AddProductValidations';
+import AddManualPriceForm from './AddManualPriceForm';
+import {
+  addManualOpenSelector,
+  loadingSelector,
+  saveErrorSelector,
+  dateCheckSelector,
+  trackedProductRetailerIdSelector,
+  trackedProductIdSelector
+} from '../../selectors/addManual';
+import {closeAddManual, checkManualDate, saveManual} from '../../actions/addManual';
+import {loadProductCurrent} from '../../actions/productDisplay';
+import {addManualFormDefaultValues, addManualFormValidationSchema} from '../../validations/AddManualValidations';
 import {withFormik} from 'formik';
 import PropTypes from 'prop-types';
 
@@ -20,7 +28,7 @@ const styles = () => ({
   },
 })
 
-class AddProduct1stModal extends React.PureComponent {
+class AddManualPriceModal extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -28,9 +36,9 @@ class AddProduct1stModal extends React.PureComponent {
   }
 
   onClose() {
-    const {closeAddProduct, resetForm} = this.props;
+    const {closeAddManual, resetForm} = this.props;
     resetForm();
-    closeAddProduct();
+    closeAddManual();
   }
 
   render() {
@@ -45,15 +53,23 @@ class AddProduct1stModal extends React.PureComponent {
       values,
       touched,
       isSubmitting,
-      isValid 
+      isValid,
+      checkManualDate,
+      dateCheck,
+      trackedProductRetailerId,
+      saveError
     } = this.props;
 
     return (
       <Modal open={open} onClose={this.onClose} className={classes.modal} >
-        <AddProduct1stForm
+        <AddManualPriceForm
           values={values}
           errors={errors}
+          saveError={saveError}
           touched={touched}
+          trackedProductRetailerId={trackedProductRetailerId}
+          checkManualDate={checkManualDate}
+          dateCheck={dateCheck}
           isSubmitting={isSubmitting}
           isValid={isValid}
           setFieldValue={setFieldValue}
@@ -66,35 +82,49 @@ class AddProduct1stModal extends React.PureComponent {
   }
 }
 
-AddProduct1stModal.propTypes = {
+AddManualPriceModal.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-const mapPropsToValues = () => addProduct1stFormDefaultValues;
+const mapPropsToValues = () => addManualFormDefaultValues;
 
 function mapStateToProps(state) {
   return {
-    open: addOpen1stSelector(state),
+    open: addManualOpenSelector(state),
     loading: loadingSelector(state),
-    loadError: loadErrorSelector(state)
+    saveError: saveErrorSelector(state),
+    dateCheck: dateCheckSelector(state),
+    trackedProductRetailerId: trackedProductRetailerIdSelector(state),
+    trackedProductId: trackedProductIdSelector(state)
   };
 }
 
 const mapDispatchToProps = {
-  closeAddProduct,
-  openAddProduct2,
+  closeAddManual,
+  checkManualDate,
+  saveManual,
+  loadProductCurrent
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withFormik({
   mapPropsToValues,
   handleSubmit: (values, {props, resetForm}) => {
-    const {openAddProduct2} = props;
+    const {
+      trackedProductId,
+      trackedProductRetailerId,
+      saveManual,
+      closeAddManual,
+      loadProductCurrent
+    } = props;
 
-    openAddProduct2(values);
+    saveManual(trackedProductRetailerId, values, () => {
+      loadProductCurrent(trackedProductId);
+      closeAddManual();
+    });
 
     resetForm();
   },
-  validationSchema: addProduct1stFormValidationSchema,
+  validationSchema: addManualFormValidationSchema,
 })(
-  withStyles(styles)(AddProduct1stModal)
+  withStyles(styles)(AddManualPriceModal)
 ));

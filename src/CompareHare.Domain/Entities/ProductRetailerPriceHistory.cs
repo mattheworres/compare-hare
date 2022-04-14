@@ -27,6 +27,8 @@ namespace CompareHare.Domain.Entities
 
         public bool PriceIsManual { get; set; }
 
+        public DateTimeOffset PriceDate { get; set; }
+
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset? ModifiedDate { get; set; }
     }
