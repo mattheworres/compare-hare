@@ -12,9 +12,11 @@ namespace CompareHare.Api.Features.Prices.Services
     {
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
+        private readonly IPriceHelper _priceHelper;
 
-        public PricePersister(IConfiguration configuration, IMapper mapper)
+        public PricePersister(IConfiguration configuration, IMapper mapper, IPriceHelper priceHelper)
         {
+            _priceHelper = priceHelper;
             _mapper = mapper;
             _configuration = configuration;
         }
@@ -31,17 +33,20 @@ namespace CompareHare.Api.Features.Prices.Services
             {
                 ProductRetailerPrice priceToUpdate;
                 // Load current Price + Price History if there is one
-                if (currentPriceId.HasValue && price.Price.HasValue) {
+                if (currentPriceId.HasValue && price.Price.HasValue)
+                {
                     priceToUpdate = context.ProductRetailerPrices.Find(currentPriceId.Value);
                     var oldPriceHistory = context.ProductRetailerPriceHistories.Find(priceToUpdate.ProductRetailerPriceHistoryId);
 
                     // Calculate change values for new price
-                    priceToUpdate.AmountChange = price.Price.Value - oldPriceHistory.Price.Value;
-                    priceToUpdate.PercentChange = -(1-(price.Price.Value / oldPriceHistory.Price.Value));
+                    priceToUpdate.AmountChange = _priceHelper.CalculatePriceChange(price.Price.Value, oldPriceHistory.Price.Value);
+                    priceToUpdate.PercentChange = _priceHelper.CalculatePriceChangePercentage(price.Price.Value, oldPriceHistory.Price.Value);
                     Log.Logger.Information("Price change of {0} ({1}% change) for retailer {2}", priceToUpdate.AmountChange.Value, priceToUpdate.PercentChange.Value * 100, retailerName);
                     // Update existing price: price, change fields, PH Id
                     _mapper.Map(price, priceToUpdate);
-                } else {
+                }
+                else
+                {
                     priceToUpdate = price;
                     Log.Logger.Information("We got a new price here for {0}...", retailerName);
 

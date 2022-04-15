@@ -6,6 +6,7 @@ using CompareHare.Domain.Entities;
 using Serilog;
 using CompareHare.Domain.Services.Interfaces;
 using CompareHare.Domain.Entities.Constants;
+using System.Threading;
 
 namespace CompareHare.Api.Features.Prices.Services
 {
@@ -49,7 +50,7 @@ namespace CompareHare.Api.Features.Prices.Services
                     Log.Logger.Information("Throttling for {0} seconds, please wait...", throttleSeconds);
 
                     // await limiter;
-                    Task.Delay(throttleSeconds * 1000);
+                    Thread.Sleep(throttleSeconds * 1000);
 
                     Log.Logger.Information("Throttling complete, attempting to scrape...");
 

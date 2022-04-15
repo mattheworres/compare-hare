@@ -13,6 +13,8 @@ namespace CompareHare.Api.IoC
         {
             builder.RegisterAssemblyTypes(ThisAssembly)
                    .AsClosedTypesOf(typeof(IJobRunner<>));
+            builder.RegisterAssemblyTypes(ThisAssembly)
+                    .AsClosedTypesOf(typeof(ISyncJobRunner<>));
         }
     }
 }
