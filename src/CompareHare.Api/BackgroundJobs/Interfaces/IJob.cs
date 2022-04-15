@@ -6,6 +6,6 @@ namespace CompareHare.Api.BackgroundJobs.Interfaces
 {
     public interface IJob : IFeatureService
     {
-        void Run(CancellationToken ct);
+        Task Run(CancellationToken ct);
     }
 }
