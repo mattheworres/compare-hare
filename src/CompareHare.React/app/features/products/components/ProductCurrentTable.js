@@ -33,10 +33,12 @@ const styles = theme => ({
     ...theme.mixins.gutters()
   },
   positive: {
-    color: '#4caf50'
+    color: '#4caf50',
+    verticalAlign: 'bottom'
   },
   negative: {
-    color: '#f44336'
+    color: '#f44336',
+    verticalAlign: 'bottom'
   },
   emptyRow: {
     textAlign: 'center'
@@ -170,30 +172,29 @@ class ProductCurrentTable extends React.PureComponent {
 
     if (retailer.lastUpdated !== null) {
       const priceDisplay = retailer.price ? <Typography variant="h6" color="primary">{printMoney(retailer.price)}</Typography> : emptyDisplay;
+      // const percentChangePositive = retailer.percentChange && retailer.percentChange > 0;
+      const percentChangeDisplay = retailer.percentChange
+        ? ` (${(retailer.percentChange * 100).toFixed(2)}%)`
+      : null;
       const amountChangePositive = retailer.amountChange && retailer.amountChange > 0;
       const amountChangeDisplay = retailer.amountChange
-        ? <Typography variant="h6" className={amountChangePositive ? classes.negative : classes.positive}>
+        ? <Typography variant="subheading" className={amountChangePositive ? classes.negative : classes.positive}>
             {amountChangePositive ? UP_ICON : DOWN_ICON}
             {printMoney(retailer.amountChange)}
+            {percentChangeDisplay}
           </Typography>
         : emptyDisplay;
-      const percentChangePositive = retailer.percentChange && retailer.percentChange > 0;
-      const percentChangeDisplay = retailer.percentChange
-        ? <Typography variant="h6" className={percentChangePositive ? classes.negative : classes.positive}>
-            {percentChangePositive ? UP_ICON : DOWN_ICON}
-            {(retailer.percentChange * 100).toFixed(2)}%
-          </Typography>
-      : emptyDisplay;
+      
 
       tableData = <>
         <TableCell>{moment(retailer.lastUpdated || '12/12/1900').format('MMMM Do YYYY')}</TableCell>
         <TableCell align="right">{priceDisplay}</TableCell>
         <TableCell align="right">{amountChangeDisplay}</TableCell>
-        <TableCell align="right">{percentChangeDisplay}</TableCell>
+        {/* <TableCell align="right">{percentChangeDisplay}</TableCell> */}
       </>;
     } else {
       tableData = <>
-        <TableCell colSpan={4}>
+        <TableCell colSpan={3}>
           <Typography color="textSecondary" className={classes.emptyRow}>
             Oopy daisy, our bunnies haven&apos;t hopped out to check {retailer.retailerName} yet. Hang tight!
           </Typography>
@@ -239,7 +240,7 @@ class ProductCurrentTable extends React.PureComponent {
               <TableCell>Last Updated</TableCell>
               <TableCell align="right">Price</TableCell>
               <TableCell align="right">Last change</TableCell>
-              <TableCell align="right">Last change (%)</TableCell>
+              {/* <TableCell align="right">Last change (%)</TableCell> */}
               <TableCell>&nbsp;</TableCell>
             </TableRow>
           </TableHead>

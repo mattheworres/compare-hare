@@ -27,7 +27,7 @@ namespace CompareHare.Api.AppStartup
             //ScheduleRecurringJobs<IDefaultRecurringJob>("BatchJobs", configuration, container, configuration["Hangfire:BatchJobSchedule"]);
             ScheduleRecurringJobs<IOfferLoaderJob>("OfferLoaderJob", configuration, container, configuration["Hangfire:OfferLoaderRunnerSchedule"]);
             ScheduleRecurringJobs<IAlertAssessorJob>("AlertAssessorJob", configuration, container, configuration["Hangfire:AlertAssessorRunnerSchedule"]);
-            ScheduleRecurringJobs<IPriceLoaderJob>("PriceLoaderJob", configuration, container, configuration["Hangfire:PriceScraperRunnerSchedule"]);
+            ScheduleRecurringSyncJobs<IPriceLoaderJob>("PriceLoaderJob", configuration, container, configuration["Hangfire:PriceScraperRunnerSchedule"]);
         }
 
         private static string BuildConnectionString(string connectionString)
@@ -65,6 +65,34 @@ namespace CompareHare.Api.AppStartup
                         Log.Error(ex, "Error starting jobs");
                     }
                 });
+            }
+        }
+
+        private static void ScheduleRecurringSyncJobs<TJob>(string jobId, IConfiguration configuration, IContainer container, string schedule)
+            where TJob : ISyncJob
+        {
+            if (!string.IsNullOrEmpty(schedule))
+            {
+                RecurringJob.AddOrUpdate<ISyncJobRunner<TJob>>(jobId, jobRunner => jobRunner.Run(), schedule, EasternTimeZone());
+            }
+            else
+            {
+                RecurringJob.RemoveIfExists(jobId);
+            }
+
+            if (configuration["Hangfire:RunJobsOnStartup"] == "True")
+            {
+                try
+                {
+                    using (var lifetimeScope = container.BeginLifetimeScope())
+                    {
+                        lifetimeScope.Resolve<ISyncJobRunner<TJob>>().Run();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "Error starting jobs");
+                }
             }
         }
 

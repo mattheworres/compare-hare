@@ -1,5 +1,4 @@
 using System.Reflection;
-using System.Threading.Tasks;
 using AutoMapper;
 using CompareHare.Api.Features.Prices.Services.Interfaces;
 using CompareHare.Domain.Entities;
@@ -20,7 +19,7 @@ namespace CompareHare.Api.Features.Prices.Services
             _configuration = configuration;
         }
 
-        public async Task PersistNewPrice(ProductRetailerPrice price, int? currentPriceId)
+        public void PersistNewPrice(ProductRetailerPrice price, int? currentPriceId)
         {
             var dbOptionsBuilder = GetDbContextOptionsBuilder();
             var retailerName = price.ProductRetailer.ToString();

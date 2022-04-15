@@ -5,6 +5,6 @@ namespace CompareHare.Api.Features.Prices.Services.Interfaces
 {
     public interface IPriceScraperRunner : IFeatureService
     {
-        Task LoadAllPrices();
+        void LoadAllPrices();
     }
 }

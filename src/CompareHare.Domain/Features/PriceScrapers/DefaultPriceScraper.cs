@@ -27,13 +27,13 @@ namespace CompareHare.Domain.Features.PriceScrapers
             _productHelper = productHelper;
         }
 
-        public async Task<ProductRetailerPrice> ScrapePrice(int trackedProductId, int trackedProductRetailerId, ProductRetailer productRetailer, string productUrl, string priceSelector, IRequester requester = null)
+        public ProductRetailerPrice ScrapePrice(int trackedProductId, int trackedProductRetailerId, ProductRetailer productRetailer, string productUrl, string priceSelector, IRequester requester = null)
         {
             // var urlToScrape = _hostingEnvironment.IsDevelopment() ? GetLocalhostProductUrl(productRetailer) : productUrl;
             var urlToScrape = productUrl;
             // var urlToScrape = GetLocalhostProductUrl(productRetailer);
             Log.Logger.Information("Scraping price, URL of {0} for retailer {1}", urlToScrape, productRetailer.ToString());
-            var document = await _parserWrapper.OpenUrlAsync(urlToScrape, requester);
+            var document = _parserWrapper.OpenUrlSync(urlToScrape, requester);
             Log.Logger.Information("URL opening complete, waiting now...");
             // await Task.Delay(5000);
             // Log.Logger.Information("Sleep is done, whoopie");
@@ -53,7 +53,8 @@ namespace CompareHare.Domain.Features.PriceScrapers
                 TrackedProductRetailerId = trackedProductRetailerId,
                 ProductRetailer = productRetailer,
                 Price = ParsePriceByRetailer(priceElement, productRetailer),
-                PriceDate = DateTime.Now.Date
+                PriceDate = DateTime.Now.Date,
+                PriceIsManual = false
             };
         }
 

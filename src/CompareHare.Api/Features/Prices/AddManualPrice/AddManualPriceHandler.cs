@@ -56,7 +56,7 @@ namespace CompareHare.Api.Features.Prices.AddManualPrice
                 closestNextPriceHistory.AmountChange = closestNextPriceHistory.Price.Value - newPriceHistory.Price.Value;
                 closestNextPriceHistory.PercentChange = -(1-(closestNextPriceHistory.Price.Value / newPriceHistory.Price.Value));
             } else { // if there's no next price, we know we need to update the existing price linked to match this price history (it just became the leader)
-                var existingPrice = await _dbContext.ProductRetailerPrices.FirstOrDefaultAsync(x => x.ProductRetailer == trackedProductRetailer.ProductRetailer);
+                var existingPrice = await _dbContext.ProductRetailerPrices.FirstOrDefaultAsync(x => x.TrackedProductRetailerId == trackedProductRetailer.Id);
 
                 if (existingPrice == null) { // Create a new one
                     var newPrice = _mapper.Map<ProductRetailerPrice>(newPriceHistory);

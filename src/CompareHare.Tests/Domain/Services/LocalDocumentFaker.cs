@@ -7,13 +7,18 @@ using Moq;
 using System.Threading;
 using CompareHare.Domain.Services;
 using System.Collections.Generic;
-using AngleSharp;
 
 namespace CompareHare.Tests.Domain.Services
 {
     public class LocalDocumentFaker : ILocalDocumentFaker
     {
         // Path: Path.Combine(Directory.GetCurrentDirectory(), "Domain/Features/OfferLoaders/PA_Response.html")
+        public IDocument GetFakeDocumentSync(string pathToLocalDocument)
+        {
+            var parserWrapper = new ParserWrapper();
+            var requesterMock = GetDefaultRequesterMock(pathToLocalDocument);
+            return parserWrapper.OpenUrlSync("http://askjdjakj", requesterMock.Object);
+        }
         public async Task<IDocument> GetFakeDocument(string pathToLocalDocument)
         {
             var parserWrapper = new ParserWrapper();

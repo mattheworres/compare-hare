@@ -9,8 +9,6 @@ using CompareHare.Tests.Domain.Services;
 using AngleSharp.Io;
 using System.IO;
 using Moq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
 
 namespace CompareHare.Tests.Domain.Features.Services
 {
@@ -21,7 +19,7 @@ namespace CompareHare.Tests.Domain.Features.Services
         private const string HD_SELECTOR = "div.price-format__large.price-format__main-price span:nth-of-type(2)";
         private const string BB_SELECTOR = "div.price-box div.priceView-hero-price.priceView-customer-price span:nth-of-type(1)";
 
-        private async Task<float> TestMockedScraper(string relativePathToResponseFile, ProductRetailer retailer)
+        private float TestMockedScraper(string relativePathToResponseFile, ProductRetailer retailer)
         {
             using (var autoMock = AutoMock.GetLoose())
             {
@@ -32,8 +30,8 @@ namespace CompareHare.Tests.Domain.Features.Services
                 //     .Returns("Hosting:Development");
                 var localDocumentFaker = new LocalDocumentFaker();
                 var pathToFakeDoc = Path.Combine(Directory.GetCurrentDirectory(), relativePathToResponseFile);
-                var fakeDocument = await localDocumentFaker.GetFakeDocument(pathToFakeDoc);
-                mockedWrapper.Setup(x => x.OpenUrlAsync(It.IsAny<string>(), It.IsAny<IRequester>())).ReturnsAsync(fakeDocument);
+                var fakeDocument = localDocumentFaker.GetFakeDocumentSync(pathToFakeDoc);
+                mockedWrapper.Setup(x => x.OpenUrlSync(It.IsAny<string>(), It.IsAny<IRequester>())).Returns(fakeDocument);
                 autoMock.Provide(mockedWrapper);
                 // autoMock.Provide(mockEnvironment);
                 var parserHelper = new ParserHelper();
@@ -42,37 +40,37 @@ namespace CompareHare.Tests.Domain.Features.Services
                 autoMock.Provide<IProductHelper>(productHelper);
 
                 var sut = autoMock.Create<DefaultPriceScraper>();
-                var response = await sut.ScrapePrice(1, 1, retailer, DEFAULT_URL, null);
+                var response = sut.ScrapePrice(1, 1, retailer, DEFAULT_URL, null);
 
                 return response.Price.HasValue ? response.Price.Value : 0;
             }
         }
 
         [Fact]
-        public async void ItShouldScrapeLowesCorrectly()
+        public void ItShouldScrapeLowesCorrectly()
         {
-            var response = await TestMockedScraper("Domain/MockDocs/Products/Lowes_Response.html", ProductRetailer.Lowes);
+            var response = TestMockedScraper("Domain/MockDocs/Products/Lowes_Response.html", ProductRetailer.Lowes);
             response.ShouldBe(2099f);
         }
 
         [Fact]
-        public async void ItShouldScrapeHomeDepotCorrectly()
+        public void ItShouldScrapeHomeDepotCorrectly()
         {
-            var response = await TestMockedScraper("Domain/MockDocs/Products/HD_Response.html", ProductRetailer.HomeDepot);
+            var response = TestMockedScraper("Domain/MockDocs/Products/HD_Response.html", ProductRetailer.HomeDepot);
             response.ShouldBe(2098f);
         }
 
         [Fact]
-        public async void ItShouldScrapeBestBuyCorrectly()
+        public void ItShouldScrapeBestBuyCorrectly()
         {
-            var response = await TestMockedScraper("Domain/MockDocs/Products/BB_Response.html", ProductRetailer.BestBuy);
+            var response = TestMockedScraper("Domain/MockDocs/Products/BB_Response.html", ProductRetailer.BestBuy);
             response.ShouldBe(2099.99f);
         }
 
         [Fact]
-        public async void ItShouldScrapeAppliancesConnectionCorrectly()
+        public void ItShouldScrapeAppliancesConnectionCorrectly()
         {
-            var response = await TestMockedScraper("Domain/MockDocs/Products/AppliancesConnection_Response.html", ProductRetailer.AppliancesConnection);
+            var response = TestMockedScraper("Domain/MockDocs/Products/AppliancesConnection_Response.html", ProductRetailer.AppliancesConnection);
             response.ShouldBe(2099.00f);
         }
     }
