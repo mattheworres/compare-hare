@@ -65,14 +65,15 @@ namespace CompareHare.Api.Features.Prices.Services
                         Log.Logger.Information("Got an exception, no can do for this one pal");
                         var retailer = productRetailer.ProductRetailer;
                         var retailerIsOther = retailer == ProductRetailer.Other;
+                        var exceptionMessage = string.Format("{0} Stack Trace: {1}", ex.Message.ToString(), ex.StackTrace.ToString());
                         var newException = new ProductPriceScrapingException()
                         {
                             TrackedProductId = product.Id,
                             TrackedProductRetailerId = productRetailer.Id,
                             ProductRetailer = retailer,
                             Url = productRetailer.ScrapeUrl,
-                            Selector = retailerIsOther ? productRetailer.PriceSelector : _productHelper.GetRetailerSelector(retailer),
-                            Error = ex.Message.ToString()
+                            Selector = _productHelper.GetRetailerSelector(retailer, productRetailer.PriceSelector),
+                            Error = exceptionMessage
                         };
 
                         _dbContext.ProductPriceScrapingExceptions.Add(newException);

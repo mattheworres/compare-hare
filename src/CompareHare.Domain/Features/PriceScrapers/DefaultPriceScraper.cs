@@ -33,15 +33,19 @@ namespace CompareHare.Domain.Features.PriceScrapers
             var urlToScrape = productUrl;
             // var urlToScrape = GetLocalhostProductUrl(productRetailer);
             Log.Logger.Information("Scraping price, URL of {0} for retailer {1}", urlToScrape, productRetailer.ToString());
-            var document = _parserWrapper.OpenUrlSync(urlToScrape, requester);
+            var scrapeConfig = _productHelper.GetRetailerScrapeConfiguration(productRetailer);
+            var document = _parserWrapper.OpenUrlSync(urlToScrape, requester, scrapeConfig);
             Log.Logger.Information("URL opening complete, waiting now...");
             // await Task.Delay(5000);
             // Log.Logger.Information("Sleep is done, whoopie");
-            var selector = _productHelper.GetRetailerSelector(productRetailer);
-            var priceElement = document.QuerySelector(selector == null ? priceSelector : selector);
+            var selector = _productHelper.GetRetailerSelector(productRetailer, priceSelector);
+            var priceElement = document != null ? document.QuerySelector(selector) : null;
 
-            if (/*productUrl.IndexOf("localhost") != -1 &&*/ priceElement == null) {
-                throw new Exception(document.DocumentElement.OuterHtml);
+            if (/*productUrl.IndexOf("localhost") != -1 &&*/ document == null || priceElement == null) {
+                var message = document != null
+                    ? string.Format("HTML: {0}", document.DocumentElement.OuterHtml)
+                    : "Document was null";
+                throw new Exception(message);
             }
             // var message = priceElement != null ? "we have an element!!" : "no element to speak of, sad panda";
             // Log.Logger.Information("And done searching for element." + message);
@@ -52,15 +56,15 @@ namespace CompareHare.Domain.Features.PriceScrapers
                 TrackedProductId = trackedProductId,
                 TrackedProductRetailerId = trackedProductRetailerId,
                 ProductRetailer = productRetailer,
-                Price = ParsePriceByRetailer(priceElement, productRetailer),
+                Price = ParsePriceByRetailer(priceElement, productRetailer, priceSelector),
                 PriceDate = DateTime.Now.Date,
                 PriceIsManual = false
             };
         }
 
-        private float ParsePriceByRetailer(IElement priceElement, ProductRetailer productRetailer)
+        private float ParsePriceByRetailer(IElement priceElement, ProductRetailer productRetailer, string defaultSelector)
         {
-            var selector = _productHelper.GetRetailerSelector(productRetailer);
+            var selector = _productHelper.GetRetailerSelector(productRetailer, defaultSelector);
             var roughScrapedPrice = priceElement.Text().Trim();
 
             return _parserHelper.ParseCurrencyWithSymbol(roughScrapedPrice);

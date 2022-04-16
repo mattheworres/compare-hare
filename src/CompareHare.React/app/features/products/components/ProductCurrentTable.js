@@ -167,27 +167,36 @@ class ProductCurrentTable extends React.PureComponent {
     const UP_ICON = <ArrowDropUp className={classes.negative} />
     const DOWN_ICON = <ArrowDropDown className={classes.positive} />
     const emptyDisplay = <>&mdash;</>;
+    const {
+      price,
+      percentChange,
+      amountChange,
+      lastUpdated,
+      retailerName,
+      trackedProductRetailerId,
+      scrapeUrl
+    } = retailer;
     const enabledIcon = retailer.enabled ? ENABLED_ICON : DISABLED_ICON;
     let tableData;
 
-    if (retailer.lastUpdated !== null) {
-      const priceDisplay = retailer.price ? <Typography variant="h6" color="primary">{printMoney(retailer.price)}</Typography> : emptyDisplay;
-      // const percentChangePositive = retailer.percentChange && retailer.percentChange > 0;
-      const percentChangeDisplay = retailer.percentChange
-        ? ` (${(retailer.percentChange * 100).toFixed(2)}%)`
+    if (lastUpdated !== null) {
+      const priceDisplay = price ? <Typography variant="h6" color="primary">{printMoney(price)}</Typography> : emptyDisplay;
+      // const percentChangePositive = percentChange && percentChange > 0;
+      const percentChangeDisplay = percentChange
+        ? ` (${(percentChange * 100).toFixed(2)}%)`
       : null;
-      const amountChangePositive = retailer.amountChange && retailer.amountChange > 0;
-      const amountChangeDisplay = retailer.amountChange
+      const amountChangePositive = amountChange && amountChange > 0;
+      const amountChangeDisplay = amountChange
         ? <Typography variant="subheading" className={amountChangePositive ? classes.negative : classes.positive}>
             {amountChangePositive ? UP_ICON : DOWN_ICON}
-            {printMoney(retailer.amountChange)}
+            {printMoney(amountChange)}
             {percentChangeDisplay}
           </Typography>
         : emptyDisplay;
       
 
       tableData = <>
-        <TableCell>{moment(retailer.lastUpdated || '12/12/1900').format('MMMM Do YYYY')}</TableCell>
+        <TableCell>{moment(lastUpdated || '12/12/1900').format('MMMM Do YYYY')}</TableCell>
         <TableCell align="right">{priceDisplay}</TableCell>
         <TableCell align="right">{amountChangeDisplay}</TableCell>
         {/* <TableCell align="right">{percentChangeDisplay}</TableCell> */}
@@ -196,20 +205,22 @@ class ProductCurrentTable extends React.PureComponent {
       tableData = <>
         <TableCell colSpan={3}>
           <Typography color="textSecondary" className={classes.emptyRow}>
-            Oopy daisy, our bunnies haven&apos;t hopped out to check {retailer.retailerName} yet. Hang tight!
+            Oopy daisy, our bunnies haven&apos;t hopped out to check {retailerName} yet. Hang tight!
           </Typography>
         </TableCell>
       </>
     }
 
+    const retailerNameAnchor = <a href={scrapeUrl} target='_blank'>{retailerName}</a>;
+
     return (
-      <TableRow key={retailer.trackedProductRetailerId}>
+      <TableRow key={trackedProductRetailerId}>
         <TableCell>{enabledIcon}</TableCell>
-        <TableCell>{retailer.retailerName}</TableCell>
+        <TableCell>{retailerNameAnchor}</TableCell>
         {tableData}
         <TableCell align="right">
           <Fab size="small" color="default"
-            data-tracked-product-retailer-id={retailer.trackedProductRetailerId}
+            data-tracked-product-retailer-id={trackedProductRetailerId}
             onClick={this.openRetailerMenu}><MoreVert /></Fab>
         </TableCell>
       </TableRow>

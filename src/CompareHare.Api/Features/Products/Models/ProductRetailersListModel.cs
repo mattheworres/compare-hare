@@ -9,6 +9,7 @@ namespace CompareHare.Api.Features.Products.Models
         public string RetailerName { get; set; }
         public DateTimeOffset? LastUpdated { get; set; }
         public bool Enabled { get; set; }
+        public string ScrapeUrl { get; set; }
         public bool PriceIsManual { get; set; }
         public bool HasScrapingFootnote { get; set; }
         public string Footnote { get; set; }

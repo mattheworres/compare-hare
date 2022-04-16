@@ -46,6 +46,8 @@
 		<PackageReference Include="Handlebars.Net" Version="2.1.0"/>
 		<PackageReference Include="AngleSharp" Version="0.16.1"/>
 		<PackageReference Include="RateLimiter" Version="2.2.0"/>
+		<PackageReference Include="AngleSharp.Js" Version="0.15.0"/>
+		<PackageReference Include="AngleSharp.Io" Version="0.16.0"/>
 	</ItemGroup>
 	<ItemGroup>
 		<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0"/>
