@@ -34,11 +34,14 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProductCurrent
 
             // Go by retailer to ensure added retailers are shown in list without prices
             foreach(var retailer in product.Retailers) {
-                model.ProductRetailers.Add(
-                        product.Prices.Any(x => x.TrackedProductRetailerId == retailer.Id)
-                        ? _mapper.Map<ProductRetailersListModel>(product.Prices.FirstOrDefault(x => x.TrackedProductRetailerId == retailer.Id))
-                        : _mapper.Map<ProductRetailersListModel>(retailer)
-                    );
+                var listModel = _mapper.Map<ProductRetailersListModel>(retailer);
+
+                if (product.Prices.Any(x => x.TrackedProductRetailerId == retailer.Id)) {
+                    var retailerPrice = product.Prices.FirstOrDefault(x => x.TrackedProductRetailerId == retailer.Id);
+                    _mapper.Map(retailerPrice, listModel);
+                }
+
+                model.ProductRetailers.Add(listModel);
             }
 
             return Ok(model);

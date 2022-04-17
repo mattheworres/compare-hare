@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace CompareHare.Api.Features.Products.Models
@@ -8,6 +9,14 @@ namespace CompareHare.Api.Features.Products.Models
         public string Name { get; set; }
 
         public bool Enabled { get; set; }
-        public IEnumerable<string> Retailers { get; set; }
+
+        // Represents lowest price, regardless of 
+        public string LowPriceRetailerName { get; set; }
+        public DateTimeOffset? PriceLastUpdated { get; set;}
+        public float? Price { get; set; }
+        public float? AmountChange { get; set; }
+        public float? PercentChange { get; set; }
+        public bool PriceIsManual { get; set; }
+        public bool HasScrapingFootnote { get; set; }
     }
 }

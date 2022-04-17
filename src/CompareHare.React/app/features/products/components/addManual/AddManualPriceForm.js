@@ -65,8 +65,8 @@ class AddManualPriceForm extends React.PureComponent {
   renderError() {
     const {saveError} = this.props;
 
-    const errorDisplay = Object.keys(saveError).forEach((errorKey, index) => {
-      <Typography key={index} color="error"><strong>{errorKey}</strong>: {saveError[errorKey][0]}</Typography>
+    const errorDisplay = Object.keys(saveError).map((errorKey, index) => {
+      return (<Typography key={index} color="error"><strong>{errorKey}</strong>: {saveError[errorKey][0]}</Typography>);
     });
 
     return (

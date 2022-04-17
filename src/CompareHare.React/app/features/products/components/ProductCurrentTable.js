@@ -9,15 +9,15 @@ import {
   deletingSelector,
   hasErrorSelector
 } from '../selectors/productDisplay';
-import {Delete, Edit, Add, AddCircle, CheckCircle, Close, ToggleOff, ToggleOn, ArrowDropUp, ArrowDropDown, MoreVert} from '@material-ui/icons';
+import {Delete, Edit, Add, AddCircle, CheckCircle, Close, ToggleOff, ToggleOn, MoreVert} from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import {retrieveAttributeValue} from '../../shared/services/displayHelpers';
+import {retrieveAttributeValue, printMoney} from '../../shared/services/displayHelpers';
 import AddManualPriceModal from './addManual/AddManualPriceModal';
+import PriceChangeDisplay from '../../shared/components/PriceChangeDisplay';
 
 const ENABLED_ICON = <CheckCircle color="primary" />
 const DISABLED_ICON = <Close color="disabled" />
-const printMoney = amount => amount.toLocaleString('en-US', { style: 'currency', currency: 'USD'});
 
 const styles = theme => ({
   root: {
@@ -54,7 +54,8 @@ class ProductCurrentTable extends React.PureComponent {
     this.state = {
       productId: null,
       menuAnchor: null,
-      menuRetailerId: null
+      menuRetailerId: null,
+      menuRetailerName: null
     };
   }
 
@@ -76,7 +77,8 @@ class ProductCurrentTable extends React.PureComponent {
   closeRetailerMenu() {
     this.setState({
       menuAnchor: null,
-      menuRetailerId: null
+      menuRetailerId: null,
+      menuRetailerName: null
     });
   }
 
@@ -126,9 +128,6 @@ class ProductCurrentTable extends React.PureComponent {
       retailerEnabled = retailer && retailer.enabled;
     }
 
-    // Left here: need to add:
-    // - check dem scrapes
-
     return (
       <Menu
         id="retailer-menu"
@@ -164,8 +163,7 @@ class ProductCurrentTable extends React.PureComponent {
 
   renderRetailer(retailer) {
     const { classes } = this.props;
-    const UP_ICON = <ArrowDropUp className={classes.negative} />
-    const DOWN_ICON = <ArrowDropDown className={classes.positive} />
+    
     const emptyDisplay = <>&mdash;</>;
     const {
       price,
@@ -181,25 +179,11 @@ class ProductCurrentTable extends React.PureComponent {
 
     if (lastUpdated !== null) {
       const priceDisplay = price ? <Typography variant="h6" color="primary">{printMoney(price)}</Typography> : emptyDisplay;
-      // const percentChangePositive = percentChange && percentChange > 0;
-      const percentChangeDisplay = percentChange
-        ? ` (${(percentChange * 100).toFixed(2)}%)`
-      : null;
-      const amountChangePositive = amountChange && amountChange > 0;
-      const amountChangeDisplay = amountChange
-        ? <Typography variant="subheading" className={amountChangePositive ? classes.negative : classes.positive}>
-            {amountChangePositive ? UP_ICON : DOWN_ICON}
-            {printMoney(amountChange)}
-            {percentChangeDisplay}
-          </Typography>
-        : emptyDisplay;
-      
 
       tableData = <>
         <TableCell>{moment(lastUpdated || '12/12/1900').format('MMMM Do YYYY')}</TableCell>
         <TableCell align="right">{priceDisplay}</TableCell>
-        <TableCell align="right">{amountChangeDisplay}</TableCell>
-        {/* <TableCell align="right">{percentChangeDisplay}</TableCell> */}
+        <TableCell align="right"><PriceChangeDisplay amountChange={amountChange} percentChange={percentChange} /></TableCell>
       </>;
     } else {
       tableData = <>
@@ -251,7 +235,6 @@ class ProductCurrentTable extends React.PureComponent {
               <TableCell>Last Updated</TableCell>
               <TableCell align="right">Price</TableCell>
               <TableCell align="right">Last change</TableCell>
-              {/* <TableCell align="right">Last change (%)</TableCell> */}
               <TableCell>&nbsp;</TableCell>
             </TableRow>
           </TableHead>

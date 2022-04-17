@@ -57,8 +57,13 @@ namespace CompareHare.Api.Features.Prices.AddManualPrice
             // If there's a next price, we need to update its diff fields using the new ph's value
             if (closestNextPriceHistory != null)
             {
-                closestNextPriceHistory.AmountChange = _priceHelper.CalculatePriceChange(closestNextPriceHistory.Price.Value, newPriceHistory.Price.Value);
-                closestNextPriceHistory.PercentChange = _priceHelper.CalculatePriceChangePercentage(closestNextPriceHistory.Price.Value, newPriceHistory.Price.Value);
+                var closestNextPrice = await _dbContext.ProductRetailerPrices.FirstAsync(x => x.ProductRetailerPriceHistoryId == closestNextPriceHistory.Id);
+                var amountChange = _priceHelper.CalculatePriceChange(closestNextPriceHistory.Price.Value, newPriceHistory.Price.Value);
+                var percentChange = _priceHelper.CalculatePriceChangePercentage(closestNextPriceHistory.Price.Value, newPriceHistory.Price.Value);
+                closestNextPriceHistory.AmountChange = amountChange;
+                closestNextPriceHistory.PercentChange = percentChange;
+                closestNextPrice.AmountChange = amountChange;
+                closestNextPrice.PercentChange = percentChange;
             }
             else
             { // if there's no next price, we know we need to update the existing price linked to match this price history (it just became the leader)

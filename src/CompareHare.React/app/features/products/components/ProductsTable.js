@@ -1,6 +1,36 @@
 import React from 'react';
 import autobind from 'class-autobind';
-import {Button, Card, CardActions, CardContent, CircularProgress, Fab, Paper, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography, withStyles} from '@material-ui/core';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CircularProgress,
+  Fab,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableRow,
+  Typography,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  withStyles
+} from '@material-ui/core';
+import {
+  Delete,
+  Edit,
+  Add,
+  CheckCircle,
+  Close,
+  MoreVert,
+  ToggleOff,
+  ToggleOn
+} from '@material-ui/icons';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {loadProducts} from '../actions/productsTable';
@@ -14,17 +44,29 @@ import {
 import {
   loadingSelector as loadingAddSelector
 } from '../selectors/addProduct';
-import {Delete, Edit, Add} from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import {LoadingModal} from '../../shared/components';
+import {retrieveAttributeValue, printMoney} from '../../shared/services/displayHelpers';
+import PriceChangeDisplay from '../../shared/components/PriceChangeDisplay';
+import moment from 'moment';
 
 const styles = theme => ({
   root: {
     width: '100%',
     marginTop: theme.spacing.unit * 3,
     overflowX: 'auto'
+  },
+  lowestPrice: {
+    display: 'inline-block'
+  },
+  lowestPriceChange: {
+    display: 'inline-block',
+    marginLeft: '10px'
   }
 });
+
+const ENABLED_ICON = <CheckCircle color="primary" />
+const DISABLED_ICON = <Close color="disabled" />
 
 class ProductsTable extends React.PureComponent {
   constructor(props) {
@@ -33,8 +75,26 @@ class ProductsTable extends React.PureComponent {
     autobind(this);
 
     this.state = {
-      productId: null
+      productId: null,
+      menuAnchor: null,
+      menuProductId: null,
     };
+  }
+
+  openProductMenu(event) {
+    const productId = retrieveAttributeValue(event, 'data-tracked-product-id');
+
+    this.setState({
+      menuAnchor: event.currentTarget,
+      menuProductId: productId,
+    })
+  }
+
+  closeProductMenu() {
+    this.setState({
+      menuAnchor: null,
+      menuProductId: null
+    });
   }
 
   componentDidMount() {
@@ -52,6 +112,23 @@ class ProductsTable extends React.PureComponent {
         <Typography variant="h5" className={this.props.paddedTypography}>Loading...</Typography>
       </Paper>
     );
+  }
+
+  renderProductPrice(product) {
+    const { classes } = this.props;
+    const { lowPriceRetailerName, price, priceLastUpdated, amountChange, percentChange } = product;
+    const emptyDisplay = <>&mdash;</>
+    const retailerNameDisplay = price
+      ? <Typography variant="caption" className={classes.lowestPriceRetailer}>{`@ ${lowPriceRetailerName} on ${moment(priceLastUpdated || '12/12/1900').format('MMMM Do YYYY')}`}</Typography>
+      : null;
+
+    return priceLastUpdated !== null ? <>
+      <Typography variant="subheading" color="primary" className={classes.lowestPrice}>
+        {price ? printMoney(price) : emptyDisplay}
+      </Typography>
+      <PriceChangeDisplay amountChange={amountChange} percentChange={percentChange} variant='' className={classes.lowestPriceChange} />
+      {retailerNameDisplay}
+    </> : emptyDisplay;
   }
 
   renderEmptyContent() {
@@ -79,19 +156,60 @@ class ProductsTable extends React.PureComponent {
     );
   }
 
+  renderMenu() {
+    const {menuAnchor, menuProductId} = this.state;
+    const open = Boolean(menuAnchor && menuProductId);
+    let product;
+    let productEnabled = false;
+
+    if (open) {
+      const {products} = this.props;
+      product = products.filter(r => r.trackedProductRetailerId === menuProductId)[0];
+      productEnabled = product && product.enabled;
+    }
+
+    return (
+      <Menu
+        id="product-menu"
+        anchorEl={menuAnchor}
+        open={open}
+        onClose={this.closeProductMenu}
+        PaperProps={{
+          style: {
+            maxHeight: 216,
+            width: 225
+          }
+        }}
+        >
+          <MenuItem disabled>
+            <ListItemIcon>{productEnabled ? <ToggleOff /> : <ToggleOn />}</ListItemIcon>
+            <ListItemText inset primary={productEnabled ? 'Disable' : 'Enable'} />
+          </MenuItem>
+          <MenuItem disabled>
+            <ListItemIcon><Edit /></ListItemIcon>
+            <ListItemText inset primary="Edit" />
+          </MenuItem>
+          <MenuItem disabled>
+            <ListItemIcon><Delete /></ListItemIcon>
+            <ListItemText inset primary="Delete" />
+          </MenuItem>
+      </Menu>
+    )
+  }
+
   renderProduct(product) {
-    const enabledText = product.enabled ? 'Enabled' : 'Disabled';
-    const retailers = product.retailers && product.retailers.length > 0 ? product.retailers.join(', ') : '(no retailers selected)';
+    const enabledIcon = product.enabled ? ENABLED_ICON : DISABLED_ICON;
     const url = `/products/${product.id}/display`;
 
     return (
       <TableRow key={product.id}>
+        <TableCell padding="checkbox">{enabledIcon}</TableCell>
         <TableCell><Link to={url}>{product.name}</Link></TableCell>
-        <TableCell>{enabledText}</TableCell>
-        <TableCell>{retailers}</TableCell>
-        <TableCell align="right">
-          <Fab size="medium" color="primary"  data-product-id={product.id}><Edit /></Fab>&nbsp;
-          <Fab size="medium" color="secondary"  data-product-id={product.id}><Delete /></Fab>
+        <TableCell>{this.renderProductPrice(product)}</TableCell>
+        <TableCell padding="checkbox" align="right">
+          <Fab size="small" color="default"
+            data-tracked-product-id={product.id}
+            onClick={this.openProductMenu}><MoreVert /></Fab>
         </TableCell>
       </TableRow>
     );
@@ -111,10 +229,10 @@ class ProductsTable extends React.PureComponent {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Product Name</TableCell>
-              <TableCell>Enabled</TableCell>
-              <TableCell>Retailers</TableCell>
-              <TableCell>&nbsp;</TableCell>
+              <TableCell padding="checkbox" variant="head">&nbsp;</TableCell>
+              <TableCell variant="head">Product Name</TableCell>
+              <TableCell variant="head">Lowest Price</TableCell>
+              <TableCell padding="checkbox" variant="head">&nbsp;</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>{products.map(this.renderProduct)}</TableBody>
@@ -126,6 +244,7 @@ class ProductsTable extends React.PureComponent {
           </TableRow>
         </TableFooter>
         </Table>
+        {this.renderMenu()}
         <LoadingModal open={loadingAdd} message="Loading retailers, one sec..." />
       </Paper>
     );
