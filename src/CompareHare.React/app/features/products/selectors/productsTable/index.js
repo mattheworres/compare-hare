@@ -6,3 +6,5 @@ export const loadingSelector = makeStandardSelector(productsTableSelector, 'load
 export const productsSelector = makeStandardSelector(productsTableSelector, 'products');
 export const deletingSelector = makeStandardSelector(productsTableSelector, 'deleting');
 export const hasErrorSelector = makeStandardSelector(productsTableSelector, 'hasError');
+export const togglingSelector = makeStandardSelector(productsTableSelector, 'toggling');
+export const toggleErrorSelector = makeStandardSelector(productsTableSelector, 'toggleError');

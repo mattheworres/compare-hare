@@ -1,15 +1,48 @@
 import React from 'react';
 import autobind from 'class-autobind';
-import {Button, Card, CardActions, CardContent, CircularProgress, Fab, ListItemIcon, ListItemText, Menu, MenuItem, Paper, Table, TableBody, TableCell, TableFooter, TableHead, TableRow, Typography, withStyles} from '@material-ui/core';
+import {
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CircularProgress,
+  Fab,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableRow,
+  Typography,
+  withStyles
+} from '@material-ui/core';
 import {connect} from 'react-redux';
 import {openAddManual} from '../actions/addManual';
+import {toggleProductRetailer} from '../actions/productDisplay';
 import {
   loadingSelector,
   productSelector,
   deletingSelector,
-  hasErrorSelector
+  hasErrorSelector,
+  togglingSelector,
+  toggleErrorSelector
 } from '../selectors/productDisplay';
-import {Delete, Edit, Add, AddCircle, CheckCircle, Close, ToggleOff, ToggleOn, MoreVert} from '@material-ui/icons';
+import {
+  Delete,
+  Edit,
+  Add,
+  AddCircle,
+  CheckCircle,
+  Close,
+  ToggleOff,
+  ToggleOn,
+  MoreVert
+} from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import {retrieveAttributeValue, printMoney} from '../../shared/services/displayHelpers';
@@ -55,8 +88,16 @@ class ProductCurrentTable extends React.PureComponent {
       productId: null,
       menuAnchor: null,
       menuRetailerId: null,
-      menuRetailerName: null
+      menuRetailerName: null,
+      menuRetailerEnabled: false
     };
+  }
+
+  componentDidUpdate(prevProps) {
+    const {toggling, toggleError, loadProductCurrent, trackedProductId} = this.props;
+    if (!toggling && toggling != prevProps.toggling && !toggleError) {
+      loadProductCurrent(trackedProductId);
+    }
   }
 
   handleAddPriceClick() {
@@ -65,12 +106,23 @@ class ProductCurrentTable extends React.PureComponent {
     this.closeRetailerMenu();
   }
 
+  handleToggle() {
+    const { menuRetailerId, menuRetailerEnabled } = this.state;
+    this.props.toggleProductRetailer(menuRetailerId, !menuRetailerEnabled);
+    this.closeRetailerMenu();
+  }
+
   openRetailerMenu(event) {
     const retailerId = retrieveAttributeValue(event, 'data-tracked-product-retailer-id');
+    const {productRetailers} = this.props.product || {};
+
+    const retailer = productRetailers.filter(r => r.trackedProductRetailerId == retailerId)[0];
 
     this.setState({
       menuAnchor: event.currentTarget,
       menuRetailerId: retailerId,
+      menuRetailerEnabled: retailer && retailer.enabled,
+      menuRetailerName: retailer && retailer.retailerName
     })
   }
 
@@ -78,7 +130,8 @@ class ProductCurrentTable extends React.PureComponent {
     this.setState({
       menuAnchor: null,
       menuRetailerId: null,
-      menuRetailerName: null
+      menuRetailerName: null,
+      menuRetailerEnabled: false
     });
   }
 
@@ -117,16 +170,8 @@ class ProductCurrentTable extends React.PureComponent {
   }
 
   renderMenu() {
-    const {menuAnchor, menuRetailerId} = this.state;
+    const {menuAnchor, menuRetailerId, menuRetailerEnabled} = this.state;
     const open = Boolean(menuAnchor && menuRetailerId);
-    let retailer;
-    let retailerEnabled = false;
-
-    if (open) {
-      const {productRetailers} = this.props.product || {};
-      retailer = productRetailers.filter(r => r.trackedProductRetailerId === menuRetailerId)[0];
-      retailerEnabled = retailer && retailer.enabled;
-    }
 
     return (
       <Menu
@@ -145,9 +190,9 @@ class ProductCurrentTable extends React.PureComponent {
             <ListItemIcon><Add /></ListItemIcon>
             <ListItemText inset primary="Add Price (manual)" />
           </MenuItem>
-          <MenuItem disabled>
-            <ListItemIcon>{retailerEnabled ? <ToggleOff /> : <ToggleOn />}</ListItemIcon>
-            <ListItemText inset primary={retailerEnabled ? 'Disable' : 'Enable'} />
+          <MenuItem onClick={this.handleToggle}>
+            <ListItemIcon>{menuRetailerEnabled ? <ToggleOff /> : <ToggleOn />}</ListItemIcon>
+            <ListItemText inset primary={menuRetailerEnabled ? 'Disable' : 'Enable'} />
           </MenuItem>
           <MenuItem disabled>
             <ListItemIcon><Edit /></ListItemIcon>
@@ -255,7 +300,9 @@ class ProductCurrentTable extends React.PureComponent {
 }
 
 ProductCurrentTable.propTypes = {
-  classes: PropTypes.object
+  classes: PropTypes.object,
+  loadProductCurrent: PropTypes.func.isRequired,
+  trackedProductId: PropTypes.string,
 };
 
 function mapStateToProps(state) {
@@ -264,11 +311,14 @@ function mapStateToProps(state) {
     deleting: deletingSelector(state),
     product: productSelector(state),
     hasError: hasErrorSelector(state),
+    toggling: togglingSelector(state),
+    toggleError: toggleErrorSelector(state)
   };
 }
 
 const mapDispatchToProps = {
-  openAddManual
+  openAddManual,
+  toggleProductRetailer,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ProductCurrentTable));

@@ -33,13 +33,15 @@ import {
 } from '@material-ui/icons';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
-import {loadProducts} from '../actions/productsTable';
+import {loadProducts, toggleProduct} from '../actions/productsTable';
 import {openAddProduct} from '../actions/addProduct';
 import {
   loadingSelector,
   productsSelector,
   deletingSelector,
-  hasErrorSelector
+  hasErrorSelector,
+  togglingSelector,
+  toggleErrorSelector
 } from '../selectors/productsTable';
 import {
   loadingSelector as loadingAddSelector
@@ -78,15 +80,19 @@ class ProductsTable extends React.PureComponent {
       productId: null,
       menuAnchor: null,
       menuProductId: null,
+      menuProductEnabled: false
     };
   }
 
   openProductMenu(event) {
     const productId = retrieveAttributeValue(event, 'data-tracked-product-id');
+    const {products} = this.props;
+    const product = products ? products.filter(r => r.id == productId)[0] : null;
 
     this.setState({
       menuAnchor: event.currentTarget,
       menuProductId: productId,
+      menuProductEnabled: product && product.enabled
     })
   }
 
@@ -101,8 +107,21 @@ class ProductsTable extends React.PureComponent {
     this.props.loadProducts();
   }
 
+  componentDidUpdate(prevProps) {
+    const {toggling, toggleError, loadProducts} = this.props;
+    if (!toggling && toggling != prevProps.toggling && !toggleError) {
+      loadProducts();
+    }
+  }
+
   handleAddClick() {
     this.props.openAddProduct();
+  }
+
+  handleProductToggle() {
+    const { menuProductId, menuProductEnabled } = this.state;
+    this.props.toggleProduct(menuProductId, !menuProductEnabled);
+    this.closeProductMenu();
   }
 
   renderLoading() {
@@ -157,16 +176,8 @@ class ProductsTable extends React.PureComponent {
   }
 
   renderMenu() {
-    const {menuAnchor, menuProductId} = this.state;
+    const {menuAnchor, menuProductId, menuProductEnabled} = this.state;
     const open = Boolean(menuAnchor && menuProductId);
-    let product;
-    let productEnabled = false;
-
-    if (open) {
-      const {products} = this.props;
-      product = products.filter(r => r.trackedProductRetailerId === menuProductId)[0];
-      productEnabled = product && product.enabled;
-    }
 
     return (
       <Menu
@@ -181,9 +192,9 @@ class ProductsTable extends React.PureComponent {
           }
         }}
         >
-          <MenuItem disabled>
-            <ListItemIcon>{productEnabled ? <ToggleOff /> : <ToggleOn />}</ListItemIcon>
-            <ListItemText inset primary={productEnabled ? 'Disable' : 'Enable'} />
+          <MenuItem onClick={this.handleProductToggle}>
+            <ListItemIcon>{menuProductEnabled ? <ToggleOff /> : <ToggleOn />}</ListItemIcon>
+            <ListItemText inset primary={menuProductEnabled ? 'Disable' : 'Enable'} />
           </MenuItem>
           <MenuItem disabled>
             <ListItemIcon><Edit /></ListItemIcon>
@@ -262,12 +273,15 @@ function mapStateToProps(state) {
     deleting: deletingSelector(state),
     products: productsSelector(state),
     hasError: hasErrorSelector(state),
+    toggling: togglingSelector(state),
+    toggleError: toggleErrorSelector(state)
   };
 }
 
 const mapDispatchToProps = {
   loadProducts,
   openAddProduct,
+  toggleProduct
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(ProductsTable));

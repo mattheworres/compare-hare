@@ -15,7 +15,7 @@ namespace CompareHare.Tests.Domain.Services
         // Path: Path.Combine(Directory.GetCurrentDirectory(), "Domain/Features/OfferLoaders/PA_Response.html")
         public IDocument GetFakeDocumentSync(string pathToLocalDocument)
         {
-            var parserWrapper = new ParserWrapper();
+            var parserWrapper = new ParserWrapper(); // This now needs DI, hence is broken
             var requesterMock = GetDefaultRequesterMock(pathToLocalDocument);
             return parserWrapper.OpenUrlSync("http://askjdjakj", requesterMock.Object);
         }

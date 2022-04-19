@@ -15,7 +15,7 @@ namespace CompareHare.Tests.Domain.Services
             {
                 var sut = autoMock.Create<ProductHelper>();
 
-                var result = sut.GetRetailerSelector(ProductRetailer.HomeDepot);
+                var result = sut.GetRetailerSelector(ProductRetailer.HomeDepot, "span");
 
                 result.ShouldBe("div.price-format__large.price-format__main-price span:nth-of-type(2)");
             }
@@ -28,7 +28,7 @@ namespace CompareHare.Tests.Domain.Services
             {
                 var sut = autoMock.Create<ProductHelper>();
 
-                var result = sut.GetRetailerSelector(ProductRetailer.Alibaba);
+                var result = sut.GetRetailerSelector(ProductRetailer.Alibaba, null);
 
                 result.ShouldBeNull();
             }

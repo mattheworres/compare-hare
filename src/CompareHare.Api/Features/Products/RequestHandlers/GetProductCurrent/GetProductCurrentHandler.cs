@@ -23,7 +23,7 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProductCurrent
         }
 
         public async Task<IActionResult> Handle(GetProductCurrentMessage message, CancellationToken cancellationToken)
-        {// Left here - scraper may be wonky in properly grabbing previous price, OR add manual is fucked in some way
+        {
             var product = await _dbContext.TrackedProducts
                 .Where(x => x.Id == message.Model.TrackedProductId)
                 .Include(x => x.Retailers)

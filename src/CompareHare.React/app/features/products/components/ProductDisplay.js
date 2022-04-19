@@ -8,7 +8,8 @@ import ProductCurrentTable from './ProductCurrentTable';
 import {loadProductCurrent} from '../actions/productDisplay';
 
 const initialState = {
-  tab: 0
+  tab: 0,
+  trackedProductId: null
 };
 
 class ProductDisplay extends React.PureComponent {
@@ -24,6 +25,8 @@ class ProductDisplay extends React.PureComponent {
     const {match, loadProductCurrent} = this.props;
     const {trackedProductId} = match.params;
 
+    this.setState({trackedProductId});
+
     loadProductCurrent(trackedProductId);
   }
 
@@ -32,7 +35,8 @@ class ProductDisplay extends React.PureComponent {
   }
   
   render() {
-    const { tab } = this.state;
+    const { tab, trackedProductId } = this.state;
+    const { loadProductCurrent } = this.props;
     return (
       <Page>
         <Grid container spacing={16}>
@@ -46,7 +50,7 @@ class ProductDisplay extends React.PureComponent {
                 <Tab icon={<Timeline />} label="Historical" disabled={true} />
             </Tabs>
             {tab === 0
-              ? <ProductCurrentTable />
+              ? <ProductCurrentTable loadProductCurrent={loadProductCurrent} trackedProductId={trackedProductId} />
               : null /* TODO: add Historical */ }
           </Grid>
           <Grid item xs={false} sm={false} md={false} lg={1} />
