@@ -32,7 +32,7 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProducts
             var userProducts = await _dbContext.TrackedProducts
                 .Where(x => x.UserId == currentUserId)
                 .Include(x => x.Retailers)
-                .ThenInclude(x => x.ProductRetailerPrices)
+                .Include(x => x.Prices)
                 .ToListAsync();
 
             var models = _mapper.Map<IEnumerable<ProductListModel>>(userProducts);
@@ -40,9 +40,8 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProducts
             foreach(var productModel in models) {
                 var matchingProduct = userProducts.First(x => x.Id == productModel.Id);
 
-                if (matchingProduct.Prices.Any()) {
+                if (matchingProduct != null && matchingProduct.Prices.Count() > 0) {
                     var lowestPrice = matchingProduct.Prices.OrderBy(x => x.Price).First();
-                    // This may not work. spidey sense tingling?
                     _mapper.Map(lowestPrice, productModel);
                 }
             }
