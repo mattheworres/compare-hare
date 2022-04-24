@@ -12,6 +12,7 @@ namespace CompareHare.Api.Features.Products.Models
         public string ScrapeUrl { get; set; }
         public bool PriceIsManual { get; set; }
         public bool HasScrapingFootnote { get; set; }
+        public bool HasScrapingExceptions { get; set; }
         public string Footnote { get; set; }
 
         public float? Price { get; set; }

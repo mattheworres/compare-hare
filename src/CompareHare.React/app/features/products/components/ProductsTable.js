@@ -29,7 +29,8 @@ import {
   Close,
   MoreVert,
   ToggleOff,
-  ToggleOn
+  ToggleOn,
+  ErrorOutline
 } from '@material-ui/icons';
 import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
@@ -67,8 +68,9 @@ const styles = theme => ({
   }
 });
 
-const ENABLED_ICON = <CheckCircle color="primary" />
-const DISABLED_ICON = <Close color="disabled" />
+const ENABLED_ICON = <CheckCircle color="primary" />;
+const DISABLED_ICON = <Close color="disabled" />;
+const EXCEPTION_ICON = <ErrorOutline color="error" />;
 
 class ProductsTable extends React.PureComponent {
   constructor(props) {
@@ -210,11 +212,12 @@ class ProductsTable extends React.PureComponent {
 
   renderProduct(product) {
     const enabledIcon = product.enabled ? ENABLED_ICON : DISABLED_ICON;
+    const exceptionIcon = product.hasScrapingExceptions ? EXCEPTION_ICON : null;
     const url = `/products/${product.id}/display`;
 
     return (
       <TableRow key={product.id}>
-        <TableCell padding="checkbox">{enabledIcon}</TableCell>
+        <TableCell padding="checkbox">{enabledIcon}{exceptionIcon}</TableCell>
         <TableCell><Link to={url}>{product.name}</Link></TableCell>
         <TableCell>{this.renderProductPrice(product)}</TableCell>
         <TableCell padding="checkbox" align="right">

@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace CompareHare.Api.Features.Products.Models
 {
@@ -18,5 +17,6 @@ namespace CompareHare.Api.Features.Products.Models
         public float? PercentChange { get; set; }
         public bool PriceIsManual { get; set; }
         public bool HasScrapingFootnote { get; set; }
+        public bool HasScrapingExceptions { get; set; }
     }
 }

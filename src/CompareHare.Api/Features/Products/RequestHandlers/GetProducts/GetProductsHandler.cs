@@ -43,6 +43,8 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProducts
                 if (matchingProduct != null && matchingProduct.Prices.Count() > 0) {
                     var lowestPrice = matchingProduct.Prices.OrderBy(x => x.Price).First();
                     _mapper.Map(lowestPrice, productModel);
+
+                    productModel.HasScrapingExceptions = await _dbContext.ProductPriceScrapingExceptions.AnyAsync(x => x.TrackedProductId == productModel.Id);
                 }
             }
 

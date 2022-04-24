@@ -41,7 +41,8 @@ import {
   Close,
   ToggleOff,
   ToggleOn,
-  MoreVert
+  MoreVert,
+  ErrorOutline
 } from '@material-ui/icons';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -49,8 +50,9 @@ import {retrieveAttributeValue, printMoney} from '../../shared/services/displayH
 import AddManualPriceModal from './addManual/AddManualPriceModal';
 import PriceChangeDisplay from '../../shared/components/PriceChangeDisplay';
 
-const ENABLED_ICON = <CheckCircle color="primary" />
-const DISABLED_ICON = <Close color="disabled" />
+const ENABLED_ICON = <CheckCircle color="primary" />;
+const DISABLED_ICON = <Close color="disabled" />;
+const EXCEPTION_ICON = <ErrorOutline color="error" />;
 
 const styles = theme => ({
   root: {
@@ -220,6 +222,7 @@ class ProductCurrentTable extends React.PureComponent {
       scrapeUrl
     } = retailer;
     const enabledIcon = retailer.enabled ? ENABLED_ICON : DISABLED_ICON;
+    const exceptionIcon = retailer.hasScrapingExceptions ? EXCEPTION_ICON : null;
     let tableData;
 
     if (lastUpdated !== null) {
@@ -244,7 +247,7 @@ class ProductCurrentTable extends React.PureComponent {
 
     return (
       <TableRow key={trackedProductRetailerId}>
-        <TableCell>{enabledIcon}</TableCell>
+        <TableCell>{enabledIcon}{exceptionIcon}</TableCell>
         <TableCell>{retailerNameAnchor}</TableCell>
         {tableData}
         <TableCell align="right">

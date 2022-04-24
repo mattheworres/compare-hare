@@ -7,6 +7,7 @@ using Serilog;
 using CompareHare.Domain.Services.Interfaces;
 using CompareHare.Domain.Entities.Constants;
 using System.Threading;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompareHare.Api.Features.Prices.Services
 {
@@ -28,7 +29,7 @@ namespace CompareHare.Api.Features.Prices.Services
             _pricePersister = pricePersister;
         }
 
-        public void LoadAllPrices()
+        public async void LoadAllPrices()
         {
             var activeProducts = _dbContext.TrackedProducts.Where(x => x.Enabled).ToList();
 
@@ -63,6 +64,15 @@ namespace CompareHare.Api.Features.Prices.Services
                     catch (Exception ex)
                     {
                         Log.Logger.Information("Got an exception, no can do for this one pal");
+
+                        //Prior to inserting new exception, remove existing ones to limit duplication
+                        var existingExceptions = _dbContext.ProductPriceScrapingExceptions
+                            .Where(x => x.TrackedProductId == product.Id && x.TrackedProductRetailerId == productRetailer.Id)
+                            .ToList();
+                        if (existingExceptions.Any()) {
+                            _dbContext.RemoveRange(existingExceptions);
+                        }
+
                         var retailer = productRetailer.ProductRetailer;
                         var retailerIsOther = retailer == ProductRetailer.Other;
                         var exceptionMessage = string.Format("{0} Stack Trace: {1}", ex.Message.ToString(), ex.StackTrace.ToString());
@@ -101,6 +111,10 @@ namespace CompareHare.Api.Features.Prices.Services
                         var hasLastPrice = lastPrice == null ? "Didn't have last price value" : string.Format("Had last price value: ${0}", lastPrice.Price.Value);
 
                         Log.Logger.Information("Bummer, no new price. hasValue: {0} hasLastPrice: {1}", hasValue, hasLastPrice);
+                        // Not sure if we actually want to do this...date correlates to change
+                        // if (lastPrice != null && scrapedPrice.Price.HasValue && scrapedPrice.Price.Value == lastPrice.Price.Value) {
+                        //     _pricePersister.UpdateUnchangedPrice(lastPrice.Id, DateTime.Now.Date);
+                        // }
                     }
                 }
             }

@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Reflection;
 using AutoMapper;
 using CompareHare.Api.Features.Prices.Services.Interfaces;
@@ -44,6 +46,15 @@ namespace CompareHare.Api.Features.Prices.Services
                     Log.Logger.Information("Price change of {0} ({1}% change) for retailer {2}", priceToUpdate.AmountChange.Value, priceToUpdate.PercentChange.Value * 100, retailerName);
                     // Update existing price: price, change fields, PH Id
                     _mapper.Map(price, priceToUpdate);
+
+                    // If the price exists and we're updating, we need to remove any exceptions tied to this retailer
+                    var existingExceptions = context.ProductPriceScrapingExceptions
+                        .Where(x => x.TrackedProductId == priceToUpdate.TrackedProductId && x.TrackedProductRetailerId == priceToUpdate.TrackedProductRetailerId)
+                        .ToList();
+
+                    if (existingExceptions.Any()) {
+                        context.RemoveRange(existingExceptions);
+                    }
                 }
                 else
                 {
@@ -58,7 +69,7 @@ namespace CompareHare.Api.Features.Prices.Services
                 // Update existing price: PH Id
                 priceToUpdate.ProductRetailerPriceHistory = newPriceHistory;
                 context.ProductRetailerPriceHistories.Add(newPriceHistory);
-                Log.Logger.Information("New price history #{0} for {1} created", newPriceHistory.Id, retailerName);
+                Log.Logger.Information("New price history for {0} created", retailerName);
 
                 // Persist price creation/changes
                 context.SaveChanges();
@@ -66,6 +77,19 @@ namespace CompareHare.Api.Features.Prices.Services
                 context.Dispose();
 
                 Log.Logger.Information("Price persisted");
+            }
+        }
+
+        public void UpdateUnchangedPrice(int currentPriceId, DateTimeOffset today)
+        {
+            var dbOptionsBuilder = GetDbContextOptionsBuilder();
+            
+            using (var context = new CompareHareDbContext(dbOptionsBuilder.Options))
+            {
+                var priceToUpdate = context.ProductRetailerPrices.Find(currentPriceId);
+                priceToUpdate.PriceDate = today;
+
+                context.SaveChanges();
             }
         }
 

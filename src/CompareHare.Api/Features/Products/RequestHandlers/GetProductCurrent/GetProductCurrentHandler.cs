@@ -39,6 +39,9 @@ namespace CompareHare.Api.Features.Products.RequestHandlers.GetProductCurrent
                 if (product.Prices.Any(x => x.TrackedProductRetailerId == retailer.Id)) {
                     var retailerPrice = product.Prices.FirstOrDefault(x => x.TrackedProductRetailerId == retailer.Id);
                     _mapper.Map(retailerPrice, listModel);
+
+                    // TODO: should probably move into a value resolver
+                    listModel.HasScrapingExceptions = await _dbContext.ProductPriceScrapingExceptions.AnyAsync(x => x.TrackedProductId == product.Id && x.TrackedProductRetailerId == retailer.Id);
                 }
 
                 model.ProductRetailers.Add(listModel);
