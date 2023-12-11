@@ -1,3 +1,5 @@
+using System.Threading;
+using System.Threading.Tasks;
 using CompareHare.Api.BackgroundJobs.Interfaces;
 using CompareHare.Api.Features.Prices.Services.Interfaces;
 
@@ -12,9 +14,9 @@ namespace CompareHare.Api.BackgroundJobs
             _priceScraperRunner = priceScraperRunner;
         }
 
-        public void Run()
+        public async Task Run(CancellationToken ct)
         {
-            _priceScraperRunner.LoadAllPrices();
+            await _priceScraperRunner.LoadAllPrices(ct);
         }
     }
 }

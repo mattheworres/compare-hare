@@ -6,6 +6,7 @@ import {AttachMoney, Timeline} from '@material-ui/icons';
 import autobind from 'class-autobind';
 import ProductCurrentTable from './ProductCurrentTable';
 import {loadProductCurrent} from '../actions/productDisplay';
+import ProductHistoryTable from './ProductHistoryTable';
 
 const initialState = {
   tab: 0,
@@ -47,11 +48,11 @@ class ProductDisplay extends React.PureComponent {
               indicatorColor="secondary"
               textColor="secondary">
                 <Tab icon={<AttachMoney />} label="Current" />
-                <Tab icon={<Timeline />} label="Historical" disabled={true} />
+                <Tab icon={<Timeline />} label="Historical" />
             </Tabs>
             {tab === 0
               ? <ProductCurrentTable loadProductCurrent={loadProductCurrent} trackedProductId={trackedProductId} />
-              : null /* TODO: add Historical */ }
+              : <ProductHistoryTable />}
           </Grid>
           <Grid item xs={false} sm={false} md={false} lg={1} />
         </Grid>

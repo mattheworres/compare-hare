@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Net;
 using AngleSharp;
+using AngleSharp.Io;
 using CompareHare.Domain.Entities.Constants;
 using CompareHare.Domain.Services.Interfaces;
 
@@ -18,9 +20,33 @@ namespace CompareHare.Domain.Services
         {
             var loaderOptions = _requesterHelper.GetDefaultLoaderOptions();
             var defaultRequester = _requesterHelper.GetDefaultRequester();
+            string cookies, userAgent;
+            WebHeaderCollection headers;
+            IRequester requester;
 
             switch (retailer)
             {
+                case ProductRetailer.HomeDepot:
+                    var hdCookies = new Dictionary<string, string>() {
+                        {"DELIVERY_ZIP", "16148"},
+                        {"DELIVERY_ZIP_TYPE", "USER"},
+                        {"IN_STORE_API_SESSION", "TRUE"},
+                        {"WORKFLOW", "LOCALIZED_BY_GPS_MEDIUM"},
+                        {"IN_STORE_USER_NUMBER", "Not%20In%20Store"},
+                        {"HD_DC", "beta"}
+                    };
+                    cookies = _requesterHelper.GetCookieString(hdCookies);
+                    userAgent = _requesterHelper.GetRandomUserAgentString();
+                    headers = _requesterHelper.GetHeaders(userAgent, cookies);
+                    requester = _requesterHelper.GetRequester(headers);
+
+                    return Configuration.Default
+                        .WithJs()
+                        // .WithCulture("en-US")
+                        .WithEventLoop()
+                        .With(requester)
+                        .WithDefaultLoader(loaderOptions);
+
                 case ProductRetailer.BestBuy:
                     return Configuration.Default
                         .WithCulture("en-US")
@@ -29,7 +55,7 @@ namespace CompareHare.Domain.Services
                         .WithDefaultCookies();
 
                 case ProductRetailer.Lowes:
-                    var lowesCookies = new Dictionary<string, string>() {
+                    var lowesCookieString = new Dictionary<string, string>() {
                         {"region", "east"},
                         {"dbidv2", "a184956c-a045-4833-90e1-5b2df112cda9"},
                         {"akaalb_prod_dual", "1650198217~op=PROD_GCP_EAST_CTRL_B:PROD_CTRL_B|PROD_GCP_EAST_CTRL_DFLT:PROD_DEFAULT_CTRL|~rv=3~m=PROD_CTRL_B:0|PROD_DEFAULT_CTRL:0|~os=352fb8a62db4e37e16b221fb4cefd635~id=8ef75d6cb63ba4ea4de213871a2612f5"},
@@ -39,10 +65,10 @@ namespace CompareHare.Domain.Services
                         {"sn", "0780"},
                         {"notice_behavior", "implied,eu"}
                     };
-                    var cookies = _requesterHelper.GetCookieString(lowesCookies);
-                    var userAgent = _requesterHelper.GetRandomUserAgentString();
-                    var headers = _requesterHelper.GetHeaders(userAgent, cookies);
-                    var requester = _requesterHelper.GetRequester(headers);
+                    cookies = _requesterHelper.GetCookieString(lowesCookieString);
+                    userAgent = _requesterHelper.GetRandomUserAgentString();
+                    headers = _requesterHelper.GetHeaders(userAgent, cookies);
+                    requester = _requesterHelper.GetRequester(headers);
 
                     return Configuration.Default
                         .WithJs()

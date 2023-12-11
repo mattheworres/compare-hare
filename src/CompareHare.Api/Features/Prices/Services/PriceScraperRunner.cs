@@ -8,6 +8,8 @@ using CompareHare.Domain.Services.Interfaces;
 using CompareHare.Domain.Entities.Constants;
 using System.Threading;
 using Microsoft.EntityFrameworkCore;
+using RateLimiter;
+using ComposableAsync;
 
 namespace CompareHare.Api.Features.Prices.Services
 {
@@ -29,7 +31,7 @@ namespace CompareHare.Api.Features.Prices.Services
             _pricePersister = pricePersister;
         }
 
-        public async void LoadAllPrices()
+        public async Task LoadAllPrices(CancellationToken ct)
         {
             var activeProducts = _dbContext.TrackedProducts.Where(x => x.Enabled).ToList();
 
@@ -37,14 +39,22 @@ namespace CompareHare.Api.Features.Prices.Services
 
             foreach (var product in activeProducts)
             {
+                if (ct.IsCancellationRequested) {
+                    return;
+                }
+
                 var random = new Random();
                 
                 var enabledRetailers = _dbContext.TrackedProductRetailers.Where(x => x.TrackedProductId == product.Id && x.Enabled == true).ToList();
                 Log.Logger.Information("For product #{0} we have {1} retailers...", product.Id, enabledRetailers.Count());
                 foreach (var productRetailer in enabledRetailers)
                 {
-                    var throttleSeconds = random.Next(THROTTLE_MIN, THROTTLE_MAX);
-                    // var limiter = TimeLimiter.GetFromMaxCountByInterval(1, TimeSpan.FromSeconds(throttleSeconds));
+                    if (ct.IsCancellationRequested) {
+                        return;
+                    }
+
+                    var throttleSeconds = 2;//random.Next(THROTTLE_MIN, THROTTLE_MAX);
+                    var limiter = TimeLimiter.GetFromMaxCountByInterval(1, TimeSpan.FromSeconds(throttleSeconds));
                     Log.Logger.Information("About to scrape for retailer {0} for product {1}...", productRetailer.ProductRetailer.ToString(), product.Id);
                     var scraper = _scraperPicker.PickPriceScraper(productRetailer.ProductRetailer);
 
@@ -57,21 +67,22 @@ namespace CompareHare.Api.Features.Prices.Services
 
                     ProductRetailerPrice scrapedPrice;
 
+                    //Prior to attempting scrape, remove existing ones to limit duplication
+                    var existingExceptions = _dbContext.ProductPriceScrapingExceptions
+                        .Where(x => x.TrackedProductId == product.Id && x.TrackedProductRetailerId == productRetailer.Id)
+                        .ToList();
+                    if (existingExceptions.Any())
+                    {
+                        _dbContext.RemoveRange(existingExceptions);
+                    }
+
                     try
                     {
-                        scrapedPrice = scraper.ScrapePrice(product.Id, productRetailer.Id, productRetailer.ProductRetailer, productRetailer.ScrapeUrl, productRetailer.PriceSelector);
+                        scrapedPrice = await scraper.ScrapePrice(product.Id, productRetailer.Id, productRetailer.ProductRetailer, productRetailer.ScrapeUrl, productRetailer.PriceSelector);
                     }
                     catch (Exception ex)
                     {
                         Log.Logger.Information("Got an exception, no can do for this one pal");
-
-                        //Prior to inserting new exception, remove existing ones to limit duplication
-                        var existingExceptions = _dbContext.ProductPriceScrapingExceptions
-                            .Where(x => x.TrackedProductId == product.Id && x.TrackedProductRetailerId == productRetailer.Id)
-                            .ToList();
-                        if (existingExceptions.Any()) {
-                            _dbContext.RemoveRange(existingExceptions);
-                        }
 
                         var retailer = productRetailer.ProductRetailer;
                         var retailerIsOther = retailer == ProductRetailer.Other;
@@ -86,16 +97,16 @@ namespace CompareHare.Api.Features.Prices.Services
                             Error = exceptionMessage
                         };
 
-                        _dbContext.ProductPriceScrapingExceptions.Add(newException);
+                        await _dbContext.ProductPriceScrapingExceptions.AddAsync(newException);
                         _dbContext.SaveChanges();
                         continue;
                     }
 
 
-                    var lastPrice = _dbContext.ProductRetailerPrices
+                    var lastPrice = await _dbContext.ProductRetailerPrices
                         .Where(x => x.TrackedProductId == product.Id && x.TrackedProductRetailerId == productRetailer.Id)
                         .OrderByDescending(x => x.PriceDate)
-                        .FirstOrDefault();
+                        .FirstOrDefaultAsync();
                     var lastStringee = lastPrice == null || !lastPrice.Price.HasValue ? "Nullee" : string.Format("${0}", lastPrice.Price.Value);
                     var lastPriceId = lastPrice != null ? (int?)lastPrice.Id : null;
                     // We want to persist this price as long as A) we have a price and either B) we haven't saved a price before or C) the price has changed in any way (in the future this gets more complicated)
@@ -119,7 +130,12 @@ namespace CompareHare.Api.Features.Prices.Services
                 }
             }
 
-            Log.Logger.Information("Price scrape done, nice jerb.");
+            var countTotal = activeProducts.Sum(p => p.Retailers.Where(x => x.Enabled).Count());
+            var activeProductRetailerIds = activeProducts.SelectMany(x => x.Retailers.Where(y => y.Enabled).Select(z => z.Id)).ToList();
+            var exceptions = _dbContext.ProductPriceScrapingExceptions.Count(x => activeProductRetailerIds.Contains(x.TrackedProductRetailerId));
+            var percentage = countTotal > 0 ? exceptions/countTotal * 100 : 0;
+
+            Log.Logger.Information("Price scrape done, nice jerb. {0} total products, {1} exceptions ( {2}% fail)", countTotal, exceptions, percentage);
         }
     }
 }

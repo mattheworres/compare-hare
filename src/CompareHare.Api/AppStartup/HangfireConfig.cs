@@ -27,7 +27,7 @@ namespace CompareHare.Api.AppStartup
             //ScheduleRecurringJobs<IDefaultRecurringJob>("BatchJobs", configuration, container, configuration["Hangfire:BatchJobSchedule"]);
             ScheduleRecurringJobs<IOfferLoaderJob>("OfferLoaderJob", configuration, container, configuration["Hangfire:OfferLoaderRunnerSchedule"]);
             ScheduleRecurringJobs<IAlertAssessorJob>("AlertAssessorJob", configuration, container, configuration["Hangfire:AlertAssessorRunnerSchedule"]);
-            ScheduleRecurringSyncJobs<IPriceLoaderJob>("PriceLoaderJob", configuration, container, configuration["Hangfire:PriceScraperRunnerSchedule"]);
+            ScheduleRecurringJobs<IPriceLoaderJob>("PriceLoaderJob", configuration, container, configuration["Hangfire:PriceScraperRunnerSchedule"]);
         }
 
         private static string BuildConnectionString(string connectionString)

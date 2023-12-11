@@ -1,4 +1,4 @@
 namespace CompareHare.Api.BackgroundJobs.Interfaces
 {
-    public interface IPriceLoaderJob : ISyncJob { }
+    public interface IPriceLoaderJob : IJob { }
 }
