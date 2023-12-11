@@ -14,7 +14,7 @@ namespace CompareHare.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.2-servicing-10034")
+                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("CompareHare.Domain.Entities.Alert", b =>
@@ -145,6 +145,114 @@ namespace CompareHare.Api.Migrations
                     b.ToTable("PendingAlertNotifications");
                 });
 
+            modelBuilder.Entity("CompareHare.Domain.Entities.ProductPriceScrapingException", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<DateTimeOffset>("CreatedDate");
+
+                    b.Property<string>("Error");
+
+                    b.Property<int>("ProductRetailer");
+
+                    b.Property<string>("Selector");
+
+                    b.Property<int>("TrackedProductId");
+
+                    b.Property<int>("TrackedProductRetailerId");
+
+                    b.Property<string>("Url");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrackedProductId");
+
+                    b.HasIndex("TrackedProductRetailerId");
+
+                    b.ToTable("ProductPriceScrapingExceptions");
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.ProductRetailerPrice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<float?>("AmountChange");
+
+                    b.Property<DateTimeOffset>("CreatedDate");
+
+                    b.Property<string>("Footnote");
+
+                    b.Property<bool>("HasScrapingFootnote");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate");
+
+                    b.Property<float?>("PercentChange");
+
+                    b.Property<float?>("Price");
+
+                    b.Property<DateTimeOffset>("PriceDate");
+
+                    b.Property<bool>("PriceIsManual");
+
+                    b.Property<int>("ProductRetailer");
+
+                    b.Property<int>("ProductRetailerPriceHistoryId");
+
+                    b.Property<int>("TrackedProductId");
+
+                    b.Property<int>("TrackedProductRetailerId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductRetailerPriceHistoryId");
+
+                    b.HasIndex("TrackedProductId");
+
+                    b.HasIndex("TrackedProductRetailerId");
+
+                    b.ToTable("ProductRetailerPrices");
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.ProductRetailerPriceHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<float?>("AmountChange");
+
+                    b.Property<DateTimeOffset>("CreatedDate");
+
+                    b.Property<string>("Footnote");
+
+                    b.Property<bool>("HasScrapingFootnote");
+
+                    b.Property<DateTimeOffset?>("ModifiedDate");
+
+                    b.Property<float?>("PercentChange");
+
+                    b.Property<float?>("Price");
+
+                    b.Property<DateTimeOffset>("PriceDate");
+
+                    b.Property<bool>("PriceIsManual");
+
+                    b.Property<int>("ProductRetailer");
+
+                    b.Property<int>("TrackedProductId");
+
+                    b.Property<int>("TrackedProductRetailerId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrackedProductId");
+
+                    b.HasIndex("TrackedProductRetailerId");
+
+                    b.ToTable("ProductRetailerPriceHistories");
+                });
+
             modelBuilder.Entity("CompareHare.Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -196,6 +304,53 @@ namespace CompareHare.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("StateUtilityIndices");
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.TrackedProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Enabled");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(512);
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TrackedProducts");
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.TrackedProductRetailer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Enabled");
+
+                    b.Property<string>("OtherRetailerDisplayName");
+
+                    b.Property<string>("PriceSelector")
+                        .HasMaxLength(128);
+
+                    b.Property<int>("ProductRetailer");
+
+                    b.Property<string>("ScrapeUrl")
+                        .IsRequired()
+                        .HasMaxLength(512);
+
+                    b.Property<int>("TrackedProductId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TrackedProductId");
+
+                    b.ToTable("TrackedProductRetailers");
                 });
 
             modelBuilder.Entity("CompareHare.Domain.Entities.User", b =>
@@ -574,11 +729,71 @@ namespace CompareHare.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("CompareHare.Domain.Entities.ProductPriceScrapingException", b =>
+                {
+                    b.HasOne("CompareHare.Domain.Entities.TrackedProduct", "TrackedProduct")
+                        .WithMany()
+                        .HasForeignKey("TrackedProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CompareHare.Domain.Entities.TrackedProductRetailer", "TrackedProductRetailer")
+                        .WithMany()
+                        .HasForeignKey("TrackedProductRetailerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.ProductRetailerPrice", b =>
+                {
+                    b.HasOne("CompareHare.Domain.Entities.ProductRetailerPriceHistory", "ProductRetailerPriceHistory")
+                        .WithMany()
+                        .HasForeignKey("ProductRetailerPriceHistoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CompareHare.Domain.Entities.TrackedProduct", "TrackedProduct")
+                        .WithMany("Prices")
+                        .HasForeignKey("TrackedProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CompareHare.Domain.Entities.TrackedProductRetailer", "TrackedProductRetailer")
+                        .WithMany("ProductRetailerPrices")
+                        .HasForeignKey("TrackedProductRetailerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.ProductRetailerPriceHistory", b =>
+                {
+                    b.HasOne("CompareHare.Domain.Entities.TrackedProduct", "TrackedProduct")
+                        .WithMany("PriceHistories")
+                        .HasForeignKey("TrackedProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("CompareHare.Domain.Entities.TrackedProductRetailer", "TrackedProductRetailer")
+                        .WithMany("ProductRetailerPriceHistories")
+                        .HasForeignKey("TrackedProductRetailerId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
             modelBuilder.Entity("CompareHare.Domain.Entities.Role", b =>
                 {
                     b.HasOne("CompareHare.Domain.Entities.User")
                         .WithMany("Roles")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.TrackedProduct", b =>
+                {
+                    b.HasOne("CompareHare.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.TrackedProductRetailer", b =>
+                {
+                    b.HasOne("CompareHare.Domain.Entities.TrackedProduct", "TrackedProduct")
+                        .WithMany("Retailers")
+                        .HasForeignKey("TrackedProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("CompareHare.Domain.Entities.UtilityPrice", b =>

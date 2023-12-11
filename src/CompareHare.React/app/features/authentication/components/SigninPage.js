@@ -16,7 +16,7 @@ import autobind from 'class-autobind';
 import {withSnackbar} from 'material-ui-snackbar-provider';
 import toastr from 'toastr';
 
-const defaultPageAfterSignin = '/dashboard';
+const defaultPageAfterSignin = '/utilitiesDashboard';//TODO: update to a home display with graphs n shiz
 
 const styles = theme => ({
   main: {

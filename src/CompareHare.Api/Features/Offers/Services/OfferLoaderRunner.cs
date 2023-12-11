@@ -8,6 +8,7 @@ using CompareHare.Domain.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using RateLimiter;
+using ComposableAsync;
 
 namespace CompareHare.Api.Features.OfferLoaders
 {
@@ -50,12 +51,15 @@ namespace CompareHare.Api.Features.OfferLoaders
 
             var limiter = TimeLimiter.GetFromMaxCountByInterval(1, TimeSpan.FromSeconds(THROTTLE_SECONDS));
 
-            foreach(var index in indices) {
-                await limiter.Perform(() => LoadOffersForIndex(index));
+            foreach (var index in indices)
+            {
+                await limiter;
+                await LoadOffersForIndex(index);
             }
         }
 
-        private async Task LoadOffersForIndex(StateUtilityIndex index) {
+        private async Task LoadOffersForIndex(StateUtilityIndex index)
+        {
             try
             {
                 var offerLoader = _offerLoaderPicker.PickOfferLoader(index);

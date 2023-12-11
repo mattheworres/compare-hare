@@ -13,15 +13,13 @@ namespace CompareHare.Api.Features.Offers.Services
 {
     public class OfferPersister : IOfferPersister
     {
-        private readonly CompareHareDbContext _dbContext;
         private readonly IConfiguration _configuration;
         private readonly IMapper _mapper;
 
         public OfferPersister(
-            CompareHareDbContext dbContext,
             IConfiguration configuration,
-            IMapper mapper) {
-            _dbContext = dbContext;
+            IMapper mapper)
+        {
             _configuration = configuration;
             _mapper = mapper;
         }
@@ -33,11 +31,15 @@ namespace CompareHare.Api.Features.Offers.Services
 
             //Log.Logger.Information("Persisting offers...");
 
-            using (var context = new CompareHareDbContext(dbOptionsBuilder.Options)) {
+            using (var context = new CompareHareDbContext(dbOptionsBuilder.Options))
+            {
                 //Log.Logger.Information("Deleting existing offers");
                 var existingOffers = await context.UtilityPrices.Where(x => x.StateUtilityIndexId == utilityIndexId).ToListAsync();
                 context.RemoveRange(existingOffers);
 
+                //Mattnote: looks like I struggled with the async nature of Hangfire jobs
+                //re: EF contexts. I think the options builder is the way I solved it.
+                //need to confirm this is the case when I return to developing utility scraping
                 //TODO: Remove once done figuring this shit out
                 var existingHistoricals = await context.UtilityPriceHistories.Where(x => x.StateUtilityIndexId == utilityIndexId).ToListAsync();
                 context.RemoveRange(existingHistoricals);
@@ -47,7 +49,8 @@ namespace CompareHare.Api.Features.Offers.Services
                 //var historicalPrices = _mapper.Map<IEnumerable<UtilityPriceHistory>>(utilityPrices);
 
                 //Hefty, but cheapest way to get link between them for assessors later
-                foreach(var utilityPrice in utilityPrices) {
+                foreach (var utilityPrice in utilityPrices)
+                {
                     var historical = _mapper.Map<UtilityPriceHistory>(utilityPrice);
                     utilityPrice.UtilityPriceHistory = historical;
 
@@ -74,7 +77,8 @@ namespace CompareHare.Api.Features.Offers.Services
             }
         }
 
-        private DbContextOptionsBuilder<CompareHareDbContext> GetDbContextOptionsBuilder() {
+        private DbContextOptionsBuilder<CompareHareDbContext> GetDbContextOptionsBuilder()
+        {
             var builder = new DbContextOptionsBuilder<CompareHareDbContext>();
 
             return builder.UseMySql(

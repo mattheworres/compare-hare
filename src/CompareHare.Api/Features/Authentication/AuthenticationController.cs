@@ -36,7 +36,7 @@ namespace CompareHare.Api.Features.Authentication
         [HttpDelete("log-out"), AllowAnonymous]
         public async Task LogOut()
         {
-            await _mediator.Send(new LogOut());
+            await _mediator.Send(new LogOutMessage());
         }
 
         // [Route("forgot-password"), HttpPost, AllowAnonymous]
