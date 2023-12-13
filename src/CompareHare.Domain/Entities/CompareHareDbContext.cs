@@ -15,12 +15,17 @@ namespace CompareHare.Domain.Entities
     public class CompareHareDbContext : IdentityDbContext<User, Role, int>
     {
         public CompareHareDbContext(
-            DbContextOptions<CompareHareDbContext> dbContextOptions) : base(dbContextOptions) {}
+            DbContextOptions<CompareHareDbContext> dbContextOptions) : base(dbContextOptions) { }
 
         public DbSet<AlertMatch> AlertMatches { get; set; }
         public DbSet<Alert> Alerts { get; set; }
         public DbSet<PendingAlertNotification> PendingAlertNotifications { get; set; }
+        public DbSet<ProductRetailerPrice> ProductRetailerPrices { get; set; }
+        public DbSet<ProductRetailerPriceHistory> ProductRetailerPriceHistories { get; set; }
+        public DbSet<ProductPriceScrapingException> ProductPriceScrapingExceptions { get; set; }
         public DbSet<StateUtilityIndex> StateUtilityIndices { get; set; }
+        public DbSet<TrackedProduct> TrackedProducts { get; set; }
+        public DbSet<TrackedProductRetailer> TrackedProductRetailers { get; set; }
         public DbSet<UtilityPrice> UtilityPrices { get; set; }
         public DbSet<UtilityPriceHistory> UtilityPriceHistories { get; set; }
 
@@ -33,11 +38,10 @@ namespace CompareHare.Domain.Entities
             userBuilder.HasIndex(u => u.Email).IsUnique();
 
             modelBuilder.Entity<UtilityPrice>()
-              .HasOne(x => x.UtilityPriceHistory)
-              ;
+              .HasOne(x => x.UtilityPriceHistory);
 
             modelBuilder.Entity<AlertMatchUtilityPriceHistory>()
-              .HasKey(x => new {x.AlertMatchId, x.UtilityPriceHistoryId});
+              .HasKey(x => new { x.AlertMatchId, x.UtilityPriceHistoryId });
 
             modelBuilder.Entity<AlertMatchUtilityPriceHistory>()
               .HasOne(x => x.AlertMatch)
@@ -48,6 +52,38 @@ namespace CompareHare.Domain.Entities
               .HasOne(x => x.UtilityPriceHistory)
               .WithMany(x => x.Alerts)
               .HasForeignKey(x => x.UtilityPriceHistoryId);
+
+            modelBuilder.Entity<TrackedProductRetailer>()
+              .HasOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<TrackedProductRetailer>()
+              .HasMany(x => x.ProductRetailerPrices)
+              .WithOne(x => x.TrackedProductRetailer);
+
+            modelBuilder.Entity<TrackedProductRetailer>()
+              .HasMany(x => x.ProductRetailerPriceHistories)
+              .WithOne(x => x.TrackedProductRetailer);
+
+            modelBuilder.Entity<TrackedProduct>()
+              .HasMany(x => x.Retailers)
+              .WithOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<TrackedProduct>()
+              .HasMany(x => x.Prices)
+              .WithOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<ProductRetailerPrice>()
+              .HasOne(x => x.ProductRetailerPriceHistory);
+
+            modelBuilder.Entity<TrackedProduct>()
+              .HasMany(x => x.PriceHistories)
+              .WithOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<ProductPriceScrapingException>()
+              .HasOne(x => x.TrackedProduct);
+
+            modelBuilder.Entity<ProductPriceScrapingException>()
+              .HasOne(x => x.TrackedProductRetailer);
 
             base.OnModelCreating(modelBuilder);
         }
@@ -64,6 +100,12 @@ namespace CompareHare.Domain.Entities
             return (await base.SaveChangesAsync(true, cancellationToken));
         }
 
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            AddTimestamps();
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
         private void AddTimestamps()
         {
             var dateTrackingEntities = ChangeTracker.Entries().Where(x =>
@@ -75,7 +117,7 @@ namespace CompareHare.Domain.Entities
                 if (entity.State == EntityState.Added && entity.Entity is ICreatedDateTimeTracker)
                     ((ICreatedDateTimeTracker)entity.Entity).CreatedDate = DateTime.UtcNow;
 
-                if(entity.State == EntityState.Modified && entity.Entity is IModifiedDateTimeTracker)
+                if (entity.State == EntityState.Modified && entity.Entity is IModifiedDateTimeTracker)
                     ((IModifiedDateTimeTracker)entity.Entity).ModifiedDate = DateTime.UtcNow;
             }
         }

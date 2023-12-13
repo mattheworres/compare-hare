@@ -6,27 +6,27 @@ Some US states have [deregulated power and/or gas utilities](http://www.deregula
 
 For electricity consumers in Pennsylvania, the PA Public Utility Commission (PUC)'s [PA Power Switch](http://www.papowerswitch.com/) website provides a powerful search tool in order to search for applicable plans and filter accordingly. This search and filter is powered by a JSON backend service that would be easily interfaced with in order to feed pricing data in.
 
-#### So, here's how it would work:
+## So, here's how it would work
 
-1.  User signs up for an account, verifies email for account.
-2.  User starts a new "alert" by selecting a state (from the ones we've implemented), and a utility type (gas/electric, from what we've implemented), and then enter their zipcode.
-3.  From here we'll need specific client implementations for each StateUtility implemented. For PA Electric (first MVP implementation) the app `POST`'s to http://www.papowerswitch.com/shop-for-electricity/shop-for-your-home/by-zipcode with `zipcode` provided, and `ajax` set to `true`
-4.  The PUC server will respond with the applicable _Distributors_, such as `duquesne-light` or `penn-power`
-5.  App `POST`'s to http://www.papowerswitch.com/shop-for-electricity/shop-for-your-home/by-distributor with the `distributor` from above, which will hand back information for that particular distributor. Using the above examples, Penn Power only has one **rate type**, so the default can be used, but Duquesne Light has 4 separate rate types, so the user must choose the applicable rate type.
-6.  App then `POST`'s to http://www.papowerswitch.com/shop-for-electricity/shop-for-your-home/by-distributor/
+1. User signs up for an account, verifies email for account.
+2. User starts a new "alert" by selecting a state (from the ones we've implemented), and a utility type (gas/electric, from what we've implemented), and then enter their zipcode.
+3. From here we'll need specific client implementations for each StateUtility implemented. For PA Electric (first MVP implementation) the app `POST`'s to <http://www.papowerswitch.com/shop-for-electricity/shop-for-your-home/by-zipcode> with `zipcode` provided, and `ajax` set to `true`
+4. The PUC server will respond with the applicable _Distributors_, such as `duquesne-light` or `penn-power`
+5. App `POST`'s to <http://www.papowerswitch.com/shop-for-electricity/shop-for-your-home/by-distributor> with the `distributor` from above, which will hand back information for that particular distributor. Using the above examples, Penn Power only has one **rate type**, so the default can be used, but Duquesne Light has 4 separate rate types, so the user must choose the applicable rate type.
+6. App then `POST`'s to <http://www.papowerswitch.com/shop-for-electricity/shop-for-your-home/by-distributor/>
 
 - If the distributor only has one rate type (Penn Power), then only `distributor` is passed
 - If there are multiple rate types, then the `ratetype` property is populated with the **slug** of the rate type appended to the distributor value (so for Duquesne Light, `duquesne-light/rs` would be passed for residential service)
   6a. At this point the app will also update the user's default ratetype and default state to autofill the alert criteria creation form next time
 
-7.  At this point, we will get back JSON data of all the applicable offers for the user. This is useful once, but in reality the PUC's website has already provided a pretty useful interface to get this pricing data. **So, what's the point of Compare Hare?**
-8.  We can store the specific string passed to the `by-distributor` call (either `penn-power` or `duquesne-light/rs`) along with other specific information for the user. For instance, the user can indicate they only want to be notified if **fixed price** offers of **renewable energy** that have **no cancellation fee** for a price of at or below **$0.0550 per kWh**. With a table of stored alert criteria, we can periodically query the PUC's website for updated pricing information and then send out user alerts accordingly.
+7. At this point, we will get back JSON data of all the applicable offers for the user. This is useful once, but in reality the PUC's website has already provided a pretty useful interface to get this pricing data. **So, what's the point of Compare Hare?**
+8. We can store the specific string passed to the `by-distributor` call (either `penn-power` or `duquesne-light/rs`) along with other specific information for the user. For instance, the user can indicate they only want to be notified if **fixed price** offers of **renewable energy** that have **no cancellation fee** for a price of at or below **$0.0550 per kWh**. With a table of stored alert criteria, we can periodically query the PUC's website for updated pricing information and then send out user alerts accordingly.
 
 ## Architecture Ideas
 
 When imagining how this would work, I envision some things needing to exist:
 
-#### General Arch
+### General Arch
 
 For an "MVP", the first integration will be for Pennsylvania power through the PUC website described above. In addition to PA natural gas also being regulated there are [29 other states](http://www.alliedpowerservices.com/deregulated-states.shtml) that provide either partial or full deregulation for electricity and natural gas.
 
@@ -78,9 +78,9 @@ This is where the architecture gets interesting. Each state AND utility type wil
 **alert assessor service** - Cycle thru all alert_criteria and find criteria that have updated pricing data (comparison of StateUtilityIndexHash on alert_criteria against the value in the matching StateUtilityIndices row). Once a criteria needs updated (the hash is different), load pricing data for that criteria's matching state utility index.
 
 Then, calculate the hash for matching offers from the newest pricing data and compare against the hash in the specific alert.
-_ If there is no alert AND there are > 0 matching offers, create a new alert + notification
+_If there is no alert AND there are > 0 matching offers, create a new alert + notification
 _ If there is an alert but the hash is the same, do nothing.
-_ If there is an alert and the hash differs, send an alert
+_If there is an alert and the hash differs, send an alert
 _ If there is an alert and there are 0 new matching offers, remove the alert
 
 **notification service** - Cycle through all pending_alert_notifications and send emails as necessary. The pending_alert_notification table contains all necessary info in order to generate said email. Once notification has been sent, the pending_alert_notification row can be deleted.

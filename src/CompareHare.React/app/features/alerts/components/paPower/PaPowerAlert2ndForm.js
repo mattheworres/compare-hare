@@ -98,7 +98,8 @@ class PaPowerAlert2ndForm extends React.Component {
       {value: false, text: 'No'}
     ];
 
-    return yesNoOptions.map((option, index) => <MenuItem key={index} value={option.value}>{option.text}</MenuItem>);
+    return yesNoOptions.map((option, index) =>
+      <MenuItem key={index} value={option.value}>{option.text}</MenuItem>);
   }
 
   render() {
