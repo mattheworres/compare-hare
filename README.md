@@ -21,7 +21,7 @@ also, make sure to create 2 databases: `comparehare` and `comparehare-hangfire`.
 
 2. `cd src/CompareHare.React` then run `yarn` to install dependencies.
 
-3.  Run `yarn start` to start the development server. It should automatically open the client in your browser when ready.
+3. Run `yarn start` to start the development server. It should automatically open the client in your browser when ready.
 
 4. Once the React app is up, you may then start the API, which both spins up the Web API server as well as the Hangfire background jobs, one of which (the offer loader job) will require a static resource that Webpack serves up for mocking purposes. (for now, in "production" it will scrape the legit URLs)
 
@@ -32,6 +32,7 @@ also, make sure to create 2 databases: `comparehare` and `comparehare-hangfire`.
 7. Finally, lets get this puppy running. Stay in the `CompareHare.Api` folder, then run `dotnet run`
 
 ## Migrations
+
 I forgot how to do this, here's how:
 
 1. Update all of the entities/relationships in `CompareHare.Domain`
@@ -48,7 +49,9 @@ I forgot how to do this, here's how:
 6. If anything fails, you can select to rollback changes with `dotnet ef database update <FULL text name of last successful migration>` (includes the numbers in the migration file name)
 
 ## Hangfire
+
 In order to see/trigger background jobs, go to `http://localhost:53041/background-jobs` when the API/Hangfire is running
+
 ## Testing
 
 1. Ensure all packages are restored: `cd src` then `dotnet restore`
@@ -59,4 +62,4 @@ In order to see/trigger background jobs, go to `http://localhost:53041/backgroun
 
 ## Tricky stuff
 
-* Getting "second selector undefined"? Yeah, this likely means you either fat-fingered the name of a base selector, OR, you need to stop and re-start `yarn start` so it can run all of those goofy scripts that re-generates the index files (including reducers)
+- Getting "second selector undefined"? Yeah, this likely means you either fat-fingered the name of a base selector, OR, you need to stop and re-start `yarn start` so it can run all of those goofy scripts that re-generates the index files (including reducers)
