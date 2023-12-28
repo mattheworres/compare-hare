@@ -1,11 +1,4 @@
-using System;
-using System.IO;
-using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Hosting;
-// using Serilog;
-using Microsoft.AspNetCore;
 
 namespace CompareHare.Api;
 public class Program

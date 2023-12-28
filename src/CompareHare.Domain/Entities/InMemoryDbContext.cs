@@ -1,12 +1,13 @@
 using CompareHare.Domain.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompareHare.Domain.Entities
 {
-    public class CompareHareDbContext : IdentityDbContext<User, Role, int>
+    public class InMemoryDbContext : IdentityDbContext<IdentityUser>
     {
-        public CompareHareDbContext(DbContextOptions<CompareHareDbContext> options) : base(options) { }
+        public InMemoryDbContext(DbContextOptions<InMemoryDbContext> options) : base(options) { }
 
         public override int SaveChanges()
         {

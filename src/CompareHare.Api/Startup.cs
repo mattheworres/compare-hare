@@ -1,11 +1,11 @@
+using System.Globalization;
 using System.Reflection;
 using Autofac;
-using CompareHare.Api.AppStartup;
+using CompareHare.Domain.Entities;
 using CompareHare.Domain.Features.Interfaces;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompareHare.Api;
 
@@ -16,12 +16,11 @@ public class Startup
         // In ASP.NET Core 3.x, using `Host.CreateDefaultBuilder` (as in the preceding Program.cs snippet) will
         // set up some configuration for you based on your appsettings.json and environment variables. See "Remarks" at
         // https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.host.createdefaultbuilder for details.
-        this.Configuration = configuration;
+        this._configuration = configuration;
     }
 
-    public IConfiguration Configuration { get; private set; }
-
-    public ILifetimeScope AutofacContainer { get; private set; }
+    public IConfiguration _configuration;
+    public ILifetimeScope AutofacContainer;
 
     // ConfigureServices is where you register dependencies. This gets
     // called by the runtime before the ConfigureContainer method, below.
@@ -32,11 +31,44 @@ public class Startup
         // won't get called. Don't create a ContainerBuilder
         // for Autofac here, and don't call builder.Populate() - that
         // happens in the AutofacServiceProviderFactory for you.
+        var builder = new ContainerBuilder();
+        services.AddOptions();
+        // services.AddDbContext<CompareHareDbContext>(
+        //     options => EntityFrameworkConfigurator.Configure(_configuration, options), ServiceLifetime.Scoped);
+        services.AddDbContext<CompareHareDbContext>(options => options.UseInMemoryDatabase("CompareHareInMem"));
+        services.AddIdentity<User, Role>(options =>
+        {
+            options.Password.RequireDigit = false;
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromSeconds(1.0);
+            options.Lockout.MaxFailedAccessAttempts = 100;
+        })
+            .AddEntityFrameworkStores<CompareHareDbContext>()
+            .AddDefaultTokenProviders();
+
         services.AddMvc()
                 // commented for now, as this seems broken signature-wise?
                 // .AddJsonOptions(JsonOptionsConfigurator.Configure)
                 .AddDataAnnotationsLocalization();
-        services.AddOptions();
+        services.AddLocalization();
+        services.Configure<RequestLocalizationOptions>(options =>
+            {
+                var supportedCultures = new[]
+                {
+                    new CultureInfo("en-US"),
+                };
+
+                options.DefaultRequestCulture = new RequestCulture(culture: "en-US", uiCulture: "en-US");
+
+                // These are the cultures the app supports for formatting numbers, dates, etc.
+                options.SupportedCultures = supportedCultures;
+
+                // These are the cultures the app supports for UI strings, i.e. we have localized resources for.
+                options.SupportedUICultures = supportedCultures;
+            });
+        // EF Identity:
+        services.AddAuthorization();
+        //TODO: add HangFire
+        
         services.AddHealthChecks();
     }
 
@@ -68,6 +100,8 @@ public class Startup
 
         // loggerFactory.AddConsole(this.Configuration.GetSection("Logging"));
         // loggerFactory.AddDebug();
-        app.UseMvc();
+        // app.UseMvc();
+        app.UseRouting();
+        app.UseEndpoints(endpoints => endpoints.MapControllers());
     }
 }
