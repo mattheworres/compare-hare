@@ -63,3 +63,48 @@ In order to see/trigger background jobs, go to `http://localhost:53041/backgroun
 ## Tricky stuff
 
 - Getting "second selector undefined"? Yeah, this likely means you either fat-fingered the name of a base selector, OR, you need to stop and re-start `yarn start` so it can run all of those goofy scripts that re-generates the index files (including reducers)
+
+## Docker
+
+Hmm. Will this work with Unraid? Really should, if I can just figure out all the speedbumps.
+
+### Running Locally
+
+```bash
+docker run -d \
+    --platform linux/arm64 \
+    --name comparehare \
+    -v /Users/morres/development/comparehare/src/CompareHare.Api/bin/Release/netcoreapp2.2/:/app/ \
+    -p 9100:8080 \
+    -e ASPNETCORE_HTTP_PORTS=8080 \
+    mattheworres/comparehare
+```
+
+```bash
+docker buildx create --use
+docker buildx build --platform linux/amd64,linux/arm64 -t mattheworres/comparehare .
+```
+
+### Building the :latest image
+
+```bash
+cd /this/directory
+docker build -t mattheworres/comparehare:latest .
+```
+
+### Pushing to docker hub
+
+From: <https://docs.docker.com/docker-hub/repos/>
+
+```bash
+docker login --username=yourhubusername --email=youremail@company.com
+docker tag mattheworres/comparehare:latest mattheworres/comparehare:<tag-name>
+docker push mattheworres/comparehare:<tag-name>
+```
+
+Also push the latest version using `latest` tag
+
+```bash
+docker tag mattheworres/comparehare:<latest-version>
+docker tag mattheworres/comparehare:latest
+```

@@ -1,4 +1,4 @@
-namespace CompareHare.Domain.Features.Interfaces
-{
-    public interface IFeatureService { }
-}
+namespace CompareHare.Domain.Features.Interfaces;
+
+public interface IFeatureService { }
+

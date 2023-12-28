@@ -1,92 +1,13 @@
-#region usings
-
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using System.Threading.Tasks;
-using System.Threading;
-using System.Linq;
 using CompareHare.Domain.Services;
-using System;
-
-#endregion
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompareHare.Domain.Entities
 {
-    public class CompareHareDbContext : IdentityDbContext<User, Role, int>
+    public class CompareHareDbContext : IdentityDbContext<IdentityUser>
     {
-        public CompareHareDbContext(
-            DbContextOptions<CompareHareDbContext> dbContextOptions) : base(dbContextOptions) { }
-
-        public DbSet<AlertMatch> AlertMatches { get; set; }
-        public DbSet<Alert> Alerts { get; set; }
-        public DbSet<PendingAlertNotification> PendingAlertNotifications { get; set; }
-        public DbSet<ProductRetailerPrice> ProductRetailerPrices { get; set; }
-        public DbSet<ProductRetailerPriceHistory> ProductRetailerPriceHistories { get; set; }
-        public DbSet<ProductPriceScrapingException> ProductPriceScrapingExceptions { get; set; }
-        public DbSet<StateUtilityIndex> StateUtilityIndices { get; set; }
-        public DbSet<TrackedProduct> TrackedProducts { get; set; }
-        public DbSet<TrackedProductRetailer> TrackedProductRetailers { get; set; }
-        public DbSet<UtilityPrice> UtilityPrices { get; set; }
-        public DbSet<UtilityPriceHistory> UtilityPriceHistories { get; set; }
-
-        public DbSet<AlertMatchUtilityPriceHistory> AlertMatchUtilityPriceHistories { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            var userBuilder = modelBuilder.Entity<User>();
-            userBuilder.Property(u => u.FullAccessGrantedDate).HasColumnType("date");
-            userBuilder.HasIndex(u => u.Email).IsUnique();
-
-            modelBuilder.Entity<UtilityPrice>()
-              .HasOne(x => x.UtilityPriceHistory);
-
-            modelBuilder.Entity<AlertMatchUtilityPriceHistory>()
-              .HasKey(x => new { x.AlertMatchId, x.UtilityPriceHistoryId });
-
-            modelBuilder.Entity<AlertMatchUtilityPriceHistory>()
-              .HasOne(x => x.AlertMatch)
-              .WithMany(x => x.UtilityPriceHistories)
-              .HasForeignKey(x => x.AlertMatchId);
-
-            modelBuilder.Entity<AlertMatchUtilityPriceHistory>()
-              .HasOne(x => x.UtilityPriceHistory)
-              .WithMany(x => x.Alerts)
-              .HasForeignKey(x => x.UtilityPriceHistoryId);
-
-            modelBuilder.Entity<TrackedProductRetailer>()
-              .HasOne(x => x.TrackedProduct);
-
-            modelBuilder.Entity<TrackedProductRetailer>()
-              .HasMany(x => x.ProductRetailerPrices)
-              .WithOne(x => x.TrackedProductRetailer);
-
-            modelBuilder.Entity<TrackedProductRetailer>()
-              .HasMany(x => x.ProductRetailerPriceHistories)
-              .WithOne(x => x.TrackedProductRetailer);
-
-            modelBuilder.Entity<TrackedProduct>()
-              .HasMany(x => x.Retailers)
-              .WithOne(x => x.TrackedProduct);
-
-            modelBuilder.Entity<TrackedProduct>()
-              .HasMany(x => x.Prices)
-              .WithOne(x => x.TrackedProduct);
-
-            modelBuilder.Entity<ProductRetailerPrice>()
-              .HasOne(x => x.ProductRetailerPriceHistory);
-
-            modelBuilder.Entity<TrackedProduct>()
-              .HasMany(x => x.PriceHistories)
-              .WithOne(x => x.TrackedProduct);
-
-            modelBuilder.Entity<ProductPriceScrapingException>()
-              .HasOne(x => x.TrackedProduct);
-
-            modelBuilder.Entity<ProductPriceScrapingException>()
-              .HasOne(x => x.TrackedProductRetailer);
-
-            base.OnModelCreating(modelBuilder);
-        }
+        public CompareHareDbContext(DbContextOptions<CompareHareDbContext> options) : base(options) { }
 
         public override int SaveChanges()
         {
@@ -94,12 +15,12 @@ namespace CompareHare.Domain.Entities
             return base.SaveChanges();
         }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<int> SaveChangesAsync(CancellationToken ct = default(CancellationToken))
         {
             AddTimestamps();
-            return (await base.SaveChangesAsync(true, cancellationToken));
+            return (await base.SaveChangesAsync(true, ct));
         }
-
+        
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             AddTimestamps();

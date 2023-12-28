@@ -1,5 +1,3 @@
-using System;
-
 namespace CompareHare.Domain.Services
 {
     public interface ICreatedDateTimeTracker

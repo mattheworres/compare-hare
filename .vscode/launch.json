@@ -11,7 +11,7 @@
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
       "program":
-        "${workspaceFolder}/src/CompareHare.Api/bin/Debug/netcoreapp2.2/CompareHare.Api.dll",
+        "${workspaceFolder}/src/CompareHare.Api/bin/Debug/net8.0/CompareHare.Api.dll",
       "args": [],
       "cwd": "${workspaceFolder}/src/CompareHare.Api",
       "stopAtEntry": false,
