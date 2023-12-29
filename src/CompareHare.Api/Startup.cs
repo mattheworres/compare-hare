@@ -68,28 +68,20 @@ public class Startup
         // EF Identity:
         services.AddAuthorization();
         //TODO: add HangFire
-        
+
         services.AddHealthChecks();
     }
 
-    // ConfigureContainer is where you can register things directly
-    // with Autofac. This runs after ConfigureServices so the things
-    // here will override registrations made in ConfigureServices.
-    // Don't build the container; that gets done for you by the factory.
     public void ConfigureContainer(ContainerBuilder builder)
     {
         // Register your own things directly with Autofac here. Don't
         // call builder.Populate(), that happens in AutofacServiceProviderFactory
         // for you.
-        // builder.RegisterModule(new MyApplicationModule());
         builder.RegisterAssemblyModules(
                 typeof(IFeatureService).Assembly,
                 Assembly.GetExecutingAssembly());
     }
 
-    // Configure is where you add middleware. This is called after
-    // ConfigureContainer. You can use IApplicationBuilder.ApplicationServices
-    // here if you need to resolve things from the container.
     public void Configure(
       IApplicationBuilder app,
       ILoggerFactory loggerFactory)
@@ -98,10 +90,14 @@ public class Startup
         // can use the convenience extension method GetAutofacRoot.
         // this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
 
-        // loggerFactory.AddConsole(this.Configuration.GetSection("Logging"));
-        // loggerFactory.AddDebug();
-        // app.UseMvc();
         app.UseRouting();
-        app.UseEndpoints(endpoints => endpoints.MapControllers());
+        app.UseEndpoints(endpoints => {
+            endpoints.MapHealthChecks("/healthcheck"); // TODO: Add authorization
+            endpoints.MapControllerRoute(name: "api", pattern: "api/{controller}/{action}",
+                defaults: new { action = "Get" });
+            // TODO: Remove weather forecast once we know API is healthy and working
+            endpoints.MapControllerRoute(name: "WeatherForecast", pattern: "weatherforecast",
+                defaults: new { controller = "WeatherForecast", action = "Get" });
+        });
     }
 }
