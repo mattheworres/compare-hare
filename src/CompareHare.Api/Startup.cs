@@ -1,6 +1,8 @@
+using System.Data.SqlClient;
 using System.Globalization;
 using System.Reflection;
 using Autofac;
+using CompareHare.Api.AppStartup;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Features.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -33,9 +35,9 @@ public class Startup
         // happens in the AutofacServiceProviderFactory for you.
         var builder = new ContainerBuilder();
         services.AddOptions();
-        // services.AddDbContext<CompareHareDbContext>(
-        //     options => EntityFrameworkConfigurator.Configure(_configuration, options), ServiceLifetime.Scoped);
-        services.AddDbContext<CompareHareDbContext>(options => options.UseInMemoryDatabase("CompareHareInMem"));
+        services.AddDbContext<CompareHareDbContext>(
+            options => EntityFrameworkConfigurator.Configure(_configuration, options), ServiceLifetime.Scoped);
+        // services.AddDbContext<CompareHareDbContext>(options => options.UseInMemoryDatabase("CompareHareInMem"));
         services.AddIdentity<User, Role>(options =>
         {
             options.Password.RequireDigit = false;
@@ -82,9 +84,7 @@ public class Startup
                 Assembly.GetExecutingAssembly());
     }
 
-    public void Configure(
-      IApplicationBuilder app,
-      ILoggerFactory loggerFactory)
+    public void Configure(IApplicationBuilder app, CompareHareDbContext dbContext)
     {
         // If, for some reason, you need a reference to the built container, you
         // can use the convenience extension method GetAutofacRoot.
@@ -99,5 +99,26 @@ public class Startup
             endpoints.MapControllerRoute(name: "WeatherForecast", pattern: "weatherforecast",
                 defaults: new { controller = "WeatherForecast", action = "Get" });
         });
+
+        CheckConnection(dbContext);
+
+        // TODO: check if migrations applied?
+    }
+
+    private static bool CheckConnection(CompareHareDbContext dbContext) {
+        try {
+            if (dbContext.Database.CanConnect()) {
+                dbContext.Database.OpenConnection();
+                dbContext.Database.CloseConnection();
+            } else {
+                throw new Exception("Database can't connect");
+            }
+        } catch(Exception ex) {
+            Console.WriteLine($"DB Exception: {ex.Message}");
+            return false;
+        }
+
+        Console.WriteLine("DB Connected! Yay!");
+        return true;
     }
 }

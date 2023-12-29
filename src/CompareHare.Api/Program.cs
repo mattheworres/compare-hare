@@ -1,4 +1,5 @@
 using Autofac.Extensions.DependencyInjection;
+using CompareHare.Api.AppStartup;
 
 namespace CompareHare.Api;
 public class Program
@@ -10,12 +11,15 @@ public class Program
         // Autofac provider to the generic hosting mechanism.
         var host = Host.CreateDefaultBuilder(args)
             .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+            .ConfigureAppConfiguration(
+                (hostingContext, configurationBuilder) =>
+                    AppConfigurationConfigurator.Configure(hostingContext, configurationBuilder, args))
             .ConfigureWebHostDefaults(webHostBuilder =>
             {
                 webHostBuilder
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                .UseStartup<Startup>();
+                    .UseContentRoot(Directory.GetCurrentDirectory())
+                    .UseIISIntegration()
+                    .UseStartup<Startup>();
             })
             .Build();
 
@@ -48,7 +52,7 @@ public class Program
 //         }
 //     }
 
-//     public static void ConfigureWebApp(string[] args) 
+//     public static void ConfigureWebApp(string[] args)
 //     {
 //         var builder = WebApplication.CreateBuilder(args);
 

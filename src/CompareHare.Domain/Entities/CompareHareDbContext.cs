@@ -8,6 +8,20 @@ namespace CompareHare.Domain.Entities
     {
         public CompareHareDbContext(DbContextOptions<CompareHareDbContext> options) : base(options) { }
 
+        public DbSet<AlertMatch> AlertMatches { get; set; }
+        public DbSet<Alert> Alerts { get; set; }
+        public DbSet<PendingAlertNotification> PendingAlertNotifications { get; set; }
+        public DbSet<ProductRetailerPrice> ProductRetailerPrices { get; set; }
+        public DbSet<ProductRetailerPriceHistory> ProductRetailerPriceHistories { get; set; }
+        public DbSet<ProductPriceScrapingException> ProductPriceScrapingExceptions { get; set; }
+        public DbSet<StateUtilityIndex> StateUtilityIndices { get; set; }
+        public DbSet<TrackedProduct> TrackedProducts { get; set; }
+        public DbSet<TrackedProductRetailer> TrackedProductRetailers { get; set; }
+        public DbSet<UtilityPrice> UtilityPrices { get; set; }
+        public DbSet<UtilityPriceHistory> UtilityPriceHistories { get; set; }
+
+        // public DbSet<AlertMatchUtilityPriceHistory> AlertMatchUtilityPriceHistories { get; set; }
+
         public override int SaveChanges()
         {
             AddTimestamps();
@@ -17,9 +31,9 @@ namespace CompareHare.Domain.Entities
         public override async Task<int> SaveChangesAsync(CancellationToken ct = default(CancellationToken))
         {
             AddTimestamps();
-            return (await base.SaveChangesAsync(true, ct));
+            return await base.SaveChangesAsync(true, ct);
         }
-        
+
         public override int SaveChanges(bool acceptAllChangesOnSuccess)
         {
             AddTimestamps();
