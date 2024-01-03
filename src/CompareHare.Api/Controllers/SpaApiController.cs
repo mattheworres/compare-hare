@@ -1,10 +1,13 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompareHare.Api.Controllers
 {
+    [Authorize]
+    [EnableCors("myCorsPolicy")]
     [ApiController]
     [Route("api/[controller]")]
-    // TODO: Add [Authorize]
     public class SpaApiController : ControllerBase {}
 
 }
