@@ -1,5 +1,5 @@
 
-namespace CompareHare.Api.Domain.Features.Authentication.Models
+namespace CompareHare.Domain.Features.Authentication.Models
 {
     public class UserIdentityModel
     {

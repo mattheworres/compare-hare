@@ -42,12 +42,13 @@ namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogIn
             // user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, model.Password);
             // await _userManager.UpdateAsync(user);
 
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
+            // TODO: remove; this isn't validator logic, this is a login.
+            // var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, lockoutOnFailure: false);
 
-            // TODO: uncomment... looks like testing...
+            // TODO: uncomment... figure out how email confirmation should work
             // if (result.Succeeded) {
-            if (await _userManager.IsEmailConfirmedAsync(user) == false) return UnconfirmedFailure(customErrors);
-            await _userManager.ResetAccessFailedCountAsync(user);
+            // if (await _userManager.IsEmailConfirmedAsync(user) == false) return UnconfirmedFailure(customErrors);
+            // await _userManager.ResetAccessFailedCountAsync(user);
             // } else {
             // await _userManager.AccessFailedAsync(user);
             //     if (result.IsLockedOut || user.AccessFailedCount >= MAXIMUM_LOGIN_ATTEMPTS) return TooManyAttemptsFailure(customErrors);

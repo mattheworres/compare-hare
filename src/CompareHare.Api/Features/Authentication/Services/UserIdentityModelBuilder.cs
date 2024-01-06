@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using CompareHare.Api.Domain.Features.Authentication.Models;
+using CompareHare.Domain.Features.Authentication.Models;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Features.Authentication.Interfaces;
 using CompareHare.Domain.Features.Interfaces;

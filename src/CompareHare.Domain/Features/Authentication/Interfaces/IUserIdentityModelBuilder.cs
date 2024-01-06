@@ -1,5 +1,5 @@
-﻿using CompareHare.Api.Domain.Features.Authentication.Models;
-using CompareHare.Domain.Entities;
+﻿using CompareHare.Domain.Entities;
+using CompareHare.Domain.Features.Authentication.Models;
 
 namespace CompareHare.Domain.Features.Authentication.Interfaces
 {

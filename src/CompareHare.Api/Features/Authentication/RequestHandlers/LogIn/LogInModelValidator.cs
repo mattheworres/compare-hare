@@ -1,16 +1,14 @@
 #region usings
 
 using CompareHare.Api.Features.Authentication.Models;
+using CompareHare.Api.Features.Shared.Validation.Interfaces;
 using FluentValidation;
-using FluentValidation.Results;
-using Microsoft.AspNetCore.Mvc.Filters;
-using SharpGrip.FluentValidation.AutoValidation.Mvc.Interceptors;
 
 #endregion
 
 namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogIn
 {
-    public class LogInModelValidator : AbstractValidator<LogInModel>, IValidatorInterceptor
+    public class LogInModelValidator : DefaultValidatorInterceptor<LogInModel>
     {
         public LogInModelValidator()
         {
@@ -22,16 +20,6 @@ namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogIn
             RuleFor(x => x.Password)
                 .NotEmpty()
                 .WithMessage("Password is required");
-        }
-
-        public ValidationResult? AfterValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
-        {
-            return null;
-        }
-
-        public IValidationContext? BeforeValidation(ActionExecutingContext actionExecutingContext, IValidationContext validationContext)
-        {
-            return null;
         }
     }
 }
