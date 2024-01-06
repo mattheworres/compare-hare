@@ -2,11 +2,12 @@ using System.Globalization;
 using System.Reflection;
 using Autofac;
 using CompareHare.Api.AppStartup;
+using CompareHare.Api.Controllers;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Features.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.EntityFrameworkCore;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 namespace CompareHare.Api;
@@ -28,19 +29,28 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         var builder = new ContainerBuilder();
-        // TODO: get CORS enabled
-        // services.AddCors(options => {
-        //     options.AddPolicy(name: MyCorsPolicy,
-        //         policy => {
-        //             policy.WithOrigins("http://localhost:8000", "https://localhost:8000");
-        //         });
-        // });
+
+        services.Configure<RouteOptions>(options => {
+            options.LowercaseUrls = true;
+        });
+
+        services.AddCors(options => {
+            options.AddPolicy(name: MyCorsPolicy,
+                builder => CorsPolicyConfigurator.Configure(builder));
+        });
+
         services.AddOptions();
         services.AddFluentValidationAutoValidation();
 
-        services.AddAuthentication().AddCookie("Identity.Application");
+        services.AddAuthentication(options => {
+            options.DefaultAuthenticateScheme = SharedAuthConstants.IdentityApplicationScheme;
+        })
+            // .AddCookie("Identity.Application");
+            .AddCookie(SharedAuthConstants.IdentityApplicationScheme, options => {
+                options.LoginPath = "/api/authentication/sign-in";
+                options.AccessDeniedPath = "/api/error";
+            });
 
-        // services.AddDbContext<CompareHareDbContext>(options => options.UseInMemoryDatabase("CompareHareInMem"));
         services.AddIdentityCore<User>()
             .AddRoles<Role>()
             .AddEntityFrameworkStores<CompareHareDbContext>()
@@ -65,11 +75,7 @@ public class Startup
                 };
 
                 options.DefaultRequestCulture = new RequestCulture(culture: enUS, uiCulture: enUS);
-
-                // These are the cultures the app supports for formatting numbers, dates, etc.
                 options.SupportedCultures = supportedCultures;
-
-                // These are the cultures the app supports for UI strings, i.e. we have localized resources for.
                 options.SupportedUICultures = supportedCultures;
             });
 
@@ -98,9 +104,9 @@ public class Startup
         // If, for some reason, you need a reference to the built container, you
         // can use the convenience extension method GetAutofacRoot.
         // this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+        app.UseStaticFiles();
         app.UseRouting();
 
-        // app.UseCors(builder => CorsPolicyConfigurator.Configure(builder));
         app.UseCors(MyCorsPolicy);
         app.UseAuthorization();
         app.UseEndpoints(endpoints => {

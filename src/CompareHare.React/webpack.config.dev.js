@@ -14,7 +14,7 @@ export default {
   },
   devtool: 'eval-source-map',
   plugins: [
-    new EnvironmentPlugin({API_BASE_URL: 'http://localhost:7235/api/'}),
+    new EnvironmentPlugin({API_BASE_URL: 'https://localhost:7235/api/'}),
     new HotModuleReplacementPlugin(),
     new HtmlWebpackPlugin({template: 'app/index.ejs'}),
   ],

@@ -50,7 +50,7 @@ I forgot how to do this, here's how:
 
 ## Hangfire
 
-In order to see/trigger background jobs, go to `http://localhost:53041/background-jobs` when the API/Hangfire is running
+In order to see/trigger background jobs, go to `https://localhost:7235/background-jobs` when the API/Hangfire is running (TODO: has not been migrated to 8.0 rewrite yet)
 
 ## Testing
 

@@ -1,8 +1,4 @@
-#region usings
-
 using Microsoft.AspNetCore.Cors.Infrastructure;
-
-#endregion
 
 namespace CompareHare.Api.AppStartup
 {
@@ -13,7 +9,8 @@ namespace CompareHare.Api.AppStartup
             builder.AllowAnyHeader()
                    .AllowAnyMethod()
                    .AllowCredentials()
-                   .WithOrigins("http://localhost:8000");
+                   .WithOrigins("https://localhost:8000",
+                        "http://localhost:8000");
         }
     }
 }
