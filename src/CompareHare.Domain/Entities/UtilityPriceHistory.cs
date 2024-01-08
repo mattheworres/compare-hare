@@ -1,4 +1,5 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+
 using System.ComponentModel.DataAnnotations;
 using CompareHare.Domain.Services;
 
@@ -61,7 +62,7 @@ namespace CompareHare.Domain.Entities
         [MaxLength(512)]
         public string Comments { get; set; }
 
-        // public IEnumerable<AlertMatchUtilityPriceHistory> Alerts { get; set; }
+        public virtual IEnumerable<AlertMatchUtilityPriceHistory> Alerts { get; set; }
 
         public DateTimeOffset CreatedDate { get; set; }
         public DateTimeOffset? ModifiedDate { get; set; }

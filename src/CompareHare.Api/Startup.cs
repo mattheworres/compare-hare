@@ -5,7 +5,6 @@ using CompareHare.Api.AppStartup;
 using CompareHare.Api.Controllers;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Features.Interfaces;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -29,6 +28,8 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         var builder = new ContainerBuilder();
+
+        SerilogConfigurator.Configure();
 
         services.Configure<RouteOptions>(options => {
             options.LowercaseUrls = true;

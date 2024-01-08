@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CompareHare.Api.Features.Shared.Validation;
 using CompareHare.Api.Features.Shared.Validation.Interfaces;
 using FluentValidation;

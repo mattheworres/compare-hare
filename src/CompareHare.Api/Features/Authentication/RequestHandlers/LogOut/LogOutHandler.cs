@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using System.Threading.Tasks;
+
 using CompareHare.Api.MediatR;
 using CompareHare.Domain.Entities;
 using MediatR;

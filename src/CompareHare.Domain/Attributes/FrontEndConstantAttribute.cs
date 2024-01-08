@@ -1,4 +1,4 @@
-using System;
+
 
 namespace CompareHare.Domain.Attributes {
     [AttributeUsage(AttributeTargets.Field)]

@@ -141,6 +141,24 @@ namespace CompareHare.Api.Migrations
                     b.ToTable("AlertMatches");
                 });
 
+            modelBuilder.Entity("CompareHare.Domain.Entities.AlertMatchUtilityPriceHistory", b =>
+                {
+                    b.Property<int>("AlertMatchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UtilityPriceHistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<byte>("Order")
+                        .HasColumnType("tinyint unsigned");
+
+                    b.HasKey("AlertMatchId", "UtilityPriceHistoryId");
+
+                    b.HasIndex("UtilityPriceHistoryId");
+
+                    b.ToTable("AlertMatchUtilityPriceHistories");
+                });
+
             modelBuilder.Entity("CompareHare.Domain.Entities.PendingAlertNotification", b =>
                 {
                     b.Property<int>("Id")
@@ -934,6 +952,25 @@ namespace CompareHare.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("CompareHare.Domain.Entities.AlertMatchUtilityPriceHistory", b =>
+                {
+                    b.HasOne("CompareHare.Domain.Entities.AlertMatch", "AlertMatch")
+                        .WithMany("UtilityPriceHistories")
+                        .HasForeignKey("AlertMatchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("CompareHare.Domain.Entities.UtilityPriceHistory", "UtilityPriceHistory")
+                        .WithMany("Alerts")
+                        .HasForeignKey("UtilityPriceHistoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AlertMatch");
+
+                    b.Navigation("UtilityPriceHistory");
+                });
+
             modelBuilder.Entity("CompareHare.Domain.Entities.PendingAlertNotification", b =>
                 {
                     b.HasOne("CompareHare.Domain.Entities.AlertMatch", "AlertMatch")
@@ -1134,6 +1171,11 @@ namespace CompareHare.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CompareHare.Domain.Entities.AlertMatch", b =>
+                {
+                    b.Navigation("UtilityPriceHistories");
+                });
+
             modelBuilder.Entity("CompareHare.Domain.Entities.TrackedProduct", b =>
                 {
                     b.Navigation("PriceHistories");
@@ -1153,6 +1195,11 @@ namespace CompareHare.Api.Migrations
             modelBuilder.Entity("CompareHare.Domain.Entities.User", b =>
                 {
                     b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("CompareHare.Domain.Entities.UtilityPriceHistory", b =>
+                {
+                    b.Navigation("Alerts");
                 });
 #pragma warning restore 612, 618
         }

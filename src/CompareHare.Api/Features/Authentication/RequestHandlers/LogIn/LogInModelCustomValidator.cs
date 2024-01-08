@@ -1,6 +1,6 @@
 #region usings
 
-using System.Threading.Tasks;
+
 using CompareHare.Api.Features.Authentication.Models;
 using CompareHare.Api.Features.Shared.Validation;
 using CompareHare.Api.Features.Shared.Validation.Interfaces;

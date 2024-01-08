@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+
 using CompareHare.Domain.Features.Authentication.Models;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Features.Authentication.Interfaces;

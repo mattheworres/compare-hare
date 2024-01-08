@@ -1,4 +1,4 @@
-using System;
+
 using CompareHare.Domain.Attributes;
 
 namespace CompareHare.Domain.Helpers
