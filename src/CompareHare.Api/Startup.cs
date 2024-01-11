@@ -50,6 +50,7 @@ public class Startup
             .AddCookie(SharedAuthConstants.IdentityApplicationScheme, options => {
                 options.LoginPath = "/api/authentication/sign-in";
                 options.AccessDeniedPath = "/api/error";
+                options.ExpireTimeSpan = TimeSpan.FromHours(4);
             });
 
         services.AddIdentityCore<User>()

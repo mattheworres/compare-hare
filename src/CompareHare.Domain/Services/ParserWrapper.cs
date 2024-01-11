@@ -17,7 +17,7 @@ namespace CompareHare.Domain.Services
             _requesterHelper = requesterHelper;
         }
 
-        public async Task<IDocument> OpenUrlAsync(string url, IRequester defaultRequester, IConfiguration configuration = null)
+        public async Task<IDocument> OpenUrlAsync(string url, IRequester defaultRequester, IConfiguration? configuration = null)
         {
             if (defaultRequester == null)
             {
@@ -39,6 +39,7 @@ namespace CompareHare.Domain.Services
                 .WithDefaultLoader(loaderOptions);
                 ;
             }
+
             var angleSharpContext = BrowsingContext.New(configuration);
 
             return await angleSharpContext
@@ -47,7 +48,7 @@ namespace CompareHare.Domain.Services
                 ;
         }
 
-        public IDocument OpenUrlSync(string url, IRequester defaultRequester, IConfiguration configuration = null)
+        public IDocument OpenUrlSync(string url, IRequester defaultRequester, IConfiguration? configuration = null)
         {
             if (defaultRequester == null)
             {

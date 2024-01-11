@@ -1,7 +1,3 @@
-
-
-using System.Threading;
-
 using AutoMapper;
 using CompareHare.Api.Features.Alerts.Models;
 using CompareHare.Api.MediatR;
@@ -30,7 +26,6 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.GetAlerts
 
         public async Task<IActionResult> Handle(GetAlertsMessage request, CancellationToken cancellationToken)
         {
-            // var currentUserId = await _currentUserProvider.GetUserIdAsync();
             var currentUserId = _currentUserProvider.GetUserIdSync();
             var alerts = await _dbContext.Alerts
                 .Where(x => x.UserId == currentUserId)

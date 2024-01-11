@@ -20,7 +20,7 @@ namespace CompareHare.Domain.Entities
         public StateUtilityIndex StateUtilityIndex { get; set; }
 
         [MaxLength(40)]
-        public string StateUtilityIndexHash { get; set; }
+        public string? StateUtilityIndexHash { get; set; }
 
         public bool Active { get; set; }
 
