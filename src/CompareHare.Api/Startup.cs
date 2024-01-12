@@ -8,22 +8,26 @@ using CompareHare.Domain.Features.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using Hangfire;
+using Autofac.Extensions.DependencyInjection;
+using CompareHare.Api.BackgroundJobs.Configuration;
 
 namespace CompareHare.Api;
 
 public class Startup
 {
     private readonly string MyCorsPolicy = "myCorsPolicy";
-    public Startup (IConfiguration configuration)
+    public Startup (IConfiguration configuration, IWebHostEnvironment environment)
     {
         // In ASP.NET Core 3.x, using `Host.CreateDefaultBuilder` (as in the preceding Program.cs snippet) will
         // set up some configuration for you based on your appsettings.json and environment variables. See "Remarks" at
         // https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.hosting.host.createdefaultbuilder for details.
-        this._configuration = configuration;
+        _configuration = configuration;
+        _environment = environment;
     }
 
     public IConfiguration _configuration;
-    public ILifetimeScope AutofacContainer;
+    public IWebHostEnvironment _environment;
 
     public void ConfigureServices(IServiceCollection services)
     {
@@ -81,11 +85,16 @@ public class Startup
                 options.SupportedUICultures = supportedCultures;
             });
 
+        // var appContainer = app.ApplicationServices.GetAutofacRoot();
+
+        services.AddHangfire(config => HangfireConfig.ConfigureService(config, _configuration));
+        // services.AddHangfire(config => HangfireConfig.Configure(config, AutofacContainer, _configuration, _hostingEnvironment));
+        services.AddHangfireServer();
+
         services.AddSwaggerGen();
 
         // EF Identity:
         services.AddAuthorization();
-        //TODO: add HangFire
 
         services.AddHealthChecks();
 
@@ -101,16 +110,24 @@ public class Startup
                 Assembly.GetExecutingAssembly());
     }
 
-    public void Configure(IApplicationBuilder app, CompareHareDbContext dbContext)
+    public void Configure(IApplicationBuilder app, CompareHareDbContext dbContext, IGlobalConfiguration globalConfiguration, IWebHostEnvironment env)
     {
         // If, for some reason, you need a reference to the built container, you
         // can use the convenience extension method GetAutofacRoot.
-        // this.AutofacContainer = app.ApplicationServices.GetAutofacRoot();
+        var autofacContainer = app.ApplicationServices.GetAutofacRoot();
+        HangfireConfig.ConfigureAndSchedule(globalConfiguration, autofacContainer, _configuration);
+
         app.UseStaticFiles();
+        app.UseHangfireDashboard();
         app.UseRouting();
 
         app.UseCors(MyCorsPolicy);
         app.UseAuthorization();
+        var hangfireDashboardOptions = new DashboardOptions()
+        {
+            Authorization = new[] { new BackgroundJobsAuthorizationFilter(!env.IsProduction())},
+            DashboardTitle = "CompareHare Jobs Dash",
+        };
         app.UseEndpoints(endpoints => {
             endpoints.MapHealthChecks("/healthcheck")
                 .RequireAuthorization();
@@ -118,6 +135,8 @@ public class Startup
                 defaults: new { action = "Get" })
                 .RequireCors(MyCorsPolicy)
                 ;
+            endpoints.MapHangfireDashboard("/background-jobs", hangfireDashboardOptions);
+
 
             // var api = endpoints.MapGroup("api");
 

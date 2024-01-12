@@ -19,11 +19,10 @@ namespace CompareHare.Api.AppStartup
             //     .CreateLogger();
 
             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
                 .ReadFrom.Configuration(configuration)
                 .WriteTo.MySQL(configuration["ConnectionStrings:CompareHareDbContext"])
                 .CreateLogger();
-
-            Log.Logger.Debug("Hi there, are you there margart?");
         }
     }
 }
