@@ -5,6 +5,22 @@ namespace CompareHare.Domain.Services.Models
     //For purposes of hashing new data and determining if it has changed
     public class UtilityPriceHashModel
     {
+        public UtilityPriceHashModel()
+        {
+            Name = "";
+            PriceUnit = "";
+            FlatRate = "";
+            PriceStructure = "";
+            CancellationFee = "";
+            MonthlyFee = "";
+            EnrollmentFee = "";
+            NetMetering = "";
+            SupplierPhone = "";
+            OfferId = "";
+            OfferUrl = "";
+            Comments = "";
+        }
+
         public int StateUtilityIndexId { get; set; }
         public string Name { get; set; }
         public string PriceUnit { get; set; }

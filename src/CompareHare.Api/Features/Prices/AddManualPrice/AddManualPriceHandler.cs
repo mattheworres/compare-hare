@@ -1,6 +1,3 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using AutoMapper;
 using CompareHare.Api.Features.Prices.Services.Interfaces;
 using CompareHare.Api.MediatR;
@@ -48,14 +45,18 @@ namespace CompareHare.Api.Features.Prices.AddManualPrice
             await _dbContext.ProductRetailerPriceHistories.AddAsync(newPriceHistory);
 
             // If there's a previous price, use it to calc our diff fields on the new ph
-            if (closestPreviousPriceHistory != null)
+            if (closestPreviousPriceHistory != null
+                && newPriceHistory.Price.HasValue
+                && closestPreviousPriceHistory.Price.HasValue)
             {
                 newPriceHistory.AmountChange = _priceHelper.CalculatePriceChange(newPriceHistory.Price.Value, closestPreviousPriceHistory.Price.Value);
                 newPriceHistory.PercentChange = _priceHelper.CalculatePriceChangePercentage(newPriceHistory.Price.Value, closestPreviousPriceHistory.Price.Value);
             }
 
             // If there's a next price, we need to update its diff fields using the new ph's value
-            if (closestNextPriceHistory != null)
+            if (closestNextPriceHistory != null
+                && closestNextPriceHistory.Price.HasValue
+                && newPriceHistory.Price.HasValue)
             {
                 var closestNextPrice = await _dbContext.ProductRetailerPrices.FirstAsync(x => x.ProductRetailerPriceHistoryId == closestNextPriceHistory.Id);
                 var amountChange = _priceHelper.CalculatePriceChange(closestNextPriceHistory.Price.Value, newPriceHistory.Price.Value);

@@ -18,6 +18,11 @@ namespace CompareHare.Api.MediatR {
         {
             return new StatusCodeResult((int)HttpStatusCode.Forbidden);
         }
+
+        protected static StatusCodeResult BadRequest()
+        {
+            return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+        }
     }
 
 }

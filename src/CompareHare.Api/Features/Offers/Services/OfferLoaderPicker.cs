@@ -4,6 +4,7 @@ using CompareHare.Domain.Entities;
 using CompareHare.Domain.Entities.Constants;
 using CompareHare.Domain.Features.OfferLoaders;
 using CompareHare.Domain.Features.OfferLoaders.Interfaces;
+using Serilog;
 
 namespace CompareHare.Api.Features.Offers.Services
 {
@@ -21,10 +22,12 @@ namespace CompareHare.Api.Features.Offers.Services
             {
                 case UtilityStates.Pennsylvania:
                     if (index.UtilityType == UtilityTypes.Power) return this._pAPowerOfferLoader.Value;
-                    return null;
+                    Log.Logger.Error("OfferLoaderPicker: PA but not power selected");
+                    throw new NotImplementedException();
 
                 default:
-                    return null;
+                    Log.Logger.Error("OfferLoaderPicker: default case reached");
+                    throw new NotImplementedException();
             }
         }
     }

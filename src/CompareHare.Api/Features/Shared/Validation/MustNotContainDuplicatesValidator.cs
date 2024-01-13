@@ -10,6 +10,6 @@ public class MustNotContainDuplicatesValidator<T,TProperty> : PropertyValidator<
 
     public override bool IsValid(ValidationContext<T> context, TProperty value) {
         var list = value as IList<T>;
-        return list.Count == list.Distinct().Count();
+        return list != null ? list.Count == list.Distinct().Count() : false;
     }
 }

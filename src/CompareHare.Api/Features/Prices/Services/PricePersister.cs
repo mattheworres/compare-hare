@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using AutoMapper;
 using CompareHare.Api.Features.Prices.Services.Interfaces;
@@ -32,25 +33,28 @@ namespace CompareHare.Api.Features.Prices.Services
             {
                 ProductRetailerPrice priceToUpdate;
                 // Load current Price + Price History if there is one
-                if (currentPriceId.HasValue && price.Price.HasValue)
+                if (currentPriceId != null && currentPriceId.HasValue && price != null && price.Price.HasValue)
                 {
                     priceToUpdate = context.ProductRetailerPrices.Find(currentPriceId.Value);
                     var oldPriceHistory = context.ProductRetailerPriceHistories.Find(priceToUpdate.ProductRetailerPriceHistoryId);
 
-                    // Calculate change values for new price
-                    priceToUpdate.AmountChange = _priceHelper.CalculatePriceChange(price.Price.Value, oldPriceHistory.Price.Value);
-                    priceToUpdate.PercentChange = _priceHelper.CalculatePriceChangePercentage(price.Price.Value, oldPriceHistory.Price.Value);
-                    Log.Logger.Information("Price change of {0} ({1}% change) for retailer {2}", priceToUpdate.AmountChange.Value, priceToUpdate.PercentChange.Value * 100, retailerName);
-                    // Update existing price: price, change fields, PH Id
-                    _mapper.Map(price, priceToUpdate);
+                    if (oldPriceHistory != null && oldPriceHistory.Price.HasValue) {
+                        // Calculate change values for new price
+                        priceToUpdate.AmountChange = _priceHelper.CalculatePriceChange(price.Price.Value, oldPriceHistory.Price.Value);
+                        priceToUpdate.PercentChange = _priceHelper.CalculatePriceChangePercentage(price.Price.Value, oldPriceHistory.Price.Value);
+                        Log.Logger.Information("Price change of {0} ({1}% change) for retailer {2}", priceToUpdate.AmountChange.Value, priceToUpdate.PercentChange.Value * 100, retailerName);
+                        // Update existing price: price, change fields, PH Id
+                        _mapper.Map(price, priceToUpdate);
 
-                    // If the price exists and we're updating, we need to remove any exceptions tied to this retailer
-                    var existingExceptions = context.ProductPriceScrapingExceptions
-                        .Where(x => x.TrackedProductId == priceToUpdate.TrackedProductId && x.TrackedProductRetailerId == priceToUpdate.TrackedProductRetailerId)
-                        .ToList();
+                        // If the price exists and we're updating, we need to remove any exceptions tied to this retailer
+                        var existingExceptions = context.ProductPriceScrapingExceptions
+                            .Where(x => x.TrackedProductId == priceToUpdate.TrackedProductId && x.TrackedProductRetailerId == priceToUpdate.TrackedProductRetailerId)
+                            .ToList();
 
-                    if (existingExceptions.Any()) {
-                        context.RemoveRange(existingExceptions);
+                        if (existingExceptions.Any())
+                        {
+                            context.RemoveRange(existingExceptions);
+                        }
                     }
                 }
                 else

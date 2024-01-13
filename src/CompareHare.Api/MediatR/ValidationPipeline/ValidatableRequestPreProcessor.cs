@@ -28,6 +28,8 @@ namespace CompareHare.Api.MediatR.ValidationPipeline
 
             foreach (var cv in _customValidators.Value) customValidationFailures.AddRange(await cv.ValidateAsync(request));
 
+#pragma warning disable CA1860 // Avoid using 'Enumerable.Any()' extension method
+#pragma warning disable CS8603 // Possible null reference return.
             return customValidationFailures.Any()
                        ? new BadRequestObjectResult(
                            customValidationFailures
@@ -48,6 +50,8 @@ namespace CompareHare.Api.MediatR.ValidationPipeline
                               .GroupBy(vf => vf.PropertyName, vf => vf.ErrorMessage)
                               .ToDictionary(pe => pe.Key, pe => pe.ToArray()))
                        : null;
+#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CA1860 // Avoid using 'Enumerable.Any()' extension method
         }
     }
 }

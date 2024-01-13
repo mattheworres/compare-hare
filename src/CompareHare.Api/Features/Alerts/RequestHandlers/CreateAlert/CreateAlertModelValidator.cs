@@ -9,7 +9,7 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.CreateAlert
     {
         public CreateAlertModelValidator()
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            ClassLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Name is required")

@@ -2,6 +2,13 @@ namespace CompareHare.Api.Features.Alerts.Models
 {
     public class EditAlertModel
     {
+        public EditAlertModel()
+        {
+            Name = "";
+            Zip = "";
+            Comments = "";
+        }
+
         public int Id { get; set; }
 
         public string Name { get; set; }

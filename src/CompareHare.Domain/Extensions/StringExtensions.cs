@@ -18,7 +18,7 @@ namespace CompareHare.Domain.Extensions
             return string.Join(" ", words);
         }
 
-        public static string ToTitleCase(this string str, CultureInfo cultureInfo = null)
+        public static string ToTitleCase(this string str, CultureInfo? cultureInfo = null)
         {
             if (string.IsNullOrEmpty(str))
                 return str;

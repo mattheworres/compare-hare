@@ -31,8 +31,8 @@ namespace CompareHare.Api.Features.Prices.CheckPriceDate
                 return Ok(false);
             }
 
-            var currentUserId = await _currentUserProvider.GetUserIdAsync();
-            var trackedProduct = await _dbContext.TrackedProducts.FirstOrDefaultAsync(x => 
+            var currentUserId = _currentUserProvider.GetUserIdSync();
+            var trackedProduct = await _dbContext.TrackedProducts.FirstOrDefaultAsync(x =>
                 x.Id == trackedProductRetailer.TrackedProductId &&
                 x.UserId == currentUserId);
 

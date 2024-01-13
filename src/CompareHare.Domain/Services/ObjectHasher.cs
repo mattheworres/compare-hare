@@ -13,7 +13,7 @@ namespace CompareHare.Domain.Services
     {
       var json = GetJsonOfObject(obj);
 
-      using (SHA1Managed sha1 = new SHA1Managed())
+      using (SHA1 sha1 = SHA1.Create())
       {
         var hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(json));
         return GetNormalizedString(hash);

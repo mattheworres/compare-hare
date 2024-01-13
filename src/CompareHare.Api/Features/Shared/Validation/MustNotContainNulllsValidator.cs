@@ -9,6 +9,6 @@ public class MustNotContainNulllsValidator<T,TProperty> : PropertyValidator<T,TP
 
     public override bool IsValid(ValidationContext<T> context, TProperty value) {
         var list = value as IList<T>;
-        return list.All(li => li != null);
+        return list != null && list.All(li => li != null);
     }
 }

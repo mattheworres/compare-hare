@@ -23,7 +23,7 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.GetAlert
         public async Task<CustomValidationFailures> ValidateAsync(GetAlertModel model)
         {
             var customErrors = new CustomValidationFailures();
-            var currentUserId = await _currentUserProvider.GetUserIdAsync();
+            var currentUserId = _currentUserProvider.GetUserIdSync();
 
             if (!await _dbContext.Alerts.AnyAsync(x => x.Id == model.AlertId && x.UserId == currentUserId)) {
                 customErrors.Add("page", "Alert not found");

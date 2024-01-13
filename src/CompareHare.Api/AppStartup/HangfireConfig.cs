@@ -24,14 +24,10 @@ namespace CompareHare.Api.AppStartup
                 .UseRecommendedSerializerSettings()
                 .UseStorage(new MySqlStorage(connectionString, new MySqlStorageOptions()))
                 ;
-
-
         }
 
         public static void ConfigureAndSchedule(IGlobalConfiguration globalConfiguration, ILifetimeScope container, IConfiguration configuration)
         {
-            // var connectionString = configuration["Hangfire:ConnectionString"];
-            // globalConfiguration.UseStorage(new MySqlStorage(BuildConnectionString(connectionString)));
             globalConfiguration.UseAutofacActivator(container, false);
 
             var offerLoaderSchedule = configuration["Hangfire:OfferLoaderRunnerSchedule"] ?? "";
@@ -59,7 +55,7 @@ namespace CompareHare.Api.AppStartup
         {
             if (!string.IsNullOrEmpty(schedule))
             {
-                RecurringJob.AddOrUpdate<IJobRunner<TJob>>(jobId, jobRunner => jobRunner.Run(JobCancellationToken.Null), schedule, EasternTimeZone());
+                RecurringJob.AddOrUpdate<IJobRunner<TJob>>(jobId, jobRunner => jobRunner.Run(JobCancellationToken.Null), schedule);
             }
             else
             {
@@ -90,7 +86,11 @@ namespace CompareHare.Api.AppStartup
         {
             if (!string.IsNullOrEmpty(schedule))
             {
-                RecurringJob.AddOrUpdate<ISyncJobRunner<TJob>>(jobId, jobRunner => jobRunner.Run(), schedule, EasternTimeZone());
+                var options = new RecurringJobOptions
+                {
+                    TimeZone = EasternTimeZone()
+                };
+                RecurringJob.AddOrUpdate<ISyncJobRunner<TJob>>(jobId, jobRunner => jobRunner.Run(), schedule, options);
             }
             else
             {

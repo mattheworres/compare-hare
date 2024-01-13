@@ -4,6 +4,7 @@ using CompareHare.Domain.Entities;
 using CompareHare.Api.Features.Offers.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Serilog;
 
 namespace CompareHare.Api.Features.Offers.Services
 {
@@ -25,11 +26,11 @@ namespace CompareHare.Api.Features.Offers.Services
             var container = new ContainerBuilder();
             var dbOptionsBuilder = GetDbContextOptionsBuilder();
 
-            //Log.Logger.Information("Persisting offers...");
+            Log.Logger.Information("OfferPersister: Persisting offers...");
 
             using (var context = new CompareHareDbContext(dbOptionsBuilder.Options))
             {
-                //Log.Logger.Information("Deleting existing offers");
+                Log.Logger.Information("OfferPersister: Deleting existing offers");
                 var existingOffers = await context.UtilityPrices.Where(x => x.StateUtilityIndexId == utilityIndexId).ToListAsync();
                 context.RemoveRange(existingOffers);
 
@@ -40,7 +41,7 @@ namespace CompareHare.Api.Features.Offers.Services
                 var existingHistoricals = await context.UtilityPriceHistories.Where(x => x.StateUtilityIndexId == utilityIndexId).ToListAsync();
                 context.RemoveRange(existingHistoricals);
 
-                //Log.Logger.Information("Mapping to histories");
+                Log.Logger.Information("OfferPersister: Mapping to histories");
 
                 //var historicalPrices = _mapper.Map<IEnumerable<UtilityPriceHistory>>(utilityPrices);
 
@@ -56,16 +57,19 @@ namespace CompareHare.Api.Features.Offers.Services
                 // await context.UtilityPrices.AddRangeAsync(utilityPrices);
                 // await context.UtilityPriceHistories.AddRangeAsync(historicalPrices);
 
-                //Log.Logger.Information("Save new additions");
+                Log.Logger.Information("OfferPersister: Save new additions");
 
                 await context.SaveChangesAsync();
 
-                //Log.Logger.Information("Update the index");
+                Log.Logger.Information("OfferPersister: Update the index");
 
                 var index = await context.StateUtilityIndices.FindAsync(utilityIndexId);
-                index.LastUpdatedHash = offerHash;
 
-                //Log.Logger.Information("Save one more bit of changes");
+                if (index != null) {
+                    index.LastUpdatedHash = offerHash;
+                }
+
+                Log.Logger.Information("OfferPersister: Save one more bit of changes");
 
                 await context.SaveChangesAsync();
 

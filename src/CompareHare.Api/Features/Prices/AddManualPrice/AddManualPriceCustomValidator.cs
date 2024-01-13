@@ -22,7 +22,7 @@ namespace CompareHare.Api.Features.Prices.AddManualPrice
         public async Task<CustomValidationFailures> ValidateAsync(AddManualPriceModel model)
         {
             var customErrors = new CustomValidationFailures();
-            var currentUserId = await _currentUserProvider.GetUserIdAsync();
+            var currentUserId = _currentUserProvider.GetUserIdSync();
 
             var productRetailer = await _dbContext.TrackedProductRetailers
                 .FirstOrDefaultAsync(x => x.Id == model.TrackedProductRetailerId);
@@ -31,7 +31,7 @@ namespace CompareHare.Api.Features.Prices.AddManualPrice
                 .FirstOrDefaultAsync(x => x.Id == productRetailer.TrackedProductId
                     && x.UserId == currentUserId)
                     : null;
-            
+
             if (productRetailer == null || product == null) {
                 customErrors.Add("page", "Product not found");
             }

@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using CompareHare.Domain.Features.Authentication.Interfaces;
+using Serilog;
 
 namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogIn
 {
@@ -30,11 +31,23 @@ namespace CompareHare.Api.Features.Authentication.RequestHandlers.LogIn
         {
             var user = await _userManager.FindByEmailAsync(message.Model.Email);
 
-            //TODO: actually fix this, make sure we have proper login
-            if(user != null &&  !user.FirstLogin.HasValue)
-                user.FirstLogin = DateTime.UtcNow;
+            if (user == null) {
+                Log.Logger.Error("LogInHandler: user null (1)");
+                return BadRequest();
+            }
 
-            user.LastLogin = DateTime.UtcNow;
+            //TODO: actually fix this, make sure we have proper login
+            if(user != null)
+            {
+                user.LastLogin = DateTime.UtcNow;
+
+                if (!user.FirstLogin.HasValue) {
+                    user.FirstLogin = DateTime.UtcNow;
+                }
+            } else {
+                Log.Logger.Error("LogInHandler: user null (2)");
+                return BadRequest();
+            }
 
             await _signInManager.SignInAsync(user, false);
 

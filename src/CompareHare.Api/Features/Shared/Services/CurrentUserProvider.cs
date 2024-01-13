@@ -45,12 +45,10 @@ namespace CompareHare.Api.Features.Shared.Services
             return user ?? new User();
         }
 
-        public async Task<int> GetUserIdAsync()
+        public int GetUserIdSync()
         {
-            throw new NotImplementedException();
-            // TODO: remove once most of biz logic is here
-            // var user = await _userManager.GetUserAsync(_principal);
-            // return user.Id;
+            var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return Convert.ToInt32(userId);
         }
 
         // For contexts in which async isn't available; Namely: automapper resolvers
@@ -75,12 +73,6 @@ namespace CompareHare.Api.Features.Shared.Services
             }
 
             return user;
-        }
-
-        public int GetUserIdSync()
-        {
-            var userId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            return Convert.ToInt32(userId);
         }
     }
 }

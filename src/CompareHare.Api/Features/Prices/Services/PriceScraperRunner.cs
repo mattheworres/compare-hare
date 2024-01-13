@@ -81,7 +81,8 @@ namespace CompareHare.Api.Features.Prices.Services
 
                         var retailer = productRetailer.ProductRetailer;
                         var retailerIsOther = retailer == ProductRetailer.Other;
-                        var exceptionMessage = string.Format("{0} Stack Trace: {1}", ex.Message.ToString(), ex.StackTrace.ToString());
+                        var stackTrace = ex.StackTrace != null ? ex.StackTrace.ToString() : "";
+                        var exceptionMessage = string.Format("{0} Stack Trace: {1}", ex.Message.ToString(), stackTrace);
                         var newException = new ProductPriceScrapingException()
                         {
                             TrackedProductId = product.Id,
@@ -105,7 +106,7 @@ namespace CompareHare.Api.Features.Prices.Services
                     var lastStringee = lastPrice == null || !lastPrice.Price.HasValue ? "Nullee" : string.Format("${0}", lastPrice.Price.Value);
                     var lastPriceId = lastPrice != null ? (int?)lastPrice.Id : null;
                     // We want to persist this price as long as A) we have a price and either B) we haven't saved a price before or C) the price has changed in any way (in the future this gets more complicated)
-                    if (scrapedPrice.Price.HasValue && (lastPrice == null || lastPrice.Price.Value != scrapedPrice.Price.Value))
+                    if (scrapedPrice.Price.HasValue && (lastPrice == null || lastPrice.Price == null || lastPrice.Price.Value != scrapedPrice.Price.Value))
                     {
                         Log.Logger.Information("Huzzah, we have a new price for {0} - ${1} (was {2})", productRetailer.ProductRetailer.ToString(), scrapedPrice.Price.Value, lastStringee);
 
@@ -114,7 +115,7 @@ namespace CompareHare.Api.Features.Prices.Services
                     else
                     {
                         var hasValue = scrapedPrice.Price.HasValue ? string.Format("Scraped price had value of ${0}", scrapedPrice.Price.Value) : "No scraped price value";
-                        var hasLastPrice = lastPrice == null ? "Didn't have last price value" : string.Format("Had last price value: ${0}", lastPrice.Price.Value);
+                        var hasLastPrice = lastPrice == null || lastPrice.Price == null ? "Didn't have last price value" : string.Format("Had last price value: ${0}", lastPrice.Price.Value);
 
                         Log.Logger.Information("Bummer, no new price. hasValue: {0} hasLastPrice: {1}", hasValue, hasLastPrice);
                         // Not sure if we actually want to do this...date correlates to change

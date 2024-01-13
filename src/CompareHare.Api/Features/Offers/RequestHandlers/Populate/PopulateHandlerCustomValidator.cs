@@ -20,7 +20,7 @@ namespace CompareHare.Api.Features.Offers.RequestHandlers.Populate
         {
 
             var failures = new CustomValidationFailures();
-            var currentUserId = await _currentUserProvider.GetUserIdAsync();
+            var currentUserId = _currentUserProvider.GetUserIdSync();
             var alertIsOwnedByUser = await _dbContext.Alerts.AnyAsync(x => x.Id == model.AlertId && x.UserId == currentUserId);
 
             if (!alertIsOwnedByUser) {

@@ -4,6 +4,23 @@ namespace CompareHare.Api.Features.Alerts.Models
 {
     public class PriceDisplayModel
     {
+        public PriceDisplayModel()
+        {
+            UtilityState = "";
+            UtilityType = "";
+            Name = "";
+            PriceUnit = "";
+            FlatRate = "";
+            PriceStructure = "";
+            CancellationFee = "";
+            MonthlyFee = "";
+            EnrollmentFee = "";
+            NetMetering = "";
+            SupplierPhone = "";
+            OfferId = "";
+            OfferUrl = "";
+        }
+
         public int Id { get; set; }
 
         public string UtilityState { get; set; }

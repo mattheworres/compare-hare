@@ -1,10 +1,9 @@
-using System.Threading;
-
 using CompareHare.Api.MediatR;
 using CompareHare.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace CompareHare.Api.Features.Alerts.RequestHandlers.DeleteAlert
 {
@@ -20,6 +19,12 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.DeleteAlert
     public async Task<IActionResult> Handle(DeleteAlertMessage request, CancellationToken cancellationToken)
     {
       var alert = await _dbContext.Alerts.FindAsync(request.Model.AlertId);
+
+      if (alert == null) {
+        Log.Logger.Error("DeleteAlertHandler: alert null");
+        return BadRequest();
+      }
+
       var alertId = alert.Id;
       var suiId = alert.StateUtilityIndexId;
 
@@ -32,6 +37,12 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.DeleteAlert
 
       if (!await _dbContext.Alerts.AnyAsync(x => x.Id != alertId && x.StateUtilityIndexId == suiId)) {
           var sui = await _dbContext.StateUtilityIndices.FindAsync(suiId);
+
+          if (sui == null) {
+            Log.Logger.Error("DeleteAlertHandler: sui null");
+            return BadRequest();
+          }
+
           sui.Active = false;
           sui.LastUpdatedHash = string.Empty;
 

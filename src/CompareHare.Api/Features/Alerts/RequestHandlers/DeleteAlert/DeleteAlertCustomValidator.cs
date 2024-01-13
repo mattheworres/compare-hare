@@ -23,7 +23,7 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.DeleteAlert
     {
       var customErrors = new CustomValidationFailures();
 
-      var currentUserId = await _currentUserProvider.GetUserIdAsync();
+      var currentUserId = _currentUserProvider.GetUserIdSync();
 
       var alertExistsAndIsOwnedByUser = await _dbContext.Alerts.AnyAsync(x => x.Id == model.AlertId && x.UserId == currentUserId);
 

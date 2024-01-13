@@ -3,6 +3,7 @@ using AngleSharp.Dom;
 using AngleSharp.Io;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Features.OfferLoaders.Interfaces;
+using CompareHare.Domain.Helpers;
 using CompareHare.Domain.Services;
 using CompareHare.Domain.Services.Interfaces;
 using Serilog;
@@ -64,12 +65,19 @@ namespace CompareHare.Domain.Features.OfferLoaders
         {
             var supplierElement = element.QuerySelector("div.supplier-name");
             var uniqueIdentifier = _parserHelper.GetElementClassStartingWith(supplierElement, "nid");
+            var nameElement = supplierElement.QuerySelector("span.name a");
+            var supplierPhoneElement = supplierElement.QuerySelector("span.phone");
+
+            if (nameElement == null || supplierPhoneElement == null)
+            {
+                throw new Exception("Null element");
+            }
 
             return new UtilityPrice
             {
                 Id = 0,
-                Name = supplierElement.QuerySelector("span.name a").Text().Trim(),
-                SupplierPhone = supplierElement.QuerySelector("span.phone").Text().Trim(),
+                Name = nameElement.Text().Trim(),
+                SupplierPhone = supplierPhoneElement.Text().Trim(),
                 StateUtilityIndexId = utilityIndexId,
                 OfferId = uniqueIdentifier,
             };
@@ -78,19 +86,27 @@ namespace CompareHare.Domain.Features.OfferLoaders
         private UtilityPrice ParseRates(IElement element, UtilityPrice utilityPrice)
         {
             var supplierRateElement = element.QuerySelector("div.supplier-rate");
-            var rateText = supplierRateElement.QuerySelector("span.rate").Text();
+
+            if (supplierRateElement == null) {
+                throw new ParsingException("PAPowerOfferLoader: supplierRateElement null");
+            }
+
+            var rateElement = supplierRateElement.QuerySelector("span.rate");
+            var rateText = rateElement != null ? rateElement.Text() : "";
 
             utilityPrice.PricePerUnit = float.Parse(rateText.Substring(1, rateText.Length - 1), CultureInfo.InvariantCulture.NumberFormat);
 
             if (utilityPrice.PricePerUnit == 0)
             {
                 utilityPrice.PricePerUnit = null;
+#pragma warning disable CS8604 // Possible null reference argument.
                 utilityPrice.FlatRate = supplierRateElement.QuerySelector("span.unlimited-rate").Text();
             }
             else
             {
                 //var word = supplierRateElement.QuerySelector("span.unit span.word").Text();
                 utilityPrice.PriceUnit = supplierRateElement.QuerySelector("span.unit span#unit").Text();
+#pragma warning restore CS8604 // Possible null reference argument.
             }
 
             return utilityPrice;
@@ -99,14 +115,26 @@ namespace CompareHare.Domain.Features.OfferLoaders
         private UtilityPrice ParseCopy(IElement element, UtilityPrice utilityPrice)
         {
             var copyElement = element.QuerySelector("div.copy");
+
+            if (copyElement == null) {
+                throw new ParsingException("PAPowerOfferLoader: ParseCopy: copyElement null");
+            }
+
             var rightCopyElement = copyElement.QuerySelector("div.right");
             var middleCopyElement = copyElement.QuerySelector("div.middle");
             var leftCopyElement = copyElement.QuerySelector("div.left");
 
+            if (rightCopyElement == null
+                || middleCopyElement == null
+                || leftCopyElement == null) {
+                    throw new ParsingException($"PAPowerOfferLoader: ParseCopy: right/middle/left copy element null");
+                }
+#pragma warning disable CS8604 // Possible null reference argument.
             utilityPrice = ParseRightCopy(rightCopyElement, utilityPrice);
             utilityPrice = ParseMiddleCopy(middleCopyElement, utilityPrice);
 
             return ParseLeftCopy(leftCopyElement, utilityPrice);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         private UtilityPrice ParseRightCopy(IElement element, UtilityPrice utilityPrice)

@@ -27,12 +27,15 @@ namespace CompareHare.Api.MediatR.ValidationPipeline
 
             foreach (var cv in _customValidators.Value) customValidationFailures.AddRange(await cv.ValidateAsync(request.Model));
 
+#pragma warning disable CA1860 // Avoid using 'Enumerable.Any()' extension method
+#pragma warning disable CS8603 // Possible null reference return.
             return customValidationFailures.Any()
                        ? new BadRequestObjectResult(
                            customValidationFailures
                               .GroupBy(vf => vf.PropertyName, vf => vf.ErrorMessage)
                               .ToDictionary(pe => pe.Key, pe => pe.ToArray()))
                        : null;
+
         }
 
         async Task<IActionResult> IFluentValidationRequestPreProcessor<IValidatableRequest<TModel>>.Process(IValidatableRequest<TModel> request)
@@ -47,6 +50,8 @@ namespace CompareHare.Api.MediatR.ValidationPipeline
                               .GroupBy(vf => vf.PropertyName, vf => vf.ErrorMessage)
                               .ToDictionary(pe => pe.Key, pe => pe.ToArray()))
                        : null;
+#pragma warning restore CS8603 // Possible null reference return.
+#pragma warning restore CA1860 // Avoid using 'Enumerable.Any()' extension method
         }
     }
 }

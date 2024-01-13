@@ -10,7 +10,7 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.GetAlerts
     {
         public GetAlertsMappingProfile() {
             CreateMap<Alert, AlertListModel>()
-                .ForMember(d => d.LastEdited, mce => mce.MapFrom(s => s.ModifiedDate))
+                .ForMember(d => d.LastEdited, mce => mce.MapFrom(s => s.ModifiedDate.HasValue ? s.ModifiedDate.Value.Date : new DateTime()))
                 .ForMember(d => d.MatchesCount, mce => mce.Ignore())
                 .ForMember(d => d.UtilityState, mce => mce.MapFrom(s => s.StateUtilityIndex.UtilityState.DisplayName()))
                 .ForMember(d => d.UtilityType, mce => mce.MapFrom(s => s.StateUtilityIndex.UtilityType.DisplayName()))

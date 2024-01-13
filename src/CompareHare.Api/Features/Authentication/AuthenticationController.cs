@@ -20,10 +20,11 @@ namespace CompareHare.Api.Features.Authentication
         [Route("sign-in"), HttpPost, AllowAnonymous]
         public async Task<IActionResult> SignIn([FromBody] LogInModel model)
         {
-            var ip = this.Request.HttpContext.Connection.RemoteIpAddress;
+            var remoteIpAddress = Request.HttpContext.Connection.RemoteIpAddress;
+            var ip = remoteIpAddress != null ? remoteIpAddress.ToString() : "";
             var valid = ModelState.IsValid;
             var errors = ModelState.Values;
-            return await _mediator.Send(new LogInMessage(model, ip.ToString()));
+            return await _mediator.Send(new LogInMessage(model, ip));
         }
 
         [HttpDelete("log-out"), AllowAnonymous]
