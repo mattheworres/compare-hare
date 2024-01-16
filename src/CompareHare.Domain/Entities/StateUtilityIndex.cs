@@ -8,6 +8,11 @@ namespace CompareHare.Domain.Entities
 {
     public class StateUtilityIndex : ICreatedDateTimeTracker, IModifiedDateTimeTracker
     {
+        public StateUtilityIndex()
+        {
+            LastUpdatedHash = "";
+        }
+
         public int Id { get; set; }
 
         [MaxLength(256)]

@@ -8,6 +8,13 @@ namespace CompareHare.Domain.Entities
 {
     public class TrackedProductRetailer
     {
+        public TrackedProductRetailer()
+        {
+            OtherRetailerDisplayName = "";
+            ScrapeUrl = "";
+            PriceSelector = "";
+        }
+
         public int Id { get; set; }
 
         public int TrackedProductId { get; set; }

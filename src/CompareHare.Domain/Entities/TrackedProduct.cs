@@ -6,6 +6,11 @@ namespace CompareHare.Domain.Entities
 {
     public class TrackedProduct
     {
+        public TrackedProduct()
+        {
+            Name = "";
+        }
+
         public int Id { get; set; }
 
         public int UserId { get; set; }

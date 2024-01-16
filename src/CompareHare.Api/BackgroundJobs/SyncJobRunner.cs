@@ -29,7 +29,7 @@ namespace CompareHare.Api.BackgroundJobs
                     }
                     catch (Exception ex)
                     {
-                        Log.Logger.Error(ex, "Error running job {0}", job.GetType().Name);
+                        Log.Logger.Error(ex, "SyncJobRunner: Error running job {0}", job.GetType().Name);
                     }
                 }
             }

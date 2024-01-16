@@ -26,7 +26,7 @@ namespace CompareHare.Api.Features.Prices.Services
             var dbOptionsBuilder = GetDbContextOptionsBuilder();
             var retailerName = price.ProductRetailer.ToString();
 
-            Log.Logger.Information("Persisting price for product {0} for retailer {1}", price.TrackedProductId, retailerName);
+            Log.Logger.Information("PricePersister: Persisting price for product {0} for retailer {1}", price.TrackedProductId, retailerName);
 
             // Note, I hit a *lot* of method not found errors when running EF SaveChangesAsync
             using (var context = new CompareHareDbContext(dbOptionsBuilder.Options))
@@ -42,7 +42,7 @@ namespace CompareHare.Api.Features.Prices.Services
                         // Calculate change values for new price
                         priceToUpdate.AmountChange = _priceHelper.CalculatePriceChange(price.Price.Value, oldPriceHistory.Price.Value);
                         priceToUpdate.PercentChange = _priceHelper.CalculatePriceChangePercentage(price.Price.Value, oldPriceHistory.Price.Value);
-                        Log.Logger.Information("Price change of {0} ({1}% change) for retailer {2}", priceToUpdate.AmountChange.Value, priceToUpdate.PercentChange.Value * 100, retailerName);
+                        Log.Logger.Information("PricePersister: Price change of {0} ({1}% change) for retailer {2}", priceToUpdate.AmountChange.Value, priceToUpdate.PercentChange.Value * 100, retailerName);
                         // Update existing price: price, change fields, PH Id
                         _mapper.Map(price, priceToUpdate);
 
@@ -60,7 +60,7 @@ namespace CompareHare.Api.Features.Prices.Services
                 else
                 {
                     priceToUpdate = price;
-                    Log.Logger.Information("We got a new price here for {0}...", retailerName);
+                    Log.Logger.Information("PricePersister: We got a new price here for {0}...", retailerName);
 
                     context.ProductRetailerPrices.Add(priceToUpdate);
                 }
@@ -70,14 +70,14 @@ namespace CompareHare.Api.Features.Prices.Services
                 // Update existing price: PH Id
                 priceToUpdate.ProductRetailerPriceHistory = newPriceHistory;
                 context.ProductRetailerPriceHistories.Add(newPriceHistory);
-                Log.Logger.Information("New price history for {0} created", retailerName);
+                Log.Logger.Information("PricePersister: New price history for {0} created", retailerName);
 
                 // Persist price creation/changes
                 context.SaveChanges();
 
                 context.Dispose();
 
-                Log.Logger.Information("Price persisted");
+                Log.Logger.Information("PricePersister: Price persisted");
             }
         }
 

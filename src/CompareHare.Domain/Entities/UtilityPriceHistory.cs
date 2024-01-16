@@ -7,6 +7,22 @@ namespace CompareHare.Domain.Entities
 {
     public class UtilityPriceHistory : ICreatedDateTimeTracker, IModifiedDateTimeTracker
     {
+        public UtilityPriceHistory()
+        {
+            Name = "";
+            PriceUnit = "";
+            FlatRate = "";
+            PriceStructure = "";
+            CancellationFee = "";
+            MonthlyFee = "";
+            EnrollmentFee = "";
+            NetMetering = "";
+            SupplierPhone = "";
+            OfferId = "";
+            OfferUrl = "";
+            Comments = "";
+        }
+
         public int Id { get; set; }
 
         public int StateUtilityIndexId { get; set; }

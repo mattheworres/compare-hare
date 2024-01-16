@@ -7,6 +7,7 @@ using CompareHare.Domain.Features.AlertAssessors.Queries;
 using CompareHare.Domain.Services.Interfaces;
 using CompareHare.Domain.Sql.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace CompareHare.Domain.Features.AlertAssessors
 {
@@ -73,7 +74,7 @@ namespace CompareHare.Domain.Features.AlertAssessors
                 if (item != null) {
                     matchingHistories.Add(item);
                 } else {
-                    // TODO: log that we didnt find ID once we have Serilog lol
+                    Log.Logger.Warning($"UPH #{id} was not found for alert {alertId}!");
                 }
             }
 
@@ -85,7 +86,7 @@ namespace CompareHare.Domain.Features.AlertAssessors
 
                 await _dbContext.SaveChangesAsync();
 
-                //Log.Logger.Information($"New matches for {alertId}!");
+                Log.Logger.Information($"New matches for {alertId}!");
 
                 returnModel.ReturnType = AlertAssessorReturnType.NewMatchesAvailable;
                 returnModel.MatchesCount = matchingHistories.Count();
@@ -94,7 +95,7 @@ namespace CompareHare.Domain.Features.AlertAssessors
             } else {
                 returnModel.ReturnType = AlertAssessorReturnType.NoChangeAtMatchLevel;
 
-                //Log.Logger.Information($"No new matches for {alertId} sadly...");
+                Log.Logger.Information($"No new matches for {alertId} sadly...");
 
                 return returnModel;
             }

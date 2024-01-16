@@ -42,7 +42,7 @@ namespace CompareHare.Api.Features.OfferLoaders
                 await _dbContext.SaveChangesAsync();
             }
 
-            //Log.Logger.Information("Ok, got indices... {0}", indices.Count());
+            Log.Logger.Information("AlertAssessorRunner: Ok, got indices... {0}", indices.Count());
 
 
             // var limiter = TimeLimiter.GetFromMaxCountByInterval(1, TimeSpan.FromSeconds(THROTTLE_SECONDS));
@@ -63,19 +63,19 @@ namespace CompareHare.Api.Features.OfferLoaders
             {
                 var offerLoader = _offerLoaderPicker.PickOfferLoader(index);
 
-                //Log.Logger.Information("Ok, got a loader for {0}... {1}", index.LoaderDataIdentifier, offerLoader.GetType());
+                Log.Logger.Information("AlertAssessorRunner: Ok, got a loader for {0}... {1}", index.LoaderDataIdentifier, offerLoader.GetType());
 
                 if (offerLoader == null) return;
 
                 var offers = await offerLoader.LoadOffers(index.Id, index.LoaderDataIdentifier);
 
-                //Log.Logger.Information("Ok, got some offers... {0}", offers.Count());
+                Log.Logger.Information("AlertAssessorRunner: Ok, got some offers... {0}", offers.Count());
 
                 if (offers.Count() == 0) return;
 
                 var offerHash = _hasherHelper.GetModelHash(offers);
 
-                //Log.Logger.Information("Ok, got a hash, comparing it to ... ({0}) and ({1})", offerHash, index.LastUpdatedHash);
+                Log.Logger.Information("AlertAssessorRunner: Ok, got a hash, comparing it to ... ({0}) and ({1})", offerHash, index.LastUpdatedHash);
 
                 if (string.IsNullOrEmpty(index.LastUpdatedHash) || offerHash != index.LastUpdatedHash)
                 {

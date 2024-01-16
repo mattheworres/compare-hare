@@ -29,7 +29,7 @@ namespace CompareHare.Api.Features.Prices.Services
         {
             var activeProducts = _dbContext.TrackedProducts.Where(x => x.Enabled).ToList();
 
-            Log.Logger.Information("Got {0} active products", activeProducts.Count());
+            Log.Logger.Information("PriceScraperRunner: Got {0} active products", activeProducts.Count());
 
             foreach (var product in activeProducts)
             {
@@ -40,7 +40,7 @@ namespace CompareHare.Api.Features.Prices.Services
                 var random = new Random();
 
                 var enabledRetailers = _dbContext.TrackedProductRetailers.Where(x => x.TrackedProductId == product.Id && x.Enabled == true).ToList();
-                Log.Logger.Information("For product #{0} we have {1} retailers...", product.Id, enabledRetailers.Count());
+                Log.Logger.Information("PriceScraperRunner: For product #{0} we have {1} retailers...", product.Id, enabledRetailers.Count());
                 foreach (var productRetailer in enabledRetailers)
                 {
                     if (ct.IsCancellationRequested) {
@@ -50,15 +50,15 @@ namespace CompareHare.Api.Features.Prices.Services
                     // TODO: Verify this actually works with Thread.Sleep... but... ok?
                     var throttleSeconds = 2;//random.Next(THROTTLE_MIN, THROTTLE_MAX);
                     // var limiter = TimeLimiter.GetFromMaxCountByInterval(1, TimeSpan.FromSeconds(throttleSeconds));
-                    Log.Logger.Information("About to scrape for retailer {0} for product {1}...", productRetailer.ProductRetailer.ToString(), product.Id);
+                    Log.Logger.Information("PriceScraperRunner: About to scrape for retailer {0} for product {1}...", productRetailer.ProductRetailer.ToString(), product.Id);
                     var scraper = _scraperPicker.PickPriceScraper(productRetailer.ProductRetailer);
 
-                    Log.Logger.Information("Throttling for {0} seconds, please wait...", throttleSeconds);
+                    Log.Logger.Information("PriceScraperRunner: Throttling for {0} seconds, please wait...", throttleSeconds);
 
                     // await limiter;
                     Thread.Sleep(throttleSeconds * 1000);
 
-                    Log.Logger.Information("Throttling complete, attempting to scrape...");
+                    Log.Logger.Information("PriceScraperRunner: Throttling complete, attempting to scrape...");
 
                     ProductRetailerPrice scrapedPrice;
 
@@ -77,7 +77,7 @@ namespace CompareHare.Api.Features.Prices.Services
                     }
                     catch (Exception ex)
                     {
-                        Log.Logger.Information("Got an exception, no can do for this one pal");
+                        Log.Logger.Information("PriceScraperRunner: Got an exception, no can do for this one pal");
 
                         var retailer = productRetailer.ProductRetailer;
                         var retailerIsOther = retailer == ProductRetailer.Other;
@@ -108,7 +108,7 @@ namespace CompareHare.Api.Features.Prices.Services
                     // We want to persist this price as long as A) we have a price and either B) we haven't saved a price before or C) the price has changed in any way (in the future this gets more complicated)
                     if (scrapedPrice.Price.HasValue && (lastPrice == null || lastPrice.Price == null || lastPrice.Price.Value != scrapedPrice.Price.Value))
                     {
-                        Log.Logger.Information("Huzzah, we have a new price for {0} - ${1} (was {2})", productRetailer.ProductRetailer.ToString(), scrapedPrice.Price.Value, lastStringee);
+                        Log.Logger.Information("PriceScraperRunner: Huzzah, we have a new price for {0} - ${1} (was {2})", productRetailer.ProductRetailer.ToString(), scrapedPrice.Price.Value, lastStringee);
 
                         _pricePersister.PersistNewPrice(scrapedPrice, lastPriceId);
                     }
@@ -117,7 +117,7 @@ namespace CompareHare.Api.Features.Prices.Services
                         var hasValue = scrapedPrice.Price.HasValue ? string.Format("Scraped price had value of ${0}", scrapedPrice.Price.Value) : "No scraped price value";
                         var hasLastPrice = lastPrice == null || lastPrice.Price == null ? "Didn't have last price value" : string.Format("Had last price value: ${0}", lastPrice.Price.Value);
 
-                        Log.Logger.Information("Bummer, no new price. hasValue: {0} hasLastPrice: {1}", hasValue, hasLastPrice);
+                        Log.Logger.Information("PriceScraperRunner: Bummer, no new price. hasValue: {0} hasLastPrice: {1}", hasValue, hasLastPrice);
                         // Not sure if we actually want to do this...date correlates to change
                         // if (lastPrice != null && scrapedPrice.Price.HasValue && scrapedPrice.Price.Value == lastPrice.Price.Value) {
                         //     _pricePersister.UpdateUnchangedPrice(lastPrice.Id, DateTime.Now.Date);
@@ -131,7 +131,7 @@ namespace CompareHare.Api.Features.Prices.Services
             var exceptions = _dbContext.ProductPriceScrapingExceptions.Count(x => activeProductRetailerIds.Contains(x.TrackedProductRetailerId));
             var percentage = countTotal > 0 ? exceptions/countTotal * 100 : 0;
 
-            Log.Logger.Information("Price scrape done, nice jerb. {0} total products, {1} exceptions ( {2}% fail)", countTotal, exceptions, percentage);
+            Log.Logger.Information("PriceScraperRunner: Price scrape done, nice jerb. {0} total products, {1} exceptions ( {2}% fail)", countTotal, exceptions, percentage);
         }
     }
 }

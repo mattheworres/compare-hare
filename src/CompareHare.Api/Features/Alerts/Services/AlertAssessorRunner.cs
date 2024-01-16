@@ -4,7 +4,7 @@ using CompareHare.Api.Features.Alerts.Services.Interfaces;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Features.AlertAssessors.Interfaces;
 using Microsoft.EntityFrameworkCore;
-// using Serilog;
+using Serilog;
 
 namespace CompareHare.Api.Features.Alerts.Services
 {
@@ -23,7 +23,7 @@ namespace CompareHare.Api.Features.Alerts.Services
         {
             var alerts = await _dbContext.Alerts.Where(x => x.Active).ToListAsync();
 
-            //Log.Logger.Information($"Ok, we have {alerts.Count()} alerts here");
+            Log.Logger.Information($"AlertAssessorRunner: Ok, we have {alerts.Count()} alerts here");
 
             foreach (var alert in alerts)
             {

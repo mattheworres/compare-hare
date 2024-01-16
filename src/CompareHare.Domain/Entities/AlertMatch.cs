@@ -6,6 +6,11 @@ namespace CompareHare.Domain.Entities
 {
     public class AlertMatch : ICreatedDateTimeTracker, IModifiedDateTimeTracker
     {
+        public AlertMatch()
+        {
+            AlertOfferHash = "";
+        }
+
         public int Id { get; set; }
 
         public int AlertId { get; set; }

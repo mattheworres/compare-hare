@@ -3,6 +3,7 @@ using CompareHare.Api.Features.Alerts.Models;
 using CompareHare.Api.Features.Shared.Mapping;
 using CompareHare.Domain.Entities;
 using CompareHare.Domain.Extensions;
+using CompareHare.Domain.Services.Mapping;
 
 namespace CompareHare.Api.Features.Alerts.RequestHandlers.GetAlert
 {
@@ -17,7 +18,7 @@ namespace CompareHare.Api.Features.Alerts.RequestHandlers.GetAlert
                 .ForMember(d => d.MatchesCount, mce => mce.MapFrom<AlertMatchCountResolver>())
                 .ForMember(d => d.Parameters, mce => mce.MapFrom<AlertFeatureResolver>())
                 .ForMember(d => d.Prices, mce => mce.Ignore())
-                .ForMember(d => d.LastEdited, mce => mce.MapFrom(s => s.ModifiedDate))
+                .ForMember(d => d.LastEdited, mce => mce.ConvertUsing(new DateTimeOffsetToDateTimeConverter(), "ModifiedDate"))
             ;
 
             CreateMap<UtilityPriceHistory, PriceDisplayModel>();

@@ -7,6 +7,11 @@ namespace CompareHare.Domain.Entities
 {
     public class ProductRetailerPrice : ICreatedDateTimeTracker, IModifiedDateTimeTracker
     {
+        public ProductRetailerPrice()
+        {
+            Footnote = "";
+        }
+
         public int Id { get; set; }
 
         public int TrackedProductId { get; set; }

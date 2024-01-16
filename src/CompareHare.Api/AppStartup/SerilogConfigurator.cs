@@ -12,12 +12,6 @@ namespace CompareHare.Api.AppStartup
                 .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
                 .Build();
 
-            // Log.Logger = new LoggerConfiguration()
-            //     .ReadFrom.Configuration(configuration)
-            //     .WriteTo.MSSqlServer(configuration["ConnectionStrings:CompareHareDbContext"], "Logs",
-            //         autoCreateSqlTable: true, restrictedToMinimumLevel: LogEventLevel.Warning)
-            //     .CreateLogger();
-
             Log.Logger = new LoggerConfiguration()
                 .MinimumLevel.Information()
                 .ReadFrom.Configuration(configuration)

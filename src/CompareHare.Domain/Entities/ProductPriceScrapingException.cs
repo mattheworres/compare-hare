@@ -7,6 +7,13 @@ namespace CompareHare.Domain.Entities
 {
     public class ProductPriceScrapingException : ICreatedDateTimeTracker
     {
+        public ProductPriceScrapingException()
+        {
+            Url = "";
+            Selector = "";
+            Error = "";
+        }
+
         public int Id { get; set; }
 
         public int TrackedProductId { get; set; }

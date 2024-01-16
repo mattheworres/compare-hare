@@ -117,7 +117,6 @@ public class Startup
         var autofacContainer = app.ApplicationServices.GetAutofacRoot();
         HangfireConfig.ConfigureAndSchedule(globalConfiguration, autofacContainer, _configuration);
 
-        app.UseStaticFiles();
         app.UseHangfireDashboard();
         app.UseRouting();
 
