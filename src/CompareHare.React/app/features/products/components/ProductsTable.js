@@ -68,9 +68,9 @@ const styles = theme => ({
   }
 });
 
-const ENABLED_ICON = <CheckCircle color="primary" />;
-const DISABLED_ICON = <Close color="disabled" />;
-const EXCEPTION_ICON = <ErrorOutline color="error" />;
+const ENABLED_ICON = <CheckCircle color="primary" title="Product is up to date" />;
+const DISABLED_ICON = <Close color="disabled" title="User has disabled this product" />;
+const EXCEPTION_ICON = <ErrorOutline color="error" title="Has scraping exceptions" />;
 
 class ProductsTable extends React.PureComponent {
   constructor(props) {

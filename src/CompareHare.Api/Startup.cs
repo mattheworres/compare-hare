@@ -135,25 +135,6 @@ public class Startup
                 .RequireCors(MyCorsPolicy)
                 ;
             endpoints.MapHangfireDashboard("/background-jobs", hangfireDashboardOptions);
-
-
-            // var api = endpoints.MapGroup("api");
-
-            // api.MapControllerRoute(name: "api", pattern: "{controller}/{action}",
-            //     defaults: new { action = "Get" });
-
-            // api.MapControllers();
-            // api.MapDefaultControllerRoute();
-            // api.RequireCors(MyCorsPolicy);
-            // TODO: Remove weather forecast once we know API is healthy and working
-            // endpoints.MapControllerRoute(name: "WeatherForecast", pattern: "weatherforecast",
-            //     defaults: new { controller = "WeatherForecast", action = "Get" })
-            //     .RequireCors(MyCorsPolicy);// not sure this actually does anything
-
-            // var apiGroup = endpoints.MapGroup("/api")
-            //     .AddFluentValidationAutoValidation()
-            //     .RequireCors();
-            // apiGroup.MapControllers();
         });
 
         // TODO: only for development

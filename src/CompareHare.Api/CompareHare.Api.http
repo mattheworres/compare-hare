@@ -1,6 +1,4 @@
 @CompareHare.Api_HostAddress = http://localhost:5193
 
-GET {{CompareHare.Api_HostAddress}}/weatherforecast/
-Accept: application/json
 
 ###
