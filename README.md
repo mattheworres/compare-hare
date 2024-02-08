@@ -2,16 +2,14 @@
 
 For a general idea of the app and its architecture, please read [ARCHITECTURE.md](ARCHITECTURE.md)
 
-This project was generated with the [Angular Full-Stack Generator](https://github.com/DaftMonk/generator-angular-fullstack) version 3.3.0.
-
 ## Getting Started
 
 ### Prerequisites
 
-- Dotnet Core 2.2 installed
-- MySQL docker image instantiated and configured
+- .NET 8+ installed
+- MySQL/MariaDB docker image instantiated and configured
 - Nuget package manager
-- Yarn
+- Yarn package manager
 
 ### Developing (order is important)
 
