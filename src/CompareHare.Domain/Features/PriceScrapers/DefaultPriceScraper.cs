@@ -76,16 +76,16 @@ namespace CompareHare.Domain.Features.PriceScrapers
             switch (retailer)
             {
                 case ProductRetailer.AppliancesConnection:
-                    return string.Format("{0}/AppliancesConnection_Response.test_markup", LOCAL_URL_BASE);
+                    return string.Format("{0}/AppliancesConnection_Response.html", LOCAL_URL_BASE);
 
                 case ProductRetailer.BestBuy:
-                    return string.Format("{0}/BB_Response.test_markup", LOCAL_URL_BASE);
+                    return string.Format("{0}/BB_Response.html", LOCAL_URL_BASE);
 
                 case ProductRetailer.HomeDepot:
-                    return string.Format("{0}/HD_Response.test_markup", LOCAL_URL_BASE);
+                    return string.Format("{0}/HD_Response.html", LOCAL_URL_BASE);
 
                 case ProductRetailer.Lowes:
-                    return string.Format("{0}/Lowes_Response.test_markup", LOCAL_URL_BASE);
+                    return string.Format("{0}/Lowes_Response.html", LOCAL_URL_BASE);
 
                 default:
                     throw new NotImplementedException();
