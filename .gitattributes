@@ -8,6 +8,7 @@
 # for example, after the build script is run)
 .*      text eol=lf
 *.html  text eol=lf
+*.html linguist-detectable=false
 *.css   text eol=lf
 *.less  text eol=lf
 *.styl  text eol=lf
