@@ -15,7 +15,7 @@ namespace CompareHare.Domain.Features.OfferLoaders
     public class PAPowerOfferLoader : IOfferLoader
     {// TODO: Rewrite to take advantage of CSV source!
         //TODO: Use on FE to get distributor ID for alerts up front: https://www.papowerswitch.com/umbraco/Api/ShopApi/ZipSearch?zipcode={0}&servicetype=residential
-        //TODO: UPDATE to use JSON source instead: https://www.papowerswitch.com/umbraco/Api/ShopApi/ZipSearch?zipcode={0}&servicetype=residential
+        private const string URL = "http://localhost:8000/public/PA_Response.test_markup";
         //private const string URL = "https://www.papowerswitch.com/shop-for-rates-results/?zipcode={0}&serviceType=residential&distributor={1}&distributorrate={2}";
         //private const string URL = "https://www.papowerswitch.com/umbraco/Api/ShopApi/RateCSV?id={0}&servicetype=residential&ratetype={1}";
         private const string SPACE = " ";
