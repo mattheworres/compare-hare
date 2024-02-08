@@ -295,7 +295,17 @@ namespace CompareHare.Api.Migrations
                     b.Property<string>("LoaderDataIdentifier")
                         .HasMaxLength(256);
 
-                    b.Property<DateTimeOffset?>("ModifiedDate");
+                    b.Property<string>("LoaderDataIdentifier2")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("LoaderDataIdentifier3")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+                    b.Property<DateTimeOffset?>("ModifiedDate")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<int>("UtilityState");
 

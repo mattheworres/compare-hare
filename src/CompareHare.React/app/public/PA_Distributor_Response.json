@@ -1,0 +1,107 @@
+[
+  {
+    "id": 1184,
+    "nid": "27502",
+    "name": "Penn Power",
+    "phone": "1-800-720-3600",
+    "website": "https://www.firstenergycorp.com/penn_power.html",
+    "rates": [
+      {
+        "id": 1208,
+        "rateSchedule": "RS - Regular Residential Service",
+        "rate": 0.11231,
+        "pastRates": [
+          {
+            "key": "2018-09-01",
+            "value": 0.0663
+          },
+          {
+            "key": "2018-12-01",
+            "value": 0.0771
+          },
+          {
+            "key": "2019-03-01",
+            "value": 0.0641
+          },
+          {
+            "key": "2019-06-01",
+            "value": 0.0626
+          },
+          {
+            "key": "2019-09-01",
+            "value": 0.0623
+          },
+          {
+            "key": "2019-12-01",
+            "value": 0.0757
+          },
+          {
+            "key": "2020-03-01",
+            "value": 0.06267
+          },
+          {
+            "key": "2020-06-01",
+            "value": 0.06684
+          },
+          {
+            "key": "2020-08-31",
+            "value": 0.06684
+          },
+          {
+            "key": "2020-11-30",
+            "value": 0.06447
+          },
+          {
+            "key": "2021-02-28",
+            "value": 0.06435
+          },
+          {
+            "key": "2021-05-31",
+            "value": 0.05721
+          },
+          {
+            "key": "2021-08-31",
+            "value": 0.07195
+          },
+          {
+            "key": "2021-11-30",
+            "value": 0.07657
+          },
+          {
+            "key": "2022-02-28",
+            "value": 0.07593
+          },
+          {
+            "key": "2022-05-31",
+            "value": 0.07082
+          },
+          {
+            "key": "2022-08-31",
+            "value": 0.08694
+          },
+          {
+            "key": "2022-11-30",
+            "value": 0.10348
+          },
+          {
+            "key": "2023-02-28",
+            "value": 0.10511
+          },
+          {
+            "key": "2023-05-31",
+            "value": 0.10439
+          },
+          {
+            "key": "2023-11-30",
+            "value": 0.10556
+          }
+        ],
+        "futureRate": 0,
+        "futureRateTimeframe": "This will be the actual price beginning June 01, 2024",
+        "lastUpdatedDate": "December 05, 2023"
+      }
+    ],
+    "suppliers": null,
+    "brokers": null
+  }
+]

@@ -8,6 +8,6 @@ namespace CompareHare.Domain.Features.OfferLoaders.Interfaces
 {
     public interface IOfferLoader : IFeatureService
     {
-        Task<List<UtilityPrice>> LoadOffers(int utilityIndexId, string loaderIdentifier, IRequester requester = null);
+        Task<List<UtilityPrice>> LoadOffers(int utilityIndexId, string[] loaderIdentifiers, IRequester? requester = null);
     }
 }

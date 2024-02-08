@@ -5,6 +5,7 @@ import {AlertsTable} from './index';
 import {Grid} from '@material-ui/core';
 import {AddAlertModal, SaveAlertProgressModal} from '../../alerts/components';
 import {
+  AddPaPowerAlertSetupModal,
   AddPaPowerAlert1stModal,
   AddPaPowerAlert2ndModal,
   AddPaPowerAlert3rdModal,
@@ -26,6 +27,7 @@ class UtilitiesDashboard extends React.Component {
           <Grid item xs={false} sm={false} md={false} lg={1}/>
         </Grid>
         <AddAlertModal />
+        <AddPaPowerAlertSetupModal />
         <AddPaPowerAlert1stModal />
         <AddPaPowerAlert2ndModal />
         <AddPaPowerAlert3rdModal />

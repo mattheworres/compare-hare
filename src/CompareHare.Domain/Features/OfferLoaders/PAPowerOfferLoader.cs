@@ -13,11 +13,11 @@ using Serilog;
 namespace CompareHare.Domain.Features.OfferLoaders
 {
     public class PAPowerOfferLoader : IOfferLoader
-    {
-        //TODO: Remove once live.....
+    {// TODO: Rewrite to take advantage of CSV source!
+        //TODO: Use on FE to get distributor ID for alerts up front: https://www.papowerswitch.com/umbraco/Api/ShopApi/ZipSearch?zipcode={0}&servicetype=residential
         //TODO: UPDATE to use JSON source instead: https://www.papowerswitch.com/umbraco/Api/ShopApi/ZipSearch?zipcode={0}&servicetype=residential
-        private const string URL = "http://localhost:8000/public/PA_Response.html";
-        //private const string URL = "https://www.papowerswitch.com/shop-for-electricity/shop-for-your-home?zipcode={0}";
+        //private const string URL = "https://www.papowerswitch.com/shop-for-rates-results/?zipcode={0}&serviceType=residential&distributor={1}&distributorrate={2}";
+        //private const string URL = "https://www.papowerswitch.com/umbraco/Api/ShopApi/RateCSV?id={0}&servicetype=residential&ratetype={1}";
         private const string SPACE = " ";
         private const string NO_ANSWER = "No";
         private const string NO_TERM_LENGTH = "No term length";
@@ -34,9 +34,13 @@ namespace CompareHare.Domain.Features.OfferLoaders
             _parserHelper = parserHelper;
         }
 
-        public async Task<List<UtilityPrice>> LoadOffers(int utilityIndexId, string loaderIdentifier, IRequester requester = null)
+        public async Task<List<UtilityPrice>> LoadOffers(int utilityIndexId, string[] loaderIdentifiers, IRequester? requester = null)
         {
-            var url = string.Format(URL, loaderIdentifier);
+            var zipCode = loaderIdentifiers[0];
+            var distributorId = loaderIdentifiers[1];
+            var distributorRate = loaderIdentifiers[2];
+            var url = string.Format(URL, zipCode, distributorId, distributorRate);
+            //var url = string.Format(URL, distributorId, distributorRate); // for CSV endpoint
             var document = await _parserWrapper.OpenUrlAsync(url, requester);
 
             var offers = new List<UtilityPrice>();
@@ -56,7 +60,7 @@ namespace CompareHare.Domain.Features.OfferLoaders
                 }
                 catch (Exception ex)
                 {
-                    Log.Logger.Error(ex, "PAPower Parse Error for {0}", loaderIdentifier);
+                    Log.Logger.Error(ex, "PAPower Parse Error for zip {0} distributor {1}", zipCode, distributorId);
                 }
             }
 

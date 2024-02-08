@@ -68,7 +68,7 @@ class AddAlertForm extends React.Component {
           <strong>
             {state} {utility}
           </strong>{' '}
-          alerts - <a href="https://twitter.com/mattheworres" target="_blank">suggest it</a> :-)
+          alerts - <a href="https://fosstodon.org/@mattygabe" target="_blank">suggest it</a> :-)
         </Typography>
       </div>
     ) : null;

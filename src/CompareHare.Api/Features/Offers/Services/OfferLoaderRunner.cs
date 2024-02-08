@@ -68,7 +68,7 @@ namespace CompareHare.Api.Features.OfferLoaders
 
                 if (offerLoader == null) return;
 
-                var offers = await offerLoader.LoadOffers(index.Id, index.LoaderDataIdentifier);
+                var offers = await offerLoader.LoadOffers(index.Id, [index.LoaderDataIdentifier, index.LoaderDataIdentifier2, index.LoaderDataIdentifier3]);
 
                 //Log.Logger.Information("Ok, got some offers... {0}", offers.Count());
 

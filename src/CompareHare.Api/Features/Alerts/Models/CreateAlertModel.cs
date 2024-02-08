@@ -9,6 +9,8 @@ namespace CompareHare.Api.Features.Alerts.Models
         public int UtilityState { get; set; }
         public int UtilityType { get; set; }
         public string Zip { get; set; }
+        public int DistributorId { get; set; }
+        public string DistributorRate { get; set; }
 
         public bool HasMinimumPrice { get; set; }
         public decimal MinimumPrice { get; set; }

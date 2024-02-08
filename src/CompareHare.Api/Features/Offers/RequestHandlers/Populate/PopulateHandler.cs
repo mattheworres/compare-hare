@@ -43,7 +43,7 @@ namespace CompareHare.Api.Features.Offers.RequestHandlers.Populate
             if (string.IsNullOrEmpty(sui.LastUpdatedHash)) {
                 var offerLoader = _offerLoaderPicker.PickOfferLoader(sui);
 
-                var newOffers = await offerLoader.LoadOffers(sui.Id, sui.LoaderDataIdentifier);
+                var newOffers = await offerLoader.LoadOffers(sui.Id, [sui.LoaderDataIdentifier, sui.LoaderDataIdentifier2, sui.LoaderDataIdentifier3]);
 
                 if (newOffers.Any()) {
                     var offerHash = _hasherHelper.GetModelHash(newOffers);

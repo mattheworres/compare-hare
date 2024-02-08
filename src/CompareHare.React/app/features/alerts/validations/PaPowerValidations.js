@@ -1,5 +1,14 @@
 import * as Yup from 'yup';
 
+export const paPowerSetupFormValidationSchema = Yup.object({
+  distributorId: Yup.number()
+    .required('Distributor must be selected')
+    .positive('Distributor ID must be positive'),
+  distributorRate: Yup.string()
+    .required('Distributor rate must be selected')
+    .min(2, 'Distributor rate must not be empty'), // change messaging?
+});
+
 export const paPower1stFormValidationSchema = Yup.object({
   name: Yup.string()
     .required('Alert name is required')
@@ -105,6 +114,11 @@ export const paPower2ndFormValidationSchema = Yup.object({
 export const paPower3rdFormValidationSchema = Yup.object({
   comments: Yup.string().max(512, 'Comments cannot be longer than 512 characters'),
 });
+
+export const paPowerSetupFormDefaultValues = {
+  distributorId: 0,
+  distributorRate: '',
+};
 
 export const paPower1stFormDefaultValues = {
   name: '',

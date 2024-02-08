@@ -7,6 +7,8 @@ export default Record({
   utilityState: '',
   utilityType: '',
   loaderIdentifier: '',
+  loaderIdentifier2: '',
+  loaderIdentifier3: '',
 
   matchesCount: 0,
   lastEdited: null,

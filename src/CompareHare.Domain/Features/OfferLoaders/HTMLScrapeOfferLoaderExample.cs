@@ -24,7 +24,7 @@ namespace CompareHare.Domain.Features.OfferLoaders
     public class HTMLScrapeOfferLoaderExample : IOfferLoader
     {
         //TODO: Remove once live.....
-        private const string URL = "http://localhost:8000/public/PA_Response.html";
+        private const string URL = "http://localhost:8000/public/PA_Response.test_markup";
         //private const string URL = "https://www.papowerswitch.com/shop-for-electricity/shop-for-your-home?zipcode={0}";
         private const string SPACE = " ";
         private const string NO_ANSWER = "No";

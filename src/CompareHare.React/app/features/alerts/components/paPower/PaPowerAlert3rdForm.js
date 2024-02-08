@@ -7,12 +7,10 @@ import {
   TextField,
   withStyles,
   Grid,
-  Stepper,
-  Step,
-  StepLabel,
   ListItemText,
 } from '@material-ui/core';
 import autobind from 'class-autobind';
+import PaPowerSteps from './PaPowerSteps';
 
 const styles = theme => ({
   paper: {
@@ -243,17 +241,9 @@ class PaPowerAlert3rdForm extends React.Component {
         <Typography variant="h5">
           {isNew ? 'New' : 'Edit'} Alert: PA Power
         </Typography>
-        <Stepper className={classes.stepper}>
-          <Step completed>
-            <StepLabel>Name &amp; Price</StepLabel>
-          </Step>
-          <Step completed>
-            <StepLabel>Flags</StepLabel>
-          </Step>
-          <Step active>
-            <StepLabel>Review</StepLabel>
-          </Step>
-        </Stepper>
+        <PaPowerSteps
+          stepperClass={classes.stepper}
+          activeStepIndex={3} />
         <Typography variant="h6" className={classes.subText}>
           Take a moment and review your alert before saving it:
         </Typography>

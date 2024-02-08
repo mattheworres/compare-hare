@@ -11,6 +11,8 @@ namespace CompareHare.Api.Features.Alerts.Models
         public string UtilityState { get; set; }
         public string UtilityType { get; set; }
         public string LoaderIdentifier { get; set; }
+        public string LoaderIdentifier2 { get; set; }
+        public string LoaderIdentifier3 { get; set; }
 
         public int MatchesCount { get; set; }
 

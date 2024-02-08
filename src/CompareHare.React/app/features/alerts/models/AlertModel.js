@@ -1,5 +1,7 @@
 import {Record} from 'immutable';
 
+// TODO: make specialized to PA Power, or make this more flexible?
+
 export default Record({
   id: null,
   stateUtilityIndexId: null,
@@ -7,7 +9,9 @@ export default Record({
   name: '',
   utilityState: null,
   utilityType: null,
-  zip: '',
+  zip: '',            //Loader ID 1
+  distributorId: '',  //Loader ID 2
+  distributorRate: '',//Loader ID 3
 
   hasMinimumPrice: false,
   minimumPrice: 0,

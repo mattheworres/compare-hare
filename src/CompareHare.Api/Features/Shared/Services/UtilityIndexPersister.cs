@@ -29,6 +29,7 @@ namespace CompareHare.Api.Features.Shared.Services
         {
             var mappedIndex = _mapper.Map<StateUtilityIndex>(model);
 
+            // TODO: this will need built out to support other states and utilities. For now, everything lives here.
             if (mappedIndex.UtilityState == UtilityStates.Pennsylvania
                 && mappedIndex.UtilityType == UtilityTypes.Power) {
                 //First check and see if one matches that is active
@@ -36,6 +37,8 @@ namespace CompareHare.Api.Features.Shared.Services
                     .AnyAsync(x => x.UtilityState == mappedIndex.UtilityState
                         && x.UtilityType == mappedIndex.UtilityType
                         && x.LoaderDataIdentifier == model.Zip
+                        && x.LoaderDataIdentifier2 == Convert.ToString(model.DistributorId)
+                        && x.LoaderDataIdentifier3 == model.DistributorRate
                         && x.Active == true);
 
                 //Already exists & active, lets get outta this joint
@@ -45,7 +48,9 @@ namespace CompareHare.Api.Features.Shared.Services
                 var stateUtility = await _dbContext.StateUtilityIndices
                     .FirstOrDefaultAsync(x => x.UtilityState == mappedIndex.UtilityState
                         && x.UtilityType == mappedIndex.UtilityType
-                        && x.LoaderDataIdentifier == model.Zip);
+                        && x.LoaderDataIdentifier == model.Zip
+                        && x.LoaderDataIdentifier2 == Convert.ToString(model.DistributorId)
+                        && x.LoaderDataIdentifier3 == model.DistributorRate);
 
                 //If it exists, we gotta update it then just return false
                 if (stateUtility != null) {
@@ -58,6 +63,7 @@ namespace CompareHare.Api.Features.Shared.Services
                 }
 
                 mappedIndex.LoaderDataIdentifier = model.Zip;
+                mappedIndex.LoaderDataIdentifier2 = Convert.ToString(model.DistributorId);
                 mappedIndex.Active = true;
 
                 await _dbContext.StateUtilityIndices.AddAsync(mappedIndex);

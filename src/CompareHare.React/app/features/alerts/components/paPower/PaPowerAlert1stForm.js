@@ -8,13 +8,11 @@ import {
   withStyles,
   Switch,
   Grid,
-  Stepper,
-  Step,
-  StepLabel,
   InputAdornment,
 } from '@material-ui/core';
 import {NavigateNext} from '@material-ui/icons';
 import autobind from 'class-autobind';
+import PaPowerSteps from './PaPowerSteps';
 
 const styles = theme => ({
   paper: {
@@ -100,17 +98,9 @@ class PaPowerAlert1stForm extends React.Component {
         <Typography variant="h5">
           {isNew ? 'New' : 'Edit'} Alert: PA Power
         </Typography>
-        <Stepper className={classes.stepper}>
-          <Step active>
-            <StepLabel>Name &amp; Price</StepLabel>
-          </Step>
-          <Step>
-            <StepLabel>Flags</StepLabel>
-          </Step>
-          <Step>
-            <StepLabel>Review</StepLabel>
-          </Step>
-        </Stepper>
+        <PaPowerSteps
+          stepperClass={classes.stepper}
+          activeStepIndex={1} />
         <TextField
           id="name"
           label="Name"

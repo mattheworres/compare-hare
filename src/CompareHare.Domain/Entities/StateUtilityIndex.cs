@@ -7,10 +7,24 @@ namespace CompareHare.Domain.Entities
 {
     public class StateUtilityIndex : ICreatedDateTimeTracker, IModifiedDateTimeTracker
     {
+        public StateUtilityIndex()
+        {
+            LastUpdatedHash = "";
+            LoaderDataIdentifier = "";
+            LoaderDataIdentifier2 = "";
+            LoaderDataIdentifier3 = "";
+        }
+
         public int Id { get; set; }
 
         [MaxLength(256)]
         public virtual string LoaderDataIdentifier { get; set; }
+
+        [MaxLength(256)]
+        public virtual string LoaderDataIdentifier2 { get; set; }
+
+        [MaxLength(256)]
+        public virtual string LoaderDataIdentifier3 { get; set; }
 
         [Required]
         public UtilityStates UtilityState { get; set; }
