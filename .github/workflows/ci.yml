@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  pull_request:
+    paths:
+      - "src/backend/**"
+      - "docker/**"
+      - ".github/workflows/ci.yml"
+  push:
+    branches: [develop,rustrewrite]
+    paths:
+      - "src/backend/**"
+      - "docker/**"
+      - ".github/workflows/ci.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: "0"
+  RUSTFLAGS: "-D warnings"
+
+defaults:
+  run:
+    working-directory: src/backend
+
+jobs:
+  build-test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # `rustup show` installs the toolchain pinned in rust-toolchain.toml.
+      - name: Install pinned toolchain
+        run: rustup show
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src/backend/target/
+          key: cargo-${{ runner.os }}-${{ hashFiles('src/backend/Cargo.lock', 'src/backend/rust-toolchain.toml') }}
+          restore-keys: |
+            cargo-${{ runner.os }}-
+      - name: Build
+        run: cargo build --workspace --all-targets --locked
+      - name: Test
+        run: cargo test --workspace --locked
+      # PLACEHOLDER (WS2): enable the sqlx offline check once the first
+      # query! macro exists and .sqlx/ metadata is committed.
+      # - name: sqlx offline check
+      #   run: cargo sqlx prepare --workspace --check
+
+  fmt:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned toolchain
+        run: rustup show
+      - run: cargo fmt --check
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned toolchain
+        run: rustup show
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            src/backend/target/
+          key: cargo-clippy-${{ runner.os }}-${{ hashFiles('src/backend/Cargo.lock', 'src/backend/rust-toolchain.toml') }}
+          restore-keys: |
+            cargo-clippy-${{ runner.os }}-
+      - run: cargo clippy --workspace --all-targets --locked -- -D warnings
+
+  deny:
+    name: Cargo deny
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EmbarkStudios/cargo-deny-action@v2
+        with:
+          manifest-path: src/backend/Cargo.toml
+          command: check
