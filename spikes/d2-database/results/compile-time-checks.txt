@@ -1,0 +1,13 @@
+sqlx 0.9.0 query! macro, online (DATABASE_URL set) and offline (SQLX_OFFLINE=true, no DB), table `offers`
+(crates: ../chk-mysql, ../chk-pg; run 2026-10-17)
+
+online, Postgres 18.6:  compiles; id i64, rate Decimal, is_green bool, fetched_at DateTime<Utc>, note Option<String> all inferred
+online, MariaDB 13.0.2: compiles ONLY with per-column overrides. Without them the macro inferred
+                        is_green (BOOLEAN) as i8 and fetched_at (DATETIME(6)) as NaiveDateTime.
+                        With `is_green AS "is_green: bool"` and `fetched_at AS "fetched_at: DateTime<Utc>"` it compiles.
+negative test, unknown column:  rejected at compile time on both engines (server error shown in compiler output)
+negative test, wrong Rust type: rejected at compile time on both engines (E0308, expected String found Decimal)
+offline: `cargo sqlx prepare` (sqlx-cli 0.9.0) writes .sqlx per crate; both crates then build with no database.
+         Running prepare for both crates against one workspace-root .sqlx made the second overwrite the first
+         (only one query file left) -> each crate needs its own .sqlx dir.
+         Changing a query without re-running prepare fails with "SQLX_OFFLINE=true but there is no cached data for this query".

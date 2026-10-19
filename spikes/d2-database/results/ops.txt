@@ -1,0 +1,14 @@
+Single measurements, Docker Desktop on macOS (aarch64 VM), containers capped at 2 CPUs / 1 GiB. 2026-10-17.
+
+Image size (docker images): mariadb:12.3.3 361MB | mariadb:13.0.2 386MB | postgres:18.6 480MB | timescale/timescaledb:latest-pg18 1.08GB
+Memory (docker stats) after the harness workload (200k-row table loaded): postgres 81.8MiB | mariadb 13.0.2 256.5MiB | mariadb 12.3.3 237.6MiB
+Memory right after container restart: postgres 22.5MiB | mariadb 13.0.2 168.9MiB | mariadb 12.3.3 147.3MiB | timescale 142MiB (not restarted, not comparable)
+Restart-to-ready (1 sample, restart -t 1): mariadb 13.0.2 1.1s | mariadb 12.3.3 1.3s. postgres 0.1s is only one docker-exec round trip, NOT a usable startup measurement.
+Backup/restore of d2_main (offers = 200,100 rows; row count identical after restore on all three):
+  postgres  pg_dump -Fc (compressed): 1,132,657 bytes, dump 0.30s, pg_restore 0.46s
+  mariadb 13.0.2  mariadb-dump (plain SQL): 15,017,462 bytes, dump 0.21s, restore 0.96s
+  mariadb 12.3.3  mariadb-dump (plain SQL): 15,027,462 bytes, dump 0.22s, restore 0.97s
+  (dump formats differ, so sizes are not comparable)
+testcontainers: testcontainers-modules 0.15.0 (latest) depends on testcontainers 0.27, not 0.28.
+  Default images: Postgres::default() -> PostgreSQL 11.22; Mariadb::default() -> MariaDB 11.3.2. .with_tag("18.6") / .with_tag("13.0.2") pin correctly.
+  Start + connect + query for both: 4.15s total (images already pulled)

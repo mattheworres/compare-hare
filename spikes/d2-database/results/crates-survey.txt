@@ -1,0 +1,25 @@
+crates.io API, queried 2026-10-17 (versions = max stable at that date; dependency reqs read from crates.io dependency metadata)
+
+JOB QUEUES
+apalis 1.0.0 (2026-10-12)             core; backends are separate crates
+apalis-postgres 1.0.0 (2026-10-12)    sqlx ^0.9      recent dl ~122k
+apalis-mysql 1.0.0-rc.8 (2026-05-08)  sqlx ^0.8.1    recent dl ~600; only a release candidate; (apalis-sql 0.7.4 is the older combined crate)
+apalis-redis 1.0.0 (2026-10-12)       redis ^1.7.1
+apalis-cron 1.0.0 (2026-10-12)
+graphile_worker 0.14.1 (2026-10-11)   Postgres only; sqlx ^0.9.0 or tokio-postgres driver
+sqlxmq 0.6.0 (2025-05-25)             Postgres only; sqlx ^0.8
+fang 0.11.0 (2026-07-02)              postgres/mysql/sqlite; sqlx ^0.8
+underway 0.2.0 (2025-07-16)           Postgres; sqlx ^0.8.2
+backie 0.9.0 (2023-07-12)             Postgres; last release 2023
+tokio-cron-scheduler 0.15.1 (2025-10-28)  in-process cron; optional postgres storage
+
+SESSIONS / AUTH GLUE
+tower-sessions 0.15.0 (2026-02-01)    tower-sessions-core =0.15.0
+tower-sessions-redis-store 0.16.0 (2025-01-01)  fred ^10, tower-sessions-core ^0.14.0
+tower-sessions-sqlx-store 0.15.0 (2025-01-01)   sqlx ^0.8.0 (postgres/mysql/sqlite), core ^0.14.0
+axum-login 0.18.0 (2025-07-20)        tower-sessions ^0.14.0, axum ^0.8.1
+
+COMPILE TESTS (../chk-crates, cargo check)
+tower-sessions 0.15 + tower-sessions-redis-store 0.16: FAILS (RedisStore does not implement tower_sessions::SessionStore; core 0.14 vs 0.15)
+tower-sessions 0.14 + tower-sessions-redis-store 0.16: compiles
+apalis-postgres 1 + graphile_worker 0.14 (driver-sqlx) + sqlx 0.9: compile together, one sqlx in the tree

@@ -1,0 +1,14 @@
+T0 server
+    PostgreSQL 18.6 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 15.2.0) 15.2.0, 64-bit
+T1 CREATE EXTENSION timescaledb
+    ok
+T1b extension version
+    Some("2.30.2")
+T2 create_hypertable
+    ok
+T3 rows per table (200 products x 2 years every 6h)
+    584200
+T4 daily avg, one product, last 90 days, ph_plain (median of 100)
+    0.86 ms
+T4 daily avg, one product, last 90 days, ph_hyper (median of 100)
+    1.16 ms

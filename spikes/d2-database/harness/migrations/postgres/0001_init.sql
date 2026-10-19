@@ -1,0 +1,26 @@
+CREATE TABLE offers (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  index_id INT NOT NULL,
+  plan_name VARCHAR(100) NOT NULL,
+  rate NUMERIC(12,5) NOT NULL,
+  term_months INT NOT NULL,
+  is_green BOOLEAN NOT NULL,
+  fetched_at TIMESTAMPTZ(6) NOT NULL,
+  note TEXT NULL
+);
+CREATE INDEX ix_offers_index_rate ON offers (index_id, rate);
+
+CREATE TABLE jobs (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  state VARCHAR(16) NOT NULL,
+  claimed_by INT NULL
+);
+CREATE INDEX ix_jobs_state ON jobs (state, id);
+
+CREATE TABLE rt (
+  id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  d NUMERIC(12,5) NOT NULL,
+  dt TIMESTAMP(6) NOT NULL,
+  ts TIMESTAMPTZ(6) NULL,
+  b BOOLEAN NOT NULL
+);

@@ -1,0 +1,2 @@
+CREATE TABLE half_b (id INT);
+CREATE TABLE half_c (id INT, x NOSUCHTYPE);

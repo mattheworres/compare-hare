@@ -1,0 +1,56 @@
+target
+    mariadb-12.3.3
+server version
+    12.3.3-MariaDB-ubu2404 | sql_mode=PIPES_AS_CONCAT,IGNORE_SPACE,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION | isolation=REPEATABLE-READ
+1a migrations from empty
+    ok
+1b DDL inside a transaction, 2nd statement fails
+    tx result: ERROR: error returned from database: 4161 (HY000): Unknown data type: 'NOSUCHTYPE'; table created by 1st statement still exists after failure/rollback: true
+1c sqlx migration #2 = `CREATE TABLE half_b; CREATE TABLE half_c (bad type)`
+    run1: ERROR: while executing migration 2: error returned from database: 4161 (HY000): Unknown data type: 'NOSUCHTYPE' | leftover half_b table: true | _sqlx_migrations: ["v1:success=true", "v2:success=false"] | rerun: ERROR: migration 2 is partially applied; fix and remove row from `_sqlx_migrations` table
+2a round-trip decimal(12,5)/DATETIME(6)/TIMESTAMP(6)/bool as Decimal, DateTime<Utc>, bool
+    decimal exact=true | datetime(6) micros exact=true | timestamp(6) micros exact=true | bool=true
+2b insert 6 decimal places into decimal(12,5)
+    ok (stored Some(0.12346))
+2c insert value too large for decimal(12,5)
+    ERROR: error returned from database: 1264 (22003): Out of range value for column 'd' at row 1
+2d TIMESTAMP(6) value in year 2040
+    ok
+2e DATETIME(6) value in year 2300
+    ok
+3 replace 100 rows atomically; failure at row 50 rolls back
+    first=100 rows; injected failure -> error returned; rows after rollback=100
+3 replace 100 rows (median of 50)
+    2.51 ms
+4 filtered query, table has ~5,000 rows (median of 200)
+    0.61 ms (last result 17 rows)
+4 filtered query, table has ~200,000 rows (median of 200)
+    0.64 ms (last result 17 rows)
+5 claim 2000 jobs, 8 workers, two-step
+    processed=2000 duplicates=0 errors=3526 elapsed=10617.15 ms per_worker=[61, 1567, 62, 62, 61, 59, 60, 68] error_samples=["ERROR: error returned from database: 1213 (40001): Deadlock found when trying to get lock; try restarting transaction"]
+5 claim 2000 jobs, 8 workers, two-step-read-committed
+    processed=2000 duplicates=0 errors=0 elapsed=1429.88 ms per_worker=[251, 258, 251, 250, 251, 244, 245, 250] error_samples=[]
+5 claim 2000 jobs, 8 workers, single-statement
+    processed=0 duplicates=0 errors=4008 elapsed=496.91 ms per_worker=[0, 0, 0, 0, 0, 0, 0, 0] error_samples=["ERROR: error returned from database: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right"]
+P1 CHECK constraint enforced
+    ERROR: error returned from database: 4025 (23000): CONSTRAINT `chk.rate` failed for `d2_main`.`chk`
+P2 native partial unique index (`CREATE UNIQUE INDEX .. WHERE`)
+    ERROR: error returned from database: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right
+P2b workaround: unique index over generated column
+    create=ok first=ok duplicate_active=ERROR: error returned from database: 1062 (23000): Duplicate entry '1' for key 'ux2' inactive_dup=ok
+P3 enum type
+    ERROR: error returned from database: 1265 (01000): Data truncated for column 'k' at row 1
+P4 JSON column
+    create=ok reported_type=Some("longtext") invalid_insert=ERROR: error returned from database: 4025 (23000): CONSTRAINT `js.j` failed for `d2_main`.`js` valid_insert=ok path_query=Some("5")
+P5a INSERT .. RETURNING
+    ok
+P5b DELETE .. RETURNING
+    ok
+P5c UPDATE .. RETURNING
+    ERROR: error returned from database: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right
+P5d REPLACE .. RETURNING
+    ok
+P5e INSERT .. ON DUPLICATE KEY UPDATE
+    ok
+P6 LISTEN/NOTIFY equivalent (`LISTEN x`)
+    ERROR: error returned from database: 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right

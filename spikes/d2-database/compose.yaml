@@ -1,0 +1,30 @@
+# D2 spike: identical limits, default config, named volumes, pinned tags.
+x-limits: &limits
+  cpus: 2
+  mem_limit: 1g
+services:
+  mariadb-latest:
+    image: mariadb:13.0.2
+    <<: *limits
+    environment: { MARIADB_ROOT_PASSWORD: spike }
+    ports: ["33061:3306"]
+    volumes: [mariadb-latest:/var/lib/mysql]
+  mariadb-lts:
+    image: mariadb:12.3.3
+    <<: *limits
+    environment: { MARIADB_ROOT_PASSWORD: spike }
+    ports: ["33062:3306"]
+    volumes: [mariadb-lts:/var/lib/mysql]
+  postgres:
+    image: postgres:18.6
+    <<: *limits
+    environment: { POSTGRES_PASSWORD: spike }
+    ports: ["54321:5432"]
+    volumes: [postgres:/var/lib/postgresql]
+  timescale:
+    image: timescale/timescaledb:latest-pg18
+    <<: *limits
+    environment: { POSTGRES_PASSWORD: spike }
+    ports: ["54322:5432"]
+    volumes: [timescale:/var/lib/postgresql]
+volumes: { mariadb-latest: {}, mariadb-lts: {}, postgres: {}, timescale: {} }

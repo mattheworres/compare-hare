@@ -1,0 +1,54 @@
+target
+    postgres-18.6
+server version
+    PostgreSQL 18.6 (Debian 18.6-1.pgdg13+2) on aarch64-unknown-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit | isolation=read committed
+1a migrations from empty
+    ok
+1b DDL inside a transaction, 2nd statement fails
+    tx result: ERROR: error returned from database: type "nosuchtype" does not exist at line 270; table created by 1st statement still exists after failure/rollback: false
+1c sqlx migration #2 = `CREATE TABLE half_b; CREATE TABLE half_c (bad type)`
+    run1: ERROR: while executing migration 2: error returned from database: type "nosuchtype" does not exist at line 270 | leftover half_b table: false | _sqlx_migrations: ["v1:success=true"] | rerun: ERROR: while executing migration 2: error returned from database: type "nosuchtype" does not exist at line 270 | retry on same pool: BLOCKED >10s (advisory lock still held by pooled connection after the failed run)
+2a round-trip numeric(12,5)/timestamp(6)/timestamptz(6)/bool as Decimal, DateTime<Utc>, bool
+    decimal exact=true | timestamp(6) micros exact=true | timestamptz(6) micros exact=true | bool=true
+2b insert 6 decimal places into numeric(12,5)
+    ok (stored Some(0.12346))
+2c insert value too large for numeric(12,5)
+    ERROR: error returned from database: numeric field overflow at line 8121
+2d timestamptz(6) value in year 2040
+    ok
+2e timestamp(6) value in year 2300
+    ok
+3 replace 100 rows atomically; failure at row 50 rolls back
+    first=100 rows; injected failure -> error returned; rows after rollback=100
+3 replace 100 rows (median of 50)
+    2.25 ms
+4 filtered query, table has ~5,000 rows (median of 200)
+    0.48 ms (last result 17 rows)
+4 filtered query, table has ~200,000 rows (median of 200)
+    0.60 ms (last result 17 rows)
+5 claim 2000 jobs, 8 workers, two-step
+    processed=2000 duplicates=0 errors=0 elapsed=563.55 ms per_worker=[254, 249, 253, 250, 249, 247, 249, 249] error_samples=[]
+5 claim 2000 jobs, 8 workers, two-step-read-committed
+    processed=2000 duplicates=0 errors=0 elapsed=563.33 ms per_worker=[247, 252, 252, 250, 250, 250, 249, 250] error_samples=[]
+5 claim 2000 jobs, 8 workers, single-statement
+    processed=2000 duplicates=0 errors=0 elapsed=324.86 ms per_worker=[251, 250, 250, 248, 248, 252, 251, 250] error_samples=[]
+P1 CHECK constraint enforced
+    ERROR: error returned from database: new row for relation "chk" violates check constraint "chk_rate_check" at line 2076
+P2 native partial unique index (`CREATE UNIQUE INDEX .. WHERE`)
+    create=ok first=ok duplicate_active=ERROR: error returned from database: duplicate key value violates unique constraint "ux" at line 666 inactive_dup=ok
+P3 enum type
+    ERROR: error returned from database: invalid input value for enum ab: "zzz" at line 129
+P4 JSON column (jsonb)
+    create=ok reported_type=Some("jsonb") invalid_insert=ERROR: error returned from database: invalid input syntax for type json at line 659 valid_insert=ok path_query=Some("5") gin_index=ok
+P5a INSERT .. RETURNING
+    ok
+P5b DELETE .. RETURNING
+    ok
+P5c UPDATE .. RETURNING
+    ok
+P5d REPLACE .. RETURNING
+    ERROR: error returned from database: syntax error at or near "REPLACE" at line 1236
+P5e INSERT .. ON CONFLICT DO UPDATE
+    ok
+P6 LISTEN/NOTIFY
+    received payload "hello"

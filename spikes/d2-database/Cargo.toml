@@ -1,0 +1,14 @@
+[workspace]
+resolver = "3"
+members = ["harness", "chk-mysql", "chk-pg", "chk-crates", "chk-tc"]
+
+[workspace.package]
+edition = "2024"
+publish = false
+
+[workspace.dependencies]
+sqlx = { version = "0.9", default-features = false, features = ["runtime-tokio", "tls-none", "macros", "migrate", "rust_decimal", "chrono"] }
+tokio = { version = "1", features = ["full"] }
+anyhow = "1"
+rust_decimal = "1"
+chrono = "0.4"

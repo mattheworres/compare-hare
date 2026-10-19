@@ -1,0 +1,26 @@
+CREATE TABLE offers (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  index_id INT NOT NULL,
+  plan_name VARCHAR(100) NOT NULL,
+  rate DECIMAL(12,5) NOT NULL,
+  term_months INT NOT NULL,
+  is_green BOOLEAN NOT NULL,
+  fetched_at DATETIME(6) NOT NULL,
+  note TEXT NULL,
+  KEY ix_offers_index_rate (index_id, rate)
+) ENGINE=InnoDB;
+
+CREATE TABLE jobs (
+  id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  state VARCHAR(16) NOT NULL,
+  claimed_by INT NULL,
+  KEY ix_jobs_state (state, id)
+) ENGINE=InnoDB;
+
+CREATE TABLE rt (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  d DECIMAL(12,5) NOT NULL,
+  dt DATETIME(6) NOT NULL,
+  ts TIMESTAMP(6) NULL,
+  b BOOLEAN NOT NULL
+) ENGINE=InnoDB;

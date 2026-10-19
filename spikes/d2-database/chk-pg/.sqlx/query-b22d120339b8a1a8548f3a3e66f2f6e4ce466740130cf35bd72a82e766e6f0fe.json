@@ -1,0 +1,101 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT id, plan_name, rate, term_months, is_green, fetched_at, note FROM offers WHERE index_id = $1 AND rate >= $2 LIMIT 3",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "offers",
+            "name": "id"
+          }
+        }
+      },
+      {
+        "ordinal": 1,
+        "name": "plan_name",
+        "type_info": "Varchar",
+        "origin": {
+          "Table": {
+            "table": "offers",
+            "name": "plan_name"
+          }
+        }
+      },
+      {
+        "ordinal": 2,
+        "name": "rate",
+        "type_info": "Numeric",
+        "origin": {
+          "Table": {
+            "table": "offers",
+            "name": "rate"
+          }
+        }
+      },
+      {
+        "ordinal": 3,
+        "name": "term_months",
+        "type_info": "Int4",
+        "origin": {
+          "Table": {
+            "table": "offers",
+            "name": "term_months"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "is_green",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "offers",
+            "name": "is_green"
+          }
+        }
+      },
+      {
+        "ordinal": 5,
+        "name": "fetched_at",
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "offers",
+            "name": "fetched_at"
+          }
+        }
+      },
+      {
+        "ordinal": 6,
+        "name": "note",
+        "type_info": "Text",
+        "origin": {
+          "Table": {
+            "table": "offers",
+            "name": "note"
+          }
+        }
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Numeric"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "b22d120339b8a1a8548f3a3e66f2f6e4ce466740130cf35bd72a82e766e6f0fe"
+}

@@ -1,0 +1,10 @@
+[package]
+name = "chk-tc"
+version = "0.0.0"
+edition.workspace = true
+publish.workspace = true
+
+[dev-dependencies]
+testcontainers-modules = { version = "0.15", features = ["postgres", "mariadb"] }
+sqlx = { workspace = true, features = ["postgres", "mysql"] }
+tokio.workspace = true
