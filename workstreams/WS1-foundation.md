@@ -13,7 +13,7 @@
 - No secrets in committed files. No `latest` image tags.
 - Keep the change to what the task names; leave later tasks' work alone.
 - Each task ends with `cargo fmt --check`, `cargo clippy --all-targets --all-features -- -D warnings` and `cargo test --workspace` passing (once task 1 exists).
-- After completing a task, provide a short and succinct summary of what was completed, including anything that you learned along the way.
+- After completing a task, provide a short and succinct summary of what was completed, including anything that you learned along the way, and update WS1-foundation.md with your learnings under the task you completed.
 
 ---
 
@@ -45,7 +45,7 @@ Create the Cargo workspace in `src/backend/` (not the repo root) and the formatt
 
 Acceptance: `cargo build`, `cargo fmt --check`, `cargo clippy --workspace --all-targets -- -D warnings` and `cargo deny check` pass on a clean checkout.
 
-Learnings or notes: (to be enumerated by agent)
+Learnings or notes: none
 
 ## 2. CI
 
@@ -58,7 +58,16 @@ Add GitHub Actions in `.github/workflows/ci.yml` at the repo root, triggered on 
 
 Acceptance: workflow file passes `actionlint`; the workflow is green on the PR that adds it.
 
-Learnings or notes: (to be enumerated by agent)
+Learnings or notes:
+
+- Added `.github/workflows/ci.yml` with four parallel jobs: build+test, fmt, clippy, cargo-deny. A workflow-level `defaults.run.working-directory: src/backend` covers all `run` steps (it does not apply to `uses:` actions, so cargo-deny gets `manifest-path` instead).
+- Path filter (`src/backend/**`, `docker/**`, the workflow file) is on both `pull_request` and `push` to `develop`. Caveat: if these checks become *required* branch-protection checks, a PR touching none of those paths will never report them and will block; revisit then.
+- Toolchain: `rustup show` in each job installs whatever `rust-toolchain.toml` pins, so no third-party toolchain action and no version duplicated in the workflow.
+- Caches use `actions/cache@v4` on `~/.cargo/registry`, `~/.cargo/git` and `src/backend/target/`, keyed on `Cargo.lock` + `rust-toolchain.toml`; clippy has its own key since its artifacts differ from test builds.
+- `RUSTFLAGS=-D warnings` is set globally, `CARGO_INCREMENTAL=0` for CI, and `--locked` on cargo builds so a stale `Cargo.lock` fails the build.
+- Third-party actions are pinned to major tags (`checkout@v4`, `cache@v4`, `cargo-deny-action@v2`), not SHAs; switch to SHAs if stricter supply-chain policy is wanted.
+- The sqlx offline check is a commented placeholder in the build job for WS2.
+- Not verified: `actionlint` is not installed locally (only YAML syntax validated), and "green on the PR" can only be confirmed once pushed. Local `fmt`, `clippy`, `test` and `deny` all pass; `cargo deny` warns that the `Zlib` licence allowance is currently unused (harmless; left as-is since task 1 set the policy).
 
 ## 3. Local services: docker compose
 
