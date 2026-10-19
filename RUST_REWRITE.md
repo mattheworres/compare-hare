@@ -124,19 +124,26 @@ SHARED: users/roles (ASP.NET Identity, cookie auth) · recurring jobs (daily 00:
 
 ```text
 comparehare/
-  Cargo.toml                workspace; edition = "2024" (decided); rust-toolchain.toml pins stable (1.99.1 installed here)
-  crates/
-    ch-domain/    pure: enums, Offer, AlertCriteria, canonical hash, matcher, assessor state machine, price diff, parsers
-    ch-db/        migrations + repositories — the only crate that knows SQL                          [D2]
-    ch-sources/   OfferSource + ProductScraper impls, HTTP fetcher, parsers                       [D4a/D4b]
-    ch-engine/    orchestration: refresh offers · assess alerts · scrape prices (traits only)
-    ch-notify/    templates, SMTP, dispatcher
-    ch-jobs/      scheduler / worker runtime                                                          [D3]
-    ch-auth/      accounts, sessions/tokens, verify/reset flows                                       [D1]
-    ch-api/       routes, DTOs, validation, error envelope, OpenAPI
-  bins/           one binary with subcommands: serve | worker | migrate
-  fixtures/       captured HTML/JSON/CSV (moved from CompareHare.Tests)
-  docker/         compose: PostgreSQL 18 + Redis + mail sink
+  docker/                   local infra compose: PostgreSQL 18 + Redis + mail sink (shared across services)
+  justfile  .github/        repo-level dev tasks and CI
+  src/
+    backend/                the Rust service (Cargo workspace root)
+      Cargo.toml            workspace; edition = "2024" (decided); rust-toolchain.toml pins stable (1.99.1 installed here)
+      crates/
+        ch-common/  config, telemetry, shared error type                                        [WS1]
+        ch-domain/  pure: enums, Offer, AlertCriteria, canonical hash, matcher, assessor state machine, price diff, parsers
+        ch-db/      migrations + repositories — the only crate that knows SQL                    [D2]
+        ch-sources/ OfferSource + ProductScraper impls, HTTP fetcher, parsers                    [D4a/D4b]
+        ch-engine/  orchestration: refresh offers · assess alerts · scrape prices (traits only)
+        ch-notify/  templates, SMTP, dispatcher
+        ch-jobs/    scheduler / worker runtime                                                    [D3]
+        ch-auth/    accounts, sessions/tokens, verify/reset flows                                 [D1]
+        ch-api/     routes, DTOs, validation, error envelope, OpenAPI
+      bins/         one binary with subcommands: serve | worker | migrate
+      fixtures/     captured HTML/JSON/CSV (moved from CompareHare.Tests)
+      config/       layered TOML config
+    frontend/       future Angular app
+    CompareHare.*   legacy .NET + React, retired in WS11
 ```
 
 The crate split is a suggestion — collapse crates if compile-time overhead isn't worth it, but **keep the pure-core / IO boundary**. One binary with subcommands keeps deployment simple now while letting API and worker scale separately later.
