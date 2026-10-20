@@ -10,6 +10,13 @@ license = "UNLICENSED"
 
 [workspace.dependencies]
 ch-common = { path = "crates/ch-common" }
+chrono-tz = { version = "0.10", features = ["serde"] }
+cron = "0.17"
+figment = { version = "0.10", features = ["toml", "parse-value"] }
+secrecy = { version = "0.10", features = ["serde"] }
+serde = { version = "1", features = ["derive"] }
+thiserror = "2"
+url = { version = "2", features = ["serde"] }
 
 [workspace.lints.clippy]
 all = { level = "deny", priority = -1 }
