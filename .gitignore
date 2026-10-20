@@ -36,3 +36,6 @@ yarn-error.log*
 /.vagrant
 yarn-error.log
 devnotes.md
+
+# Local service credentials
+docker/.env
