@@ -81,7 +81,14 @@ Create `docker/compose.yaml` for local development.
 
 Acceptance: `docker compose -f docker/compose.yaml up -d` reaches `healthy` for postgres and redis; a test message sent to `localhost:1025` appears in the sink UI.
 
-Learnings or notes: (to be enumerated by agent)
+Learnings or notes:
+
+- Added `docker/compose.yaml`, `docker/.env.example`, `docker/README.md`; `docker/.env` is gitignored via the root `.gitignore`. Pins: `postgres:18.6`, `redis:8.2.1-alpine`, `axllent/mailpit:v1.27.8`. Compose project name is fixed to `comparehare`.
+- Postgres 18 images moved `PGDATA` to a version-specific dir under `/var/lib/postgresql`, so the named volume mounts at `/var/lib/postgresql` (mounting at `.../data` as in older images breaks/warns).
+- Compose reads `.env` for `${...}` interpolation relative to the compose file's directory, so host-port overrides (`POSTGRES_PORT` etc.) work from the same `docker/.env`; `docker compose` must be run with `-f docker/compose.yaml` from the repo root (or `just`, task 8).
+- Redis runs with `--save "" --appendonly no` (no persistence). Mailpit healthcheck uses its built-in `/mailpit readyz`.
+- Verified locally: `up -d --wait` → all three `healthy`; a raw SMTP message to `127.0.0.1:1025` appeared in the Mailpit API (`:8025`); `down -v` removes the volume. Image tags were pulled successfully, so they exist.
+- The `.env` must exist before `up` (postgres uses `env_file`); the README says to copy it first.
 
 ## 4. Typed, layered configuration
 
