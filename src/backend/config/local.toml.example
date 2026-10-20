@@ -1,0 +1,15 @@
+# Copy to `config/local.toml` (gitignored) and run with COMPAREHARE_ENV=local.
+# Only list what differs from default.toml. No secrets here: use
+# COMPAREHARE__DATABASE__PASSWORD / COMPAREHARE__REDIS__PASSWORD / COMPAREHARE__SMTP__PASSWORD
+# in the environment
+# (docker/.env.example lists the dev password for the compose database).
+
+[log]
+level = "debug"
+format = "pretty"
+
+[log.filters]
+sqlx = "warn"
+
+[jobs]
+run_on_startup = false

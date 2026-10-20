@@ -1,0 +1,61 @@
+# Base configuration. Mirrors the built-in defaults (a test keeps them in sync) and targets the
+# local docker compose services. Override per environment with `config/{COMPAREHARE_ENV}.toml`
+# or `COMPAREHARE__SECTION__KEY` environment variables.
+#
+# Secrets are NOT allowed here; set them in the environment only:
+#   COMPAREHARE__DATABASE__PASSWORD
+#   COMPAREHARE__REDIS__PASSWORD
+#   COMPAREHARE__SMTP__PASSWORD
+# URLs must not embed a password either (neither `user:pw@` nor `?password=`).
+
+[database]
+url = "postgres://comparehare@localhost:5432/comparehare"
+pool_size = 10
+
+[redis]
+url = "redis://localhost:6379"
+
+[smtp]
+host = "localhost"
+port = 1025
+from = "admin@comparehare.com"
+tls = "none" # none | start_tls | tls
+
+[urls]
+web_app = "http://localhost:8000"
+api_base = "http://localhost:8080"
+
+[http]
+bind = "127.0.0.1:8080"
+cors_allowed_origins = ["http://localhost:8000"]
+
+[jobs]
+run_on_startup = false
+timezone = "America/New_York"
+
+# Five-field cron: minute hour day-of-month month day-of-week. Day-of-week is standard cron
+# (0-7, with 0 and 7 = Sunday, or SUN-SAT).
+[jobs.schedules]
+offer_refresh = "0 0 * * *"
+alert_assessment = "0 1 * * *"
+price_scraping = "0 2 * * *"
+
+[jobs.concurrency]
+offer_refresh = 1
+alert_assessment = 1
+price_scraping = 1
+
+# Minimum seconds between requests to one host (the values the .NET runners hardcoded).
+[jobs.request_throttle]
+offer_refresh_secs = 15
+price_scraping_secs = 2
+
+[jobs.request_throttle.per_host_secs]
+# "example.com" = 5
+
+[log]
+level = "info"   # error | warn | info | debug | trace
+format = "json"  # json | pretty
+
+[log.filters]
+# sqlx = "warn"
