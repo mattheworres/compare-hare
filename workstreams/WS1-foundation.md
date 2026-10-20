@@ -134,7 +134,7 @@ Learnings or notes: (to be enumerated by agent)
 
 Create `crates/ch-api` and wire the binary.
 
-- `bins/comparehare` uses `clap` with subcommands `serve`, `worker`, `migrate`. Only `serve` does anything; `worker` and `migrate` print "not implemented" and exit non-zero.
+- `bins/comparehare` uses `clap` with subcommands `serve`, `worker`, `migrate`. Only `serve` does anything; `worker` and `migrate` print "not implemented" and exit non-zero. **`migrate` is a stub on purpose:** migrations use sqlx's own migrator (`sqlx::migrate!`, per D2; no ORM), and WS2 wires it to the `migrations/` directory with the baseline schema.
 - `serve`: load config (task 4), init telemetry (task 5), build an explicit `AppState { config, db: PgPool, redis }` (no DI container, no globals), and run an axum server with graceful shutdown on SIGINT/SIGTERM.
 - `GET /health`: returns `200` with `{"status":"ok"}` when `SELECT 1` succeeds against Postgres and Redis answers `PING`; otherwise `503` with the failing component named. No auth. A short timeout on each check.
 - Use `sqlx` 0.9 (`postgres`, `runtime-tokio`, TLS feature chosen explicitly) for the pool; no migrations or queries beyond `SELECT 1`.
